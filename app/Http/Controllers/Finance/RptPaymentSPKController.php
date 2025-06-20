@@ -1,0 +1,138 @@
+<?php
+
+namespace App\Http\Controllers\Finance;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\DropdownController;
+use Symfony\Component\HttpFoundation\Response;
+
+// DATATABLES
+use DataTables;
+
+// BASE CONTROLLER
+use App\Http\Controllers\MyController;
+
+// MODEL
+
+
+// PLUGIN
+use Validator;
+use PDF;
+use Mail;
+
+class RptPaymentSPKController extends MyController
+{ 
+    // =========================================================================================
+    // CONSTRUCTOR
+    // =========================================================================================
+    public function __construct(Request $request)
+    {        
+        $this->data['img_logo']  = url('public/images/logo/wuser.png');    
+        $this->table_name = '';    
+        
+        // FORM TITLE
+        $this->data['module_name'] = 'Finance';
+        $this->data['form_title'] = 'Payment SPK Report';
+
+        // NAVIGATION
+        $this->data['navbar'] = 'navigation.navbar_finance';     
+        $this->data['sidebar'] = 'navigation.sidebar_finance'; 
+
+        // BREADCRUMB
+        $this->data['breads'] = array('ASBS','Finance','Report'); 
+         
+
+        parent::__construct($request);
+    }
+
+    public function payment_spk()
+    { 
+        $this->data['form_id'] = 'FM-RPT-Payment-SPK';
+
+        $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
+
+        // $access = TRUE;
+        
+        $this->data['title'] = 'ASBS';
+        $this->data['form_title'] = 'Laporan Payment SPK';
+        $this->data['form_sub_title'] = 'Laporan';
+        $this->data['form_desc'] = 'Laporan Payment SPK';
+
+        $this->data['form_remark'] = 'Laporan Payment SPK';
+
+        // BREADCRUMB
+        array_push($this->data['breads'],'Payment SPK'); 
+
+        $this->data['state'] = 'update';        
+
+        if($access == TRUE)
+        { 
+                       
+            // DEFAULT PARAMETER
+            $this->data['start_date'] = date('Y-m-d');
+            $this->data['end_date'] = date('Y-m-d');
+
+            // DROPDOWN
+            $dd = new DropdownController;           
+            $this->data['dd_project'] = (array) $dd->project();
+
+            // URL SAVE
+            $this->data['url_show_repoprt'] = url('fm-rpt-payment-spk');
+
+            return view('finance/rpt_payment_spk_form', $this->data);
+        }
+        else
+        {
+            return $this->show_no_access($this->data);
+        }
+    }
+
+    public function payment_spk_report(Request $request)
+    {
+        $validator = Validator::make($request->all(),[   
+            'start_date' => 'required',
+            'end_date' => 'required'
+        ]);
+
+        if($validator->fails())
+        {
+            return $this->validation_fails($validator->errors(),$request->input('start_date'));     
+        } 
+        else 
+        {
+            // GET POST VALUE
+            $this->data['fields'] = $request->all();
+
+            // REPORT INFORMATION
+            $this->data['page_title'] = 'Laporan Payment SPK';   
+            $this->data['title'] = 'Laporan Payment SPK';            
+            $this->data['form_title'] = 'Laporan Payment SPK';      
+
+            $this->data['bulan'] = $this->indonesian_month($this->data['fields']['end_date']);
+
+            // REPORT PARAMETER ** Param sequence must refer to param sequence in stored procedure **
+            $param['IDX_M_Company'] = '1';
+            $param['IDX_M_Branch'] = '1';
+            $param['StartDate'] = $this->data['fields']['start_date'];
+            $param['EndDate'] = $this->data['fields']['end_date'];
+            $param['IDX_M_Partner'] = $this->data['fields']['IDX_M_Partner'];
+            $param['IDX_M_Project'] = $this->data['fields']['IDX_M_Project'];		                     
+
+            // RECORDS
+            $this->data['records'] = $this->exec_sp('USP_CM_R_PaymentSPK_Period',$param,'list','sqlsrv');
+
+            // VIEW
+            $this->data['view'] = 'finance/rpt_payment_spk_report'; 
+
+            if($request->report_type == 'S')
+            {
+                $this->data['title'] = 'LAPORAN PAYMENT SPK';   
+                $this->data['view'] = 'finance/rpt_payment_spk_report';                                 
+            }
+            
+            return view($this->data['view'], $this->data);
+        }
+    }
+}

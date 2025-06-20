@@ -1,0 +1,1 @@
+<a href="{{ $url_reload ?? '#' }}" class="btn btn-warning btn-sm" type="button"><i class="fas fa-circle-notch"></i> Reload</a>

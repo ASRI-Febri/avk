@@ -1,0 +1,145 @@
+body {
+	font-family: Helvetica, 'Courier', 'Courier New', 'Sans-serif', Tahoma, Verdana, Sans;
+	font-size: 11px;
+}
+
+h1
+{    
+    font-size: 18px;
+    text-align: left;
+}
+
+h2
+{    
+    font-size: 16px;
+    text-align: left;
+}
+
+h3
+{    
+    font-size: 14px;
+    text-align: left;
+}
+
+h5
+{    
+    font-size: 12px;
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+br
+{
+	clear: left;
+	height: 3px;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-info {
+  color: #051b7c;
+}
+
+.tex-success {
+  color: #023620;
+}
+
+.total {	
+	font-size: 11px;
+  font-weight: bold;
+  color: #000000;	
+}
+
+.param-key {	
+	font-size: 12px;
+	font-weight: bold;
+	color: #000000;	
+	width: 200px;
+}
+
+.param-value {	
+	font-size: 12px;
+	font-weight: normal;
+	color: #000000;	
+	width: 400px;
+}
+
+.top-align{
+	vertical-align: top;	
+	margin-top: 0;
+	margin-bottom: 2px;
+	padding-top: 0;
+}
+
+.width-80{
+	width: 80px;
+}
+
+.width-100{
+	width: 100px;
+}
+
+.width-200{
+	width: 200px;
+}
+
+.width-300{
+	width: 300px;
+}
+
+table.minimalistBlack {    
+    border: 1px solid #000000;
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+  }
+  table.minimalistBlack td, table.minimalistBlack th {
+    border: 1px solid #000000;
+    padding: 5px 4px;    
+  }
+  table.minimalistBlack tbody tr, td {
+	font-size: 11px;
+	vertical-align: top;
+  }
+  table.minimalistBlack tr:nth-child(even) {
+    background: #E8EAEA;
+  }
+  table.minimalistBlack thead {
+    background: #CFCFCF;
+    background: -moz-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+    background: -webkit-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+    background: linear-gradient(to bottom, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+    border-bottom: 1px solid #000000;
+  }
+  table.minimalistBlack thead th {
+    font-size: 11px;
+    font-weight: bold;
+    color: #000000;
+    text-align: center;
+    border-left: 1px solid #D0E4F5;
+    height: 20px;
+  }
+  table.minimalistBlack thead th:first-child {
+    border-left: none;
+  }
+  
+  table.minimalistBlack tfoot {
+    font-size: 11px;
+    font-weight: bold;
+    color: #000000;
+    border-top: 1px solid #000000;
+  }
+  table.minimalistBlack tfoot td {
+    font-size: 11px;
+  }

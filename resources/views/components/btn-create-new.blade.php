@@ -1,0 +1,1 @@
+<a href="{{ $url }}" class="btn btn-info" type="button"><i class="fas fa-plus"></i> {{ $label }}</a>

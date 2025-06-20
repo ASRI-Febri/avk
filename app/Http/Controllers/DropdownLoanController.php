@@ -1,0 +1,1530 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+// MODEL
+use App\Models\General\DocumentTypeStatus;
+
+class DropdownLoanController extends Controller
+{
+    public function company($id='',$connection = 'sqlsrv')
+    {
+        if ($id != '')
+        {
+            $sql = "SELECT D.IDX_M_Company, D.CompanyID, D.CompanyName
+                    FROM SM_M_User A WITH(NOLOCK)
+                        INNER JOIN SM_M_UserBranch B WITH(NOLOCK) ON A.IDX_M_User = B.IDX_M_User
+                        INNER JOIN GN_M_Branch C WITH(NOLOCK) ON B.IDX_M_Branch = C.IDX_M_Branch
+                        INNER JOIN GN_M_Company D WITH(NOLOCK) ON C.IDX_M_Company = D.IDX_M_Company
+                    WHERE A.LoginID = '$id' AND B.RecordStatus = 'A'
+                    ORDER BY D.CompanyID";
+        }
+        else
+        {
+            $sql = "SELECT IDX_M_Company, CompanyID, CompanyName FROM GN_M_Company WITH(NOLOCK) ORDER BY IDX_M_Company";
+        }
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Company)] = trim($row->CompanyName);
+        }
+        
+        return $value;
+    }
+
+    public function branch($id='',$connection = 'sqlsrv')
+    {
+        if ($id != '')
+        {
+            // $sql = "SELECT IDX_M_Branch, BranchName + ' - ' + BranchAlias + ' / ' + BranchID AS BranchName
+            //         FROM GN_M_Branch 
+            //         WHERE IDX_M_Company = $ID AND RecordStatus = 'A'
+            //         ORDER BY IDX_M_Branch";
+
+            $sql = "SELECT C.IDX_M_Branch, C.BranchName + ' - ' + C.BranchAlias + ' / ' + C.BranchID AS BranchName
+                    FROM SM_M_User A WITH(NOLOCK)
+                        INNER JOIN SM_M_UserBranch B WITH(NOLOCK) ON A.IDX_M_User = B.IDX_M_User
+                        INNER JOIN GN_M_Branch C WITH(NOLOCK) ON B.IDX_M_Branch = C.IDX_M_Branch
+                    WHERE A.LoginID = '$id' AND B.RecordStatus = 'A'
+                    ORDER BY C.BranchName";
+        } 
+        else 
+        {
+            $sql = "SELECT IDX_M_Branch, BranchName + ' - ' + BranchAlias + ' / ' + BranchID AS BranchName
+                    FROM GN_M_Branch WITH(NOLOCK)	
+                    WHERE RecordStatus = 'A'				
+                    ORDER BY IDX_M_Branch";
+        }
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Branch)] = trim($row->BranchName);
+        }
+        
+        return $value;
+    }
+
+    public function branch_code($id='',$connection = 'sqlsrv')
+    {
+        if ($id != '')
+        {
+            // $sql = "SELECT IDX_M_Branch, BranchName + ' - ' + BranchAlias + ' / ' + BranchID AS BranchName
+            //         FROM GN_M_Branch 
+            //         WHERE IDX_M_Company = $ID AND RecordStatus = 'A'
+            //         ORDER BY IDX_M_Branch";
+
+            $sql = "SELECT C.IDX_M_Branch, C.BranchID, C.BranchName + ' - ' + C.BranchAlias + ' / ' + C.BranchID AS BranchName
+                    FROM SM_M_User A WITH(NOLOCK)
+                        INNER JOIN SM_M_UserBranch B WITH(NOLOCK) ON A.IDX_M_User = B.IDX_M_User
+                        INNER JOIN GN_M_Branch C WITH(NOLOCK) ON B.IDX_M_Branch = C.IDX_M_Branch
+                    WHERE A.LoginID = '$id' AND B.RecordStatus = 'A'
+                    ORDER BY C.BranchName";
+        } 
+        else 
+        {
+            $sql = "SELECT IDX_M_Branch, C.BranchID, BranchName + ' - ' + BranchAlias + ' / ' + BranchID AS BranchName
+                    FROM GN_M_Branch WITH(NOLOCK)	
+                    WHERE RecordStatus = 'A'				
+                    ORDER BY IDX_M_Branch";
+        }
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->BranchID)] = trim($row->BranchName);
+        }
+        
+        return $value;
+    }
+
+    public function branch_code_specific($branch_id='',$connection = 'sqlsrv')
+    {
+        if ($branch_id != '')
+        {
+            // $sql = "SELECT IDX_M_Branch, BranchName + ' - ' + BranchAlias + ' / ' + BranchID AS BranchName
+            //         FROM GN_M_Branch 
+            //         WHERE IDX_M_Company = $ID AND RecordStatus = 'A'
+            //         ORDER BY IDX_M_Branch";
+
+            $sql = "SELECT C.IDX_M_Branch, C.BranchID, C.BranchName + ' - ' + C.BranchAlias + ' / ' + C.BranchID AS BranchName
+                    FROM SM_M_User A WITH(NOLOCK)
+                        INNER JOIN SM_M_UserBranch B WITH(NOLOCK) ON A.IDX_M_User = B.IDX_M_User
+                        INNER JOIN GN_M_Branch C WITH(NOLOCK) ON B.IDX_M_Branch = C.IDX_M_Branch
+                    WHERE C.BranchID = '$branch_id' AND B.RecordStatus = 'A'
+                    ORDER BY C.BranchName";
+        } 
+        else 
+        {
+            $sql = "SELECT IDX_M_Branch, C.BranchID, BranchName + ' - ' + BranchAlias + ' / ' + BranchID AS BranchName
+                    FROM GN_M_Branch WITH(NOLOCK)	
+                    WHERE RecordStatus = 'A'				
+                    ORDER BY IDX_M_Branch";
+        }
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->BranchID)] = trim($row->BranchName);
+        }
+        
+        return $value;
+    }
+
+    public function document_type($category = '', $connection = 'sqlsrv')
+    {
+        $sql_where = '';
+
+        if ($category !== '') {
+            $sql_where = " WHERE DocumentTypeCategory LIKE '%$category%' ";
+        }
+
+        $sql = "SELECT IDX_M_DocumentType, DocumentTypeID, DocumentTypeDesc 
+                FROM GN_M_DocumentType 
+                $sql_where 
+                ORDER BY IDX_M_DocumentType";
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_DocumentType)] = trim($row->DocumentTypeDesc);
+        }
+        
+        return $value;
+    }
+
+    public function document_type_selected($idx,$connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_DocumentType, DocumentTypeID, DocumentTypeDesc 
+                FROM GN_M_DocumentType 
+                WHERE IDX_M_DocumentType = $idx 
+                ORDER BY IDX_M_DocumentType";
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        //$value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_DocumentType)] = trim($row->DocumentTypeDesc);
+        }
+        
+        return $value;
+    }
+
+    public function asbs_application($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Application, ApplicationID, ApplicationName, RecordStatus 
+                FROM SM_M_Application 
+                WHERE RecordStatus = 'A'
+                ORDER BY IDX_M_Application";
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Application)] = trim($row->ApplicationName);
+        }
+        
+        return $value;
+    }
+
+    public function asbs_module($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Application, ApplicationID, ApplicationName, RecordStatus 
+                FROM SM_M_Application 
+                WHERE RecordStatus = 'A'
+                ORDER BY IDX_M_Application";
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Application)] = trim($row->ApplicationName);
+        }
+        
+        return $value;
+    }
+
+    public function gender($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Gender, GenderName FROM GN_M_Gender ORDER BY IDX_M_Gender";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Gender)] = trim($row->GenderName);
+        }
+        return $value;
+    }
+
+    function gender_id()
+    {
+        $value[''] = '--SELECT--';
+        $value['M'] = 'Laki-Laki';
+        $value['W'] = 'Perempuan';
+
+        return $value;
+    }
+
+    public function currency($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Currency, CurrencyName FROM GN_M_Currency WHERE RecordStatus = 'A' ORDER BY CurrencyName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Currency)] = trim($row->CurrencyName);
+        }
+        return $value;
+    }
+
+    function yes_no()
+    {
+        $value[''] = '--SELECT--';
+        $value['Y'] = 'Yes';
+        $value['N'] = 'No';
+
+        return $value;
+    }
+
+    function exist_non_exists()
+    {
+        $value[''] = '--SELECT--';
+        $value['Y'] = 'Ada';
+        $value['N'] = 'Tidak Ada';
+
+        return $value;
+    }
+
+    function yes_no_bit()
+    {
+        $value[''] = '--SELECT--';
+        $value['1'] = 'Yes';
+        $value['0'] = 'No';
+
+        return $value;
+    }
+
+    function flag_system()
+    {
+        $value[''] = '--SELECT--';
+        $value['IH'] = 'INHOUSE';
+        $value['EZ'] = 'EZITAMA';
+
+        return $value;
+    }
+
+    function active_status()
+    {
+        $value[''] = '--SELECT--';
+        $value['A'] = 'Active';
+        $value['I'] = 'In-Active';
+
+        return $value;
+    }
+
+    public function project($id='',$connection = 'sqlsrv')
+    {
+        if ($id != '')
+        {
+            $sql = "SELECT IDX_M_Project, ProjectID, ProjectName 
+                    FROM SM_M_User A WITH(NOLOCK)
+                        INNER JOIN SM_M_UserBranch B WITH(NOLOCK) ON A.IDX_M_User = B.IDX_M_User
+                        INNER JOIN GN_M_Project PJ WITH(NOLOCK) ON B.IDX_M_Branch = PJ.IDX_M_Branch
+                    WHERE A.LoginID = '$id' AND B.RecordStatus = 'A'
+                    ORDER BY PJ.ProjectName";
+        }
+        else
+        {
+            $sql = "SELECT IDX_M_Project, ProjectID, ProjectName 
+                    FROM GN_M_Project WITH(NOLOCK)
+                    ORDER BY ProjectName";
+        }
+
+        $result =  DB::connection($connection)->select($sql);    
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Project)] = trim($row->ProjectName);
+        }
+
+        return $value;
+    }
+
+    public function department($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Department, DepartmentID, DepartmentName 
+                FROM GN_M_Department
+                ORDER BY DepartmentName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Department)] = trim($row->DepartmentName);
+        }
+        return $value;
+    }
+
+    public function payment_terms($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_PaymentTerms, Name, Notes 
+                FROM GN_M_PaymentTerms 
+                WHERE RecordStatus = 'A'
+                ORDER BY Name";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_PaymentTerms)] = trim($row->Name);
+        }
+        return $value;
+    }
+
+    public function shipping_terms($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_ShippingTerms, Name, Alias, Notes 
+                FROM GN_M_ShippingTerms 
+                WHERE RecordStatus = 'A'
+                ORDER BY Name";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_ShippingTerms)] = trim($row->Name);
+        }
+        return $value;
+    }
+
+    function getMonth()
+    {
+        $value[''] = '--';
+        $value['01'] = '01';
+        $value['02'] = '02';
+        $value['03'] = '03';
+        $value['04'] = '04';
+        $value['05'] = '05';
+        $value['06'] = '06';
+        $value['07'] = '07';
+        $value['08'] = '08';
+        $value['09'] = '09';
+        $value['10'] = '10';
+        $value['11'] = '11';
+        $value['12'] = '12';
+
+        return $value;
+    }
+
+    function getMonthName()
+    {
+        $value['00'] = '--';
+        $value['01'] = 'January';
+        $value['02'] = 'February';
+        $value['03'] = 'March';
+        $value['04'] = 'April';
+        $value['05'] = 'May';
+        $value['06'] = 'June';
+        $value['07'] = 'July';
+        $value['08'] = 'August';
+        $value['09'] = 'September';
+        $value['10'] = 'October';
+        $value['11'] = 'November';
+        $value['12'] = 'December';
+
+        return $value;
+    }
+    
+    function getYear()
+    {
+
+        $year = 2005;
+
+        $value[''] = '--';
+        while ($year <= date('Y')) {
+            $value["$year"] = $year;
+            $year += 1;
+        }
+
+        return $value;
+    }
+
+    function ytd_mtd()
+    {
+        $value[''] = '--SELECT--';
+        $value['YTD'] = 'YTD';
+        $value['MTD'] = 'MTD';
+
+        return $value;
+    }
+
+    function detail_summary()
+    {
+        $value[''] = '--SELECT--';
+        $value['D'] = 'Detail';
+        $value['S'] = 'Summary';
+
+        return $value;
+    }
+
+    function ar_status()
+    {
+        $value[''] = '--SELECT--';
+        $value['A'] = 'SEMUA';
+        $value['L'] = 'SUDAH LUNAS';
+        $value['N'] = 'BELUM LUNAS';
+
+        return $value;
+    }
+
+    public function address_type($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_AddressType, [Name] 
+        FROM GN_M_AddressType 					
+        ORDER BY IDX_M_AddressType";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_AddressType)] = trim($row->Name);
+        }
+        return $value;
+    }
+
+    public function bank($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Bank, BankCode, BankName
+        FROM GN_M_Bank 					
+        ORDER BY BankName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Bank)] = trim($row->BankName);
+        }
+        return $value;
+    }
+
+    // BEGIN::INVENTORY
+    public function brand($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Brand, BrandName FROM IN_M_Brand ORDER BY IDX_M_Brand";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Brand)] = trim($row->BrandName);
+        }
+        return $value;
+    }
+
+    public function item_type($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_IN_M_ItemType, ItemTypeID FROM IN_M_ItemType WHERE RecordStatus = 'A' ORDER BY ItemTypeID";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_IN_M_ItemType)] = trim($row->ItemTypeID);
+        }
+        return $value;
+    }
+
+    public function item_category($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_ItemCategory, ItemCategoryName
+                FROM IN_M_ItemCategory
+                WHERE RecordStatus = 'A'
+                ORDER BY ItemCategoryName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_ItemCategory)] = trim($row->ItemCategoryName);
+        }
+        return $value;
+    }
+
+    public function sub_category($IDX_M_ItemCategory, $connection = 'sqlsrv')
+    {
+        if ($IDX_M_ItemCategory == '') {
+            $where = "WHERE RecordStatus = 'A'";
+        } else {
+            $where = "WHERE RecordStatus = 'A' AND IDX_M_ItemCategory = $IDX_M_ItemCategory ";
+        }
+        
+        $sql = "SELECT IDX_M_SubCategory, SubCategoryName 
+                FROM IN_M_SubCategory 
+                $where
+                ORDER BY IDX_M_SubCategory";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_SubCategory)] = trim($row->SubCategoryName);
+        }
+        return $value;
+    }
+
+    public function material_group($IDX_M_SubCategory, $connection = 'sqlsrv')
+    {
+        if ($IDX_M_SubCategory == '') {
+            $where = "WHERE RecordStatus = 'A'";
+        } else {
+            $where = "WHERE RecordStatus = 'A' AND IDX_M_SubCategory = $IDX_M_SubCategory ";
+        }
+
+        $sql = "SELECT IDX_M_MaterialGroup, MaterialGroupName  
+                FROM IN_M_MaterialGroup 
+                $where
+                ORDER BY IDX_M_MaterialGroup";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_MaterialGroup)] = trim($row->MaterialGroupName);
+        }
+        return $value;
+    }
+
+    public function stock_category($connection = 'sqlsrv')
+    {  
+        $sql = "SELECT IDX_M_StockCategory, StockCategoryName FROM IN_M_StockCategory WHERE RecordStatus = 'A' ORDER BY IDX_M_StockCategory";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_StockCategory)] = trim($row->StockCategoryName);
+        }
+        return $value;
+    }
+
+    public function uom($connection = 'sqlsrv')
+    {  
+        $sql = "SELECT IDX_M_UoM, UoMName FROM IN_M_UOM WHERE RecordStatus = 'A' ORDER BY UoMName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_UoM)] = trim($row->UoMName);
+        }
+        return $value;
+    }
+
+    public function color($connection = 'sqlsrv')
+    {  
+        $sql = "SELECT IDX_M_Color, ColorName FROM IN_M_Color WHERE RecordStatus = 'A' ORDER BY ColorName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Color)] = trim($row->ColorName);
+        }
+        return $value;
+    }
+
+    public function inventory_location($connection = 'sqlsrv')
+    {  
+        $sql = "SELECT IDX_M_LocationInventory, LocationName
+                FROM IN_M_LocationInventory
+                WHERE RecordStatus = 'A'
+                ORDER BY LocationName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_LocationInventory)] = trim($row->LocationName);
+        }
+        return $value;
+    }
+    // END::INVENTORY
+
+    // BEGIN::PROPERTY MANAGEMENT
+    public function charge_type($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_ChargeType, ChargeTypeID, ChargeTypeDesc FROM BM_M_ChargeType ORDER BY ChargeTypeID";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_ChargeType)] = trim($row->ChargeTypeID) . ' - ' . trim($row->ChargeTypeDesc);
+        }
+        return $value;
+    }
+
+    public function payment_type($connection = 'sqlsrv')
+    {
+        $sql = "SELECT Name AS PaymentType FROM GN_M_PaymentType ORDER BY PaymentType";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->PaymentType)] = trim($row->PaymentType);
+        }
+        return $value;
+    }
+
+    public function cluster_name($connection = 'sqlsrv')
+    {
+        $sql = "SELECT DISTINCT ClusterName FROM BM_T_ChargeMeter ORDER BY ClusterName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->ClusterName)] = trim($row->ClusterName);
+        }
+        return $value;
+    } 
+    // END::PROPERTY MANAGEMENT
+
+    // BEGIN::FINANCE
+    function include_tax()
+    {
+        $value[''] = '--SELECT--';
+        $value['1'] = 'Include Tax';
+        $value['0'] = 'Exclude Tax';
+
+        return $value;
+    }
+
+    public function tax($flag = '', $connection = 'sqlsrv')
+    {
+        $filter_flag = '';
+
+        if($flag <> '')
+        {
+            $filter_flag = " AND Flag = 'PPN' ";
+        }
+
+        $sql = "SELECT IDX_M_Tax, TaxID, TaxName 
+                FROM GL_M_Tax
+                WHERE RecordStatus = 'A' $filter_flag";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Tax)] = trim($row->TaxID);
+        }
+        return $value;
+    }    
+
+    // public function coa_1($connection = 'sqlsrv')
+    // {
+    //     $sql = "SELECT IDX_M_COAGroup1, COAGroup1Name1 
+    //     FROM GL_M_COAGroup1
+    //     WHERE RecordStatus = 'A'";
+
+    //     $result =  DB::connection($connection)->select($sql);     
+
+    //     $value[''] = '--SELECT--';
+    //     foreach ($result as $row){
+    //         $value[trim($row->IDX_M_COAGroup1)] = trim($row->COAGroup1Name1);
+    //     }
+    //     return $value;
+    // }
+    
+    // public function coa_2($connection = 'sqlsrv')
+    // {
+    //     $sql = "SELECT IDX_M_COAGroup2, COAGroup2Name1 
+    //     FROM GL_M_COAGroup2
+    //     WHERE RecordStatus = 'A'";
+
+    //     $result =  DB::connection($connection)->select($sql);     
+
+    //     $value[''] = '--SELECT--';
+    //     foreach ($result as $row){
+    //         $value[trim($row->IDX_M_COAGroup2)] = trim($row->COAGroup2Name1);
+    //     }
+    //     return $value;
+    // }
+
+    // public function coa_3($connection = 'sqlsrv')
+    // {
+    //     $sql = "SELECT IDX_M_COAGroup3, COAGroup3Name1 
+    //     FROM GL_M_COAGroup3
+    //     WHERE RecordStatus = 'A'";
+
+    //     $result =  DB::connection($connection)->select($sql);     
+
+    //     $value[''] = '--SELECT--';
+    //     foreach ($result as $row){
+    //         $value[trim($row->IDX_M_COAGroup3)] = trim($row->COAGroup3Name1);
+    //     }
+    //     return $value;
+    // }
+    
+    public function account_type()
+    {
+        $value[''] = '--SELECT--';
+        $value['B'] = 'Bank';
+        $value['C'] = 'Cash';
+        $value['D'] = 'Deposito';
+
+        return $value;
+    }
+
+    public function cashflow_flag()
+    {
+        $value[''] = '--SELECT--';
+        $value['A'] = 'Account';
+        $value['H'] = 'Header';
+
+        return $value;
+    }
+
+    public function salesperson($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_SalesPerson, SalesPersonID, SalesPersonName 
+        FROM GN_M_SalesPerson
+        WHERE RecordStatus = 'A'";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_SalesPerson)] = trim($row->SalesPersonID . ' - ' . $row->SalesPersonName);
+        }
+        return $value;
+    }
+
+    public function payment_method($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_PaymentType, Name 
+        FROM GN_M_PaymentType
+        WHERE RecordStatus = 'A'";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_PaymentType)] = trim($row->Name);
+        }
+        return $value;
+    }
+
+    public function financial_account($id='', $connection = 'sqlsrv')
+    {
+        if ($id != '')
+        {
+            $sql = "SELECT IDX_M_FinancialAccount, FinancialAccountID, FinancialAccountDesc
+                    FROM CM_M_FinancialAccount A WITH(NOLOCK)
+                        INNER JOIN SM_M_UserBranch B WITH(NOLOCK) ON A.IDX_M_Branch = B.IDX_M_Branch AND B.RecordStatus = 'A'
+                        INNER JOIN SM_M_User C WITH(NOLOCK) ON B.IDX_M_User = C.IDX_M_User
+                    WHERE C.LoginID = '$id' 
+                    ORDER BY A.FinancialAccountDesc";
+        }
+        else
+        {
+            $sql = "SELECT IDX_M_FinancialAccount, FinancialAccountID, FinancialAccountDesc
+            FROM CM_M_FinancialAccount WITH(NOLOCK)
+            WHERE RecordStatus = 'A'";
+        }
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_FinancialAccount)] = trim($row->FinancialAccountID . ' - ' . $row->FinancialAccountDesc);
+        }
+        return $value;
+    }
+
+    public function coa_transactionsi($id, $connection = 'sqlsrv')
+    {
+        if ($id != '')
+        {
+            $sql = "SELECT DISTINCT(COA.IDX_M_COA) AS IDX_M_COA, COA.COAID, COA.COADesc 
+                    FROM CM_T_SalesInvoiceHeader SIH WITH(NOLOCK)
+                        INNER JOIN GL_T_JournalHeader JH WITH(NOLOCK) ON SIH.IDX_T_SalesInvoiceHeader = JH.IDX_ReferenceNo AND SIH.InvoiceNo = JH.ReferenceNo
+                        INNER JOIN GL_T_JournalDetail JD WITH(NOLOCK) ON JH.IDX_T_JournalHeader = JD.IDX_T_JournalHeader
+                        INNER JOIN GL_M_COA COA WITH(NOLOCK) ON JD.IDX_M_COA = COA.IDX_M_COA
+                    WHERE JH.PostingStatus = 'P' AND JD.ODebetAmount > 0 AND SIH.IDX_T_SalesInvoiceHeader = '$id' ";
+        }
+        else
+        {
+            $sql = "";
+        }
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_COA)] = trim($row->COAID . ' - ' . $row->COADesc);
+        }
+        return $value;
+    }
+    
+    public function item_tax($connection = 'sqlsrv', $headerid)
+    {
+        $sql = "SELECT PID.IDX_M_Item, PID.IDX_T_PurchaseInvoiceDetail, CONCAT(RTRIM(LTRIM(ItemSKU)), ' - ', RTRIM(LTRIM(ItemName)), ' - ', P.ProjectName, ' - ', PID.RemarkDetail) AS ItemDesc
+        FROM CM_T_PurchaseInvoiceDetail PID WITH(NOLOCK) 
+        LEFT JOIN CM_T_PurchaseInvoiceHeader PIH WITH(NOLOCK) ON PID.IDX_T_PurchaseInvoiceHeader = PIH.IDX_T_PurchaseInvoiceHeader
+        LEFT JOIN IN_M_Item I WITH(NOLOCK) ON PID.IDX_M_Item = I.IDX_M_Item
+        LEFT JOIN GN_M_Project P WITH(NOLOCK) ON PID.IDX_M_Project = P.IDX_M_Project
+        WHERE PID.RecordStatus = 'A' AND PIH.IDX_T_PurchaseInvoiceHeader = " . $headerid;
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            // $value[trim($row->IDX_M_Item)] = trim($row->ItemDesc);
+            $value[trim($row->IDX_T_PurchaseInvoiceDetail)] = trim($row->ItemDesc);
+        }
+        return $value;
+    }
+
+    public function item_tax_si($connection = 'sqlsrv', $headerid)
+    {
+        $sql = "SELECT SID.IDX_M_Item, SID.IDX_T_SalesInvoiceDetail, CONCAT(RTRIM(LTRIM(ItemSKU)), ' - ', RTRIM(LTRIM(ItemName)), ' - ', P.ProjectName, ' - ', SID.RemarkDetail) AS ItemDesc
+        FROM CM_T_SalesInvoiceDetail SID WITH(NOLOCK) 
+        LEFT JOIN CM_T_SalesInvoiceHeader SIH WITH(NOLOCK) ON SID.IDX_T_SalesInvoiceHeader = SIH.IDX_T_SalesInvoiceHeader
+        LEFT JOIN IN_M_Item I WITH(NOLOCK) ON SID.IDX_M_Item = I.IDX_M_Item
+        LEFT JOIN GN_M_Project P WITH(NOLOCK) ON SID.IDX_M_Project = P.IDX_M_Project
+        WHERE SID.RecordStatus = 'A' AND SIH.IDX_T_SalesInvoiceHeader = " . $headerid;
+
+        $result =  DB::connection($connection)->select($sql);    
+        // dd($result); 
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            // $value[trim($row->IDX_M_Item)] = trim($row->ItemDesc);
+            $value[trim($row->IDX_T_SalesInvoiceDetail)] = trim($row->ItemDesc);
+        }
+        return $value;
+    }
+
+    public function document_no_fp($connection = 'sqlsrv', $IDX_M_Partner)
+    {
+        // $sql = "SELECT IDX_T_PurchaseInvoiceHeader AS IDX_DocumentNo, InvoiceNo AS DocumentNo 
+        //             FROM CM_T_PurchaseInvoiceHeader 
+        //             WHERE InvoiceStatus IN ('A','F') AND IDX_M_Partner = " . $IDX_M_Partner;
+
+        $sql = "SELECT a.IDX_T_PurchaseInvoiceHeader AS IDX_DocumentNo, a.InvoiceNo AS DocumentNo, a.InvoiceNo + ' - Date: ' + CONVERT(VARCHAR,CONVERT(DATE,a.InvoiceDate)) 
+                + ' - Amount: ' + CONVERT(VARCHAR,sum(DPP.DPP+TAX.TAX)) AS DocumentNo2
+                FROM CM_T_PurchaseInvoiceHeader a WITH(NOLOCK)
+                    LEFT JOIN 
+                    (
+                        SELECT IDX_T_PurchaseInvoiceHeader, IDX_T_PurchaseInvoiceDetail, Quantity * (UntaxedAmount - isnull(DiscountAmount,0)) AS DPP 
+                        FROM CM_T_PurchaseInvoiceDetail WITH(NOLOCK)
+                    ) DPP ON a.IDX_T_PurchaseInvoiceHeader = DPP.IDX_T_PurchaseInvoiceHeader
+                    LEFT JOIN 
+                    (
+                        SELECT a.IDX_T_PurchaseInvoiceDetail, a.Quantity * sum(isnull(b.TaxAmount,0)) AS TAX
+                        FROM CM_T_PurchaseInvoiceDetail a WITH(NOLOCK)
+                            LEFT JOIN CM_T_PurchaseInvoiceTax b WITH(NOLOCK) ON a.IDX_T_PurchaseInvoiceDetail = b.IDX_T_PurchaseInvoiceDetail
+                        GROUP BY a.IDX_T_PurchaseInvoiceDetail, a.Quantity
+                    ) TAX on DPP.IDX_T_PurchaseInvoiceDetail = TAX.IDX_T_PurchaseInvoiceDetail
+                WHERE a.InvoiceStatus IN ('A','F') AND IDX_M_Partner = " . $IDX_M_Partner . "
+                GROUP BY a.IDX_T_PurchaseInvoiceHeader, a.InvoiceNo, a.InvoiceDate";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_DocumentNo)] = trim($row->DocumentNo);
+        }
+        return $value;
+    }
+
+    public function document_no_fr($connection = 'sqlsrv', $IDX_M_Partner)
+    {
+        // $sql = "SELECT IDX_T_SalesInvoiceHeader AS IDX_DocumentNo, InvoiceNo AS DocumentNo 
+        //             FROM CM_T_SalesInvoiceHeader 
+        //             WHERE InvoiceStatus IN ('A','F') AND IDX_M_Partner = " . $IDX_M_Partner;
+
+        $sql = "SELECT a.IDX_T_SalesInvoiceHeader AS IDX_DocumentNo, a.InvoiceNo AS DocumentNo, 
+                CASE WHEN ISNULL(A.TotalSalesAmount,0) > 0 
+                     THEN 
+                          a.InvoiceNo + ' - Date: ' + CONVERT(VARCHAR,CONVERT(DATE,a.InvoiceDate)) + ' - Amount: ' + CONVERT(VARCHAR,A.TotalSalesAmount) 
+                     ELSE
+                          a.InvoiceNo + ' - Date: ' + CONVERT(VARCHAR,CONVERT(DATE,a.InvoiceDate)) + ' - Amount: ' + CONVERT(VARCHAR,sum(DPP.DPP+TAX.TAX)) 
+                     END AS DocumentNo2
+                FROM CM_T_SalesInvoiceHeader a WITH(NOLOCK)
+                    LEFT JOIN 
+                    (
+                        SELECT IDX_T_SalesInvoiceHeader, IDX_T_SalesInvoiceDetail, Quantity * (UntaxedAmount - isnull(DiscountAmount,0)) AS DPP 
+                        FROM CM_T_SalesInvoiceDetail WITH(NOLOCK)
+                    ) DPP ON a.IDX_T_SalesInvoiceHeader = DPP.IDX_T_SalesInvoiceHeader
+                    LEFT JOIN 
+                    (
+                        SELECT a.IDX_T_SalesInvoiceDetail, a.Quantity * sum(isnull(b.TaxAmount,0)) AS TAX
+                        FROM CM_T_SalesInvoiceDetail a WITH(NOLOCK)
+                            LEFT JOIN CM_T_SalesInvoiceTax b WITH(NOLOCK) ON a.IDX_T_SalesInvoiceDetail = b.IDX_T_SalesInvoiceDetail
+                        GROUP BY a.IDX_T_SalesInvoiceDetail, a.Quantity
+                    ) TAX on DPP.IDX_T_SalesInvoiceDetail = TAX.IDX_T_SalesInvoiceDetail
+                WHERE a.InvoiceStatus IN ('A','F') AND IDX_M_Partner = " . $IDX_M_Partner . "
+                GROUP BY a.IDX_T_SalesInvoiceHeader, a.InvoiceNo, a.InvoiceDate";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_DocumentNo)] = trim($row->DocumentNo);
+        }
+        return $value;
+    }    
+    // END::FINANCE
+
+    // BEGIN::ACCOUNTING 
+    function posting_status()
+    {
+        $value[''] = '--SELECT--';
+        $value['U'] = 'UNPOSTED';
+        $value['P'] = 'POSTED';
+
+        return $value;
+    }
+
+    function coa_flag()
+    {
+        $value[''] = '--SELECT--';
+        $value['H'] = 'HEADER';
+        $value['A'] = 'ACCOUNT';
+
+        return $value;
+    }
+
+    function debet_credit()
+    {
+        $value[''] = '--SELECT--';
+        $value['D'] = 'DEBET';
+        $value['C'] = 'CREDIT';
+
+        return $value;
+    }
+
+    public function coa_type($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_COAType, COATypeDesc 
+        FROM GL_M_COAType
+        WHERE RecordStatus = 'A'";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_COAType)] = trim($row->COATypeDesc);
+        }
+        return $value;
+    }
+
+    public function coa_category($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_COACategory, COACategoryDesc 
+        FROM GL_M_COACategory
+        WHERE RecordStatus = 'A'";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_COACategory)] = trim($row->COACategoryDesc);
+        }
+        return $value;
+    }
+
+    public function coa_reconcile()
+    {
+        $value[''] = '--SELECT--';
+        $value['1'] = 'Yes';
+        $value['0'] = 'No';
+
+        return $value;
+    }
+
+    public function journal_type($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_JournalType, JournalTypeDesc 
+        FROM GL_M_JournalType
+        WHERE RecordStatus = 'A'";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_JournalType)] = trim($row->JournalTypeDesc);
+        }
+        return $value;
+    }
+
+    public function journal_type_by_id($id, $connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_JournalType, JournalTypeDesc 
+        FROM GL_M_JournalType
+        WHERE IDX_M_JournalType = $id AND RecordStatus = 'A'";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_JournalType)] = trim($row->JournalTypeDesc);
+        }
+        return $value;
+    }
+
+    public function journal_type_entry($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_JournalType, JournalTypeDesc 
+        FROM GL_M_JournalType
+        WHERE RecordStatus = 'A' AND AllowJournalEntry ='Y'";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_JournalType)] = trim($row->JournalTypeDesc);
+        }
+        return $value;
+    }
+
+    public function coa_group1($coa_type, $connection = 'sqlsrv')
+    {
+        if ($coa_type == '') {
+            $filter = "";
+        } else {
+            $filter = " AND IDX_M_COAType = $coa_type ";
+        }
+
+        $sql = "SELECT IDX_M_COAGroup1, COAGroup1ID, COAGroup1Name1 
+                FROM GL_M_COAGroup1
+                WHERE RecordStatus = 'A' $filter ";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_COAGroup1)] = trim($row->COAGroup1Name1);
+        }
+        return $value;
+    }
+
+    public function coa_group2($IDX_M_COAGroup1, $connection = 'sqlsrv')
+    {
+        if ($IDX_M_COAGroup1 == '') {
+            $filter = "";
+        } else {
+            $filter = " AND IDX_M_COAGroup1 = $IDX_M_COAGroup1 ";
+        }
+
+        $sql = "SELECT IDX_M_COAGroup2, COAGroup2ID, COAGroup2Name1 
+                FROM GL_M_COAGroup2
+                WHERE RecordStatus = 'A' $filter ";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_COAGroup2)] = trim($row->COAGroup2Name1);
+        }
+        return $value;
+    }
+
+    public function coa_group3($IDX_M_COAGroup2, $connection = 'sqlsrv')
+    {
+        if ($IDX_M_COAGroup2 == '') {
+            $filter = "";
+        } else {
+            $filter = " AND IDX_M_COAGroup2 = $IDX_M_COAGroup2 ";
+        }
+
+        $sql = "SELECT IDX_M_COAGroup3, COAGroup3ID, COAGroup3Name1 
+                FROM GL_M_COAGroup3
+                WHERE RecordStatus = 'A' $filter ";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_COAGroup3)] = trim($row->COAGroup3Name1);
+        }
+        return $value;
+    }
+    // END::ACCOUNTING 
+
+    // BEGIN::LOAN
+    public function branch_cf($id='',$connection = 'sqlsrv')
+    {
+        if ($id != '')
+        {
+            $sql = "SELECT C.IDX_M_Branch, C.branch_id AS BranchID, C.branch_desc AS BranchName
+                    FROM ms_userid A WITH(NOLOCK)
+                        INNER JOIN ms_user_branch B WITH(NOLOCK) ON A.user_id = B.user_id
+                        INNER JOIN ms_branch C WITH(NOLOCK) ON B.branch_id = C.branch_id
+                    WHERE A.user_id = '$id' 
+                    ORDER BY C.branch_desc";
+        } 
+        else 
+        {
+            $sql = "SELECT C.IDX_M_Branch, C.branch_id AS BranchID, C.branch_desc AS BranchName
+                    FROM ms_branch WITH(NOLOCK)	
+                    ORDER BY branch_id";
+        }
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Branch)] = trim($row->BranchName);
+        }
+        
+        return $value;
+    }
+
+    public function branch_code_cf($id='',$connection = 'sqlsrv')
+    {
+        if ($id != '')
+        {
+            $sql = "SELECT C.IDX_M_Branch, C.branch_id AS BranchID, C.branch_desc AS BranchName
+                    FROM ms_userid A WITH(NOLOCK)
+                        INNER JOIN ms_user_branch B WITH(NOLOCK) ON A.user_id = B.user_id
+                        INNER JOIN ms_branch C WITH(NOLOCK) ON B.branch_id = C.branch_id
+                    WHERE A.user_id = '$id' 
+                    ORDER BY C.branch_desc";
+        } 
+        else 
+        {
+            $sql = "SELECT C.IDX_M_Branch, C.branch_id AS BranchID, C.branch_desc AS BranchName
+                    FROM ms_branch C WITH(NOLOCK)	
+                    ORDER BY branch_id";
+        }
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->BranchID)] = trim($row->BranchName);
+        }
+        
+        return $value;
+    }
+
+    public function branch_code_specific_cf($branch_id,$connection = 'sqlsrv')
+    {
+        if ($branch_id != '')
+        {
+            $sql = "SELECT C.IDX_M_Branch, C.branch_id AS BranchID, C.branch_desc AS BranchName
+                    FROM ms_userid A WITH(NOLOCK)
+                        INNER JOIN ms_user_branch B WITH(NOLOCK) ON A.user_id = B.user_id
+                        INNER JOIN ms_branch C WITH(NOLOCK) ON B.branch_id = C.branch_id
+                    WHERE C.branch_id = '$branch_id' 
+                    ORDER BY C.branch_desc";
+        } 
+        else 
+        {
+            $sql = "SELECT C.IDX_M_Branch, C.branch_id AS BranchID, C.branch_desc AS BranchName
+                    FROM ms_branch C WITH(NOLOCK)	
+                    ORDER BY branch_id";
+        }
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->BranchID)] = trim($row->BranchName);
+        }
+        
+        return $value;
+    }
+
+    public function allocation_cf($connection = 'sqlsrv')
+    {   
+        $sql = "SELECT allocation_id, allocation_desc FROM ms_payment_allocation";        
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->allocation_id)] = trim($row->allocation_desc);
+        }
+        
+        return $value;
+    }
+
+    public function payment_type_cf($connection = 'sqlsrv')
+    {   
+        $sql = "SELECT ptype_id, ptype_desc FROM ms_payment_type 
+                ORDER BY ptype_desc";        
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->ptype_id)] = trim($row->ptype_desc);
+        }
+        
+        return $value;
+    }
+
+    public function marketing_cf($branch_id = '', $connection = 'sqlsrv')
+    {   
+        $sql = "SELECT mkt_id, mkt_name FROM ms_marketing 
+                WHERE mkt_rec_id = 'A' AND mkt_branch_id = '$branch_id'
+                ORDER BY mkt_name";        
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->mkt_id)] = trim($row->mkt_name);
+        }
+        
+        return $value;
+    }
+
+    public function collector_cf($branch_id = '', $connection = 'sqlsrv')
+    {   
+        if($branch_id <> '')
+        {
+            $sql = "SELECT coll_id, coll_name 
+                    FROM ms_collector 
+                    WHERE coll_rec_id = 'A' AND coll_branch_id = '$branch_id'
+                    ORDER BY coll_name";
+        }
+        else 
+        {
+            $sql = "SELECT coll_id, coll_name 
+                    FROM ms_collector 
+                    WHERE coll_rec_id = 'A' 
+                    ORDER BY coll_name";
+        }       
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->coll_id)] = trim($row->coll_name);
+        }
+        
+        return $value;
+    }
+
+    public function mediator_cf($branch_id = '', $connection = 'sqlsrv')
+    {   
+        $sql = "SELECT med_id, med_name FROM ms_mediator 
+                WHERE med_rec_id = 'A' AND med_branch_id = '$branch_id'
+                ORDER BY med_name";        
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->med_id)] = trim($row->med_name);
+        }
+        
+        return $value;
+    }
+
+    public function loan_type( $connection = 'sqlsrv')
+    {   
+        $sql = "SELECT loan_id, loan_desc 
+                FROM ms_loan_type 
+                WHERE loan_rec_id = 'A' 
+                ORDER BY loan_id";        
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->loan_id)] = trim($row->loan_desc);
+        }
+        
+        return $value;
+    }    
+
+    public function collateral_type($connection = 'sqlsrv')
+    {   
+        $sql = "SELECT colla_type_id, colla_type_description 
+                FROM ms_collateral_type
+                WHERE colla_rec_id = 'A' 
+                ORDER BY colla_type_description";        
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->colla_type_id)] = trim($row->colla_type_description);
+        }
+        
+        return $value;
+    }
+
+    public function collateral_location($connection = 'sqlsrv')
+    {   
+        $sql = "SELECT loc_location_id, loc_description 
+                FROM ms_collateral_location
+                WHERE loc_rec_id = 'A' 
+                ORDER BY loc_description";        
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->loc_location_id)] = trim($row->loc_description);
+        }
+        
+        return $value;
+    }
+
+    public function cashier_cf($branch_id = '', $connection = 'sqlsrv')
+    {   
+        $sql = "SELECT user_id, user_name 
+                FROM ms_userid                
+                ORDER BY user_name";        
+
+        $result =  DB::connection($connection)->select($sql);        
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->user_id)] = trim($row->user_name);
+        }
+        
+        return $value;
+    }
+
+    public function brand_cf($asset_type_id = '', $connection = 'sqlsrv')
+    {
+        $sql = "SELECT brand_id, brand_desc FROM ms_brand ORDER BY brand_desc";
+
+        if(trim($asset_type_id) <> '')
+        {
+            $sql = "SELECT brand_id, brand_desc 
+                    FROM ms_brand 
+                    WHERE asset_type_id = '$asset_type_id'
+                    ORDER BY brand_desc";
+        }
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->brand_id)] = trim($row->brand_desc);
+        }
+        return $value;
+    }
+
+    public function asset_type_cf($connection = 'sqlsrv')
+    {
+        $sql = "SELECT asset_type_id, asset_type_desc FROM ms_asset_type ORDER BY asset_type_desc";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->asset_type_id)] = trim($row->asset_type_desc);
+        }
+        return $value;
+    }
+
+    public function brand_item_cf($brand_id = '', $connection = 'sqlsrv')
+    {
+        $sql_where = '';
+
+        if($brand_id !== '')
+        {
+            $sql_where = " WHERE brand_id = '$brand_id' ";
+        }
+
+        $sql = "SELECT brand_item_id, brand_item_desc 
+                FROM ms_brand_item 
+                $sql_where 
+                ORDER BY brand_item_desc";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->brand_item_id)] = trim($row->brand_item_desc);
+        }
+        return $value;
+    }
+
+    function tenor_month_cf()
+    {
+
+        $count = 1;
+
+        $value[''] = '--PILIH--';
+        while ($count <= 36) {
+            $value["$count"] = $count . ' BULAN' ;
+            $count += 1;
+        }
+
+        return $value;
+    }
+
+    function stnk_expired()
+    { 
+        $value['0'] = '--SELECT--';
+        $value['100000'] = 'RP ' . (string) number_format(100000,0,'.',',');
+        $value['150000'] = 'RP ' . (string) number_format(150000,0,'.',',');
+        $value['175000'] = 'RP ' . (string) number_format(175000,0,'.',',');
+        $value['200000'] = 'RP ' . (string) number_format(200000,0,'.',',');
+        $value['225000'] = 'RP ' . (string) number_format(225000,0,'.',',');
+        $value['250000'] = 'RP ' . (string) number_format(250000,0,'.',',');
+        $value['275000'] = 'RP ' . (string) number_format(275000,0,'.',',');
+        $value['300000'] = 'RP ' . (string) number_format(300000,0,'.',',');
+        $value['325000'] = 'RP ' . (string) number_format(325000,0,'.',',');
+        $value['350000'] = 'RP ' . (string) number_format(350000,0,'.',',');
+        $value['375000'] = 'RP ' . (string) number_format(375000,0,'.',',');
+        $value['400000'] = 'RP ' . (string) number_format(400000,0,'.',',');
+        $value['425000'] = 'RP ' . (string) number_format(425000,0,'.',',');
+        $value['450000'] = 'RP ' . (string) number_format(450000,0,'.',',');
+        $value['475000'] = 'RP ' . (string) number_format(475000,0,'.',',');
+        $value['500000'] = 'RP ' . (string) number_format(500000,0,'.',',');
+        $value['525000'] = 'RP ' . (string) number_format(525000,0,'.',',');
+        $value['550000'] = 'RP ' . (string) number_format(550000,0,'.',',');
+        $value['600000'] = 'RP ' . (string) number_format(600000,0,'.',',');
+        $value['650000'] = 'RP ' . (string) number_format(650000,0,'.',',');
+        $value['700000'] = 'RP ' . (string) number_format(700000,0,'.',',');
+        $value['750000'] = 'RP ' . (string) number_format(750000,0,'.',',');
+        $value['800000'] = 'RP ' . (string) number_format(800000,0,'.',',');
+        $value['850000'] = 'RP ' . (string) number_format(850000,0,'.',',');
+        $value['900000'] = 'RP ' . (string) number_format(900000,0,'.',',');
+        $value['1000000'] = 'RP ' . (string) number_format(1000000,0,'.',',');
+        $value['1100000'] = 'RP ' . (string) number_format(1100000,0,'.',',');
+        $value['1200000'] = 'RP ' . (string) number_format(1200000,0,'.',',');
+        $value['1300000'] = 'RP ' . (string) number_format(1300000,0,'.',',');
+        $value['1400000'] = 'RP ' . (string) number_format(1400000,0,'.',',');
+        $value['1500000'] = 'RP ' . (string) number_format(1500000,0,'.',',');
+        $value['1600000'] = 'RP ' . (string) number_format(1600000,0,'.',',');
+        $value['1700000'] = 'RP ' . (string) number_format(1700000,0,'.',',');
+        $value['1800000'] = 'RP ' . (string) number_format(1800000,0,'.',',');
+        $value['1900000'] = 'RP ' . (string) number_format(1900000,0,'.',',');
+        $value['2000000'] = 'RP ' . (string) number_format(2000000,0,'.',',');
+        
+        return $value;
+    }
+
+    function upload_category()
+    {
+        $value[''] = '--SELECT--';
+        $value['Pencairan'] = 'Pencairan Pinjaman'; // DISBURSEMENT
+        $value['Pelunasan'] = 'Pelunasan Pinjaman'; // TERMINATION
+        $value['Penyerahan'] = 'Penyerahan Jaminan'; // RELEASE DOCUMENT
+
+        return $value;
+    }
+
+    public function activeKwitansiByContract($branch_id = '', $contract_no, $connection = 'sqlsrv')
+    {
+        $sql = "SELECT kwt_receipt_no 
+                FROM tr_kwitansi 					
+                WHERE kwt_status = 'A' AND kwt_branch_id = '$branch_id' AND kwt_contract_no = '$contract_no' 
+                ORDER BY kwt_period, kwt_receipt_no";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->kwt_receipt_no)] = trim($row->kwt_receipt_no);
+        }
+        return $value;
+    }
+
+    function brake_type()
+    {
+        $value[''] = '--SELECT--';
+        $value['D'] = 'Disc / Cakram';
+        $value['T'] = 'Tromol'; 
+
+        return $value;
+    }
+
+    function velg_type()
+    {
+        $value[''] = '--SELECT--';
+        $value['C'] = 'Cast Wheel (CW)';
+        $value['S'] = 'Spoke / Jari-Jari'; 
+
+        return $value;
+    }
+
+    // END::LOAN
+}

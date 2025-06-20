@@ -1,0 +1,1 @@
+<button id="{{ $id }}" class="btn btn-outline-secondary" type="button"><i class="fas fa-plus"></i> {{ $label ?? 'Add New'}}</button>

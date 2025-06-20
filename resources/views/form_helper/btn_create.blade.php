@@ -1,0 +1,1 @@
+<a href="{{ $url_create }}" class="btn btn-success" type="button"><i class="fas fa-plus"></i> Create New</a>

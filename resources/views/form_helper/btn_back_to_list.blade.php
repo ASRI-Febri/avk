@@ -1,0 +1,1 @@
+<a href="{{ $url_cancel ?? '#' }}" class="btn btn-danger" type="button"><i class="fas fa-angle-left"></i> Back</a> 
