@@ -44,4 +44,22 @@ class DropdownFinanceController extends Controller
         return $value;
     }
 
+    public function transaction_type($connection = 'sqlsrv')
+    {
+        $sql = "SELECT [IDX_M_TransactionType]
+                    ,[TransactionTypeID]
+                    ,[TransactionTypeName]
+                    ,[RecordStatus]
+                FROM [dbo].[MC_M_TransactionType]
+                WHERE IDX_M_TransactionType < 3";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_TransactionType)] = trim($row->TransactionTypeName);
+        }
+        return $value;
+    }
+
 }

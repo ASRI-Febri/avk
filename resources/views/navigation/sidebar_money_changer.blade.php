@@ -29,28 +29,24 @@
                         <span>Transaksi Jual Beli</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ url('mc-partner/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Customer
+                            </a>
+                        </li>
+                        <li><a href="{{ url('mc-partner') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Customer
+                            </a>
+                        </li>
                         <li><a href="{{ url('mc-sales-order/create') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Transaksi
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-sales-order/buy-list') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Transaksi Beli
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-sales-order/sell-list') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Transaksi Jual
+                        <li><a href="{{ url('mc-sales-order') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Transaksi
                             </a>
                         </li>
                         <li><a href="{{ url('mc-valas-rate') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Nilai Tukar
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-business-partner/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Business Partner
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-business-partner') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Business Partner
                             </a>
                         </li>
                     </ul>

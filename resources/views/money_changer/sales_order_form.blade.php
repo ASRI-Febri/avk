@@ -1,16 +1,16 @@
 @extends('layouts.master-form-transaction')
 
 @section('form-remark')
-    Purchase order untuk melakukan pembelian valuta asing dari supplier. 
+    Sales Order untuk melakukan transaksi penjualan atau pembelian valuta asing dari customer. 
     <br> 
-    Contoh nomor PO <code>PO-100-2506-001</code> untuk kode cabang 100, bulan 05 tahun 2025.
+    Contoh nomor SO <code>SO-100-2506-001</code> untuk kode cabang 100, bulan 05 tahun 2025.
 @endsection
 
 @section('action')
 
     <x-btn-action>
         
-        @if($fields->POStatus == 'D')
+        @if($fields->SOStatus == 'D')
         <a id="btn-approval" class="dropdown-item" href="#">
             <div class="dropdown-icon">
                 <i class="fa fa-check-double"></i> 
@@ -19,7 +19,7 @@
         </a>
         @endif
 
-        @if($fields->POStatus == 'A')
+        @if($fields->SOStatus == 'A')
         <a id="btn-reverse" class="dropdown-item text-danger" href="#">
             <div class="dropdown-icon">
                 <i class="fas fa-undo"></i> 
@@ -30,12 +30,12 @@
 
         <div class="dropdown-divider"></div>   
 
-        <a href="{{ url('pr-purchase-order/download-pdf').'/'.$fields->IDX_T_PurchaseOrder }}" id="btn-download2-pdf" 
+        <a href="{{ url('mc-sales-order/download-pdf').'/'.$fields->IDX_T_SalesOrder }}" id="btn-download2-pdf" 
             target="_blank" class="dropdown-item text-info">
             <div class="dropdown-icon">
                 <i class="fa fa-file-pdf"></i>
             </div> 
-            <span class="dropdown-content">Print PO</span>            
+            <span class="dropdown-content">Print SO</span>            
         </a>        
     </x-btn-action>
 
@@ -46,9 +46,9 @@
    
 
     <!-- HIDDEN FIELDS -->
-    <input type="hidden" id="IDX_T_PurchaseOrder" name="IDX_T_PurchaseOrder" value="{{ $fields->IDX_T_PurchaseOrder }}"/>
+    <input type="hidden" id="IDX_T_SalesOrder" name="IDX_T_SalesOrder" value="{{ $fields->IDX_T_SalesOrder }}"/>
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>
-    <input type="hidden" id="POStatus" name="POStatus" value="{{ $fields->POStatus }}"/>
+    <input type="hidden" id="SOStatus" name="SOStatus" value="{{ $fields->SOStatus }}"/>
 
     <div class="row">
         <div class="col-md-6">
@@ -61,6 +61,8 @@
                         <x-select-horizontal label="Perusahaan" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
                         <x-select-horizontal label="Cabang" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/>
                         <x-textbox-horizontal label="No Referensi" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="(No Quotation atau Penawaran)" class="" />
+                        <x-textbox-horizontal label="Sumber Dana" id="FundSource" :value="$fields->FundSource" placeholder="" class="" />
+                        <x-textbox-horizontal label="Tujuan Transaksi" id="TransactionPurpose" :value="$fields->TransactionPurpose" placeholder="" class="" />        
                     </div>
                 </div>
             </div>            
@@ -69,14 +71,14 @@
 
             <div class="card">
                 <div class="card-header card-header-bordered">
-                    <h3 class="card-title">Informasi PO</h3>
+                    <h3 class="card-title">Informasi SO</h3>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-3">
-                        <x-textbox-horizontal label="No PO" id="PONumber" :value="$fields->PONumber" placeholder="(Auto)" class="readonly" />
-                        <x-textbox-horizontal label="Tanggal PO" id="PODate" :value="$fields->PODate" placeholder="" class="required datepicker2" />
-                        <x-lookup-horizontal label="Supplier" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
-                        <x-textbox-horizontal label="Keterangan PO" id="PONotes" :value="$fields->PONotes" placeholder="" class="required" />
+                        <x-textbox-horizontal label="No SO" id="SONumber" :value="$fields->SONumber" placeholder="(Auto)" class="readonly" />
+                        <x-textbox-horizontal label="Tanggal SO" id="SODate" :value="$fields->SODate" placeholder="" class="required datepicker2" />
+                        <x-lookup-horizontal label="Customer" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
+                        <x-textbox-horizontal label="Keterangan" id="SONotes" :value="$fields->SONotes" placeholder="" class="required" />
                     </div>
                 </div>
             </div> 
@@ -84,7 +86,7 @@
         </div>
     </div>
 
-    @if($fields->POStatus == 'D')
+    @if($fields->SOStatus == 'D')
     <div class="row"> 
         <div class="col-12 mb-2">           
             @include('form_helper.btn_save_header')
@@ -106,12 +108,12 @@
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane fade active show" id="card-detail" role="tabpanel" aria-labelledby="#card-detail-tab">                        
-                        @if($fields->POStatus == 'D')                
+                        @if($fields->SOStatus == 'D')                
                             <x-btn-add-detail id="btn-add-detail" label="Add New Valas" />                        
                         @endif
             
                         <div id="table-order-detail" class="table-responsive">
-                            @include('money_changer.purchase_order_detail_list')            
+                            @include('money_changer.sales_order_detail_list')            
                         </div>
                     </div>
                     <div class="tab-pane fade" id="card-log" role="tabpanel" aria-labelledby="#card-log-tab">
@@ -131,15 +133,15 @@
         function deleteDetail(idx,item_description)
         {
             //alert('Delete ' + idx);
-            var url = "{{ url('mc-purchase-order-detail/delete') }}";
+            var url = "{{ url('mc-sales-order-detail/delete') }}";
             
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();       
 
             var data = {
                 "_token": $('#_token').val(),
-                "IDX_T_PurchaseOrder": $("#IDX_T_PurchaseOrder").val(),
-                "IDX_T_PurchaseOrderDetail": idx,
+                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),
+                "IDX_T_SalesOrderDetail": idx,
                 "ItemDesc": item_description
             }
             
@@ -149,15 +151,15 @@
         function editDetail(idx)
         {
             //alert('Delete ' + idx);
-            var url = "{{ url('mc-purchase-order-detail/update') }}"+'/'+idx;
+            var url = "{{ url('mc-sales-order-detail/update') }}"+'/'+idx;
 
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();
 
             var data = {
                 "_token": $('#_token').val(),
-                "IDX_T_PurchaseOrder": $("#IDX_T_PurchaseOrder").val(),
-                "IDX_T_PurchaseOrderDetail": idx            
+                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),
+                "IDX_T_SalesOrderDetail": idx            
             }
             
             callAjaxModalView(url,data);
@@ -166,14 +168,14 @@
         function deleteTax(idx,item_description)
         {
             //alert('Delete ' + idx);
-            var url = "{{ url('mc-purchase-order-tax/delete') }}";
+            var url = "{{ url('mc-sales-order-tax/delete') }}";
             
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();       
 
             var data = {
                 "_token": $('#_token').val(),
-                "IDX_T_PurchaseOrder": $("#IDX_T_PurchaseOrder").val(),
+                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),
                 "IDX_T_PurchaseInvoiceTax": idx,
                 "ItemDesc": item_description
             }
@@ -184,14 +186,14 @@
         function addTax(idx)
         {
             //alert('Delete ' + idx);
-            var url = "{{ url('mc-purchase-order-tax/create') }}";
+            var url = "{{ url('mc-sales-order-tax/create') }}";
 
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();
 
             var data = {
                 "_token": $('#_token').val(),
-                "IDX_T_PurchaseOrder": $("#IDX_T_PurchaseOrder").val(),                     
+                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),                     
             }
             
             callAjaxModalView(url,data);
@@ -200,14 +202,14 @@
         function editTax(idx)
         {
             //alert('Delete ' + idx);
-            var url = "{{ url('mc-purchase-order-tax/update') }}"+'/'+idx;
+            var url = "{{ url('mc-sales-order-tax/update') }}"+'/'+idx;
 
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();
 
             var data = {
                 "_token": $('#_token').val(),
-                "IDX_T_PurchaseOrder": $("#IDX_T_PurchaseOrder").val(),
+                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),
                 "IDX_T_PurchaseInvoiceTax": idx            
             }
             
@@ -244,50 +246,50 @@
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_PurchaseOrder: $("#IDX_T_PurchaseOrder").val(),
+                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-purchase-order-detail/create') }}',data);            
+                callAjaxModalView('{{ url('mc-sales-order-detail/create') }}',data);            
             });
 
             $('#btn-add-tax').click(function()
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_PurchaseOrder: $("#IDX_T_PurchaseOrder").val(),
+                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-purchase-order-tax/create') }}',data);            
+                callAjaxModalView('{{ url('mc-sales-order-tax/create') }}',data);            
             });
             
             $('#btn-add-payment').click(function()
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_PurchaseOrder: $("#IDX_T_PurchaseOrder").val(),
+                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-purchase-order-payment/create') }}',data);            
+                callAjaxModalView('{{ url('mc-sales-order-payment/create') }}',data);            
             });
 
             $('#btn-approval').click(function()
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_PurchaseOrder: $("#IDX_T_PurchaseOrder").val(),
+                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-purchase-order/approve') }}',data);            
+                callAjaxModalView('{{ url('mc-sales-order/approve') }}',data);            
             });
 
             $('#btn-reverse').click(function()
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_PurchaseOrder: $("#IDX_T_PurchaseOrder").val(),
+                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-purchase-order/reverse') }}',data);            
+                callAjaxModalView('{{ url('mc-sales-order/reverse') }}',data);            
             });
 
             // $("#ReferenceNo").autocomplete({                
@@ -317,10 +319,10 @@
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_PurchaseOrder: $("#IDX_T_PurchaseOrder").val(),
+                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-purchase-order/duplicate') }}',data);            
+                callAjaxModalView('{{ url('mc-sales-order/duplicate') }}',data);            
             });
 
         });

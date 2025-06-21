@@ -41,13 +41,58 @@ Route::get('/mc-purchase-order-detail/reload/{id}', 'MoneyChanger\PurchaseOrderD
 Route::post('mc-purchase-order-detail/delete/{id?}', 'MoneyChanger\PurchaseOrderDetailController@delete');
 Route::post('/mc-purchase-order-detail/save-delete', 'MoneyChanger\PurchaseOrderDetailController@save_delete');
 
+// SALES ORDER
+Route::get('/mc-sales-order', 'MoneyChanger\SalesOrderController@inquiry');
+Route::post('/mc-sales-order-list', 'MoneyChanger\SalesOrderController@inquiry_data');
+Route::get('/mc-sales-order/create', 'MoneyChanger\SalesOrderController@create');
+Route::get('/mc-sales-order/update/{id}', 'MoneyChanger\SalesOrderController@update');
+Route::post('/mc-sales-order/save', 'MoneyChanger\SalesOrderController@save');
+Route::post('/mc-sales-order/approve', 'MoneyChanger\SalesOrderController@approve');
+Route::post('/mc-sales-order/save-approve', 'MoneyChanger\SalesOrderController@save_approve');
+Route::post('/mc-sales-order/reverse', 'MoneyChanger\SalesOrderController@reverse');
+Route::post('/mc-sales-order/save-reverse', 'MoneyChanger\SalesOrderController@save_reverse');
+Route::get('/mc-sales-order/download-pdf/{id}', 'MoneyChanger\SalesOrderController@download_pdf');
+Route::post('/mc-sales-order/duplicate', 'MoneyChanger\SalesOrderController@duplicate');
+Route::post('/mc-sales-order/save-duplicate', 'MoneyChanger\SalesOrderController@save_duplicate');
+
+// SALES ORDER - DETAIL
+Route::get('/mc-sales-order-detail', 'MoneyChanger\SalesOrderDetailController@inquiry');
+Route::post('/mc-sales-order-detail-list', 'MoneyChanger\SalesOrderDetailController@inquiry_data');
+Route::post('/mc-sales-order-detail/create', 'MoneyChanger\SalesOrderDetailController@create');
+Route::post('/mc-sales-order-detail/update/{id}', 'MoneyChanger\SalesOrderDetailController@update');
+Route::post('/mc-sales-order-detail/save', 'MoneyChanger\SalesOrderDetailController@save');
+Route::get('/mc-sales-order-detail/reload/{id}', 'MoneyChanger\SalesOrderDetailController@reload'); // RELOAD TABLE AFTER SAVE
+Route::post('mc-sales-order-detail/delete/{id?}', 'MoneyChanger\SalesOrderDetailController@delete');
+Route::post('/mc-sales-order-detail/save-delete', 'MoneyChanger\SalesOrderDetailController@save_delete');
+
 // STOCK CARD SUMMARY
 Route::get('/mc-stock-card', 'MoneyChanger\StockCardController@inquiry');
 Route::post('/mc-stock-card-list', 'MoneyChanger\StockCardController@inquiry_data');
 
 // LOOKUP BUSINESS PARTNER
-Route::post('/mc-partner-list', 'MoneyChanger\PurchaseOrderController@inquiry_data_partner');
-Route::post('/mc-select-partner', 'MoneyChanger\PurchaseOrderController@show_lookup_partner');
+Route::get('/mc-partner', 'MoneyChanger\PartnerController@inquiry');
+Route::post('/mc-partner-list', 'MoneyChanger\PartnerController@inquiry_data');
+Route::get('/mc-partner/create', 'MoneyChanger\PartnerController@create');
+Route::get('/mc-partner/update/{id}', 'MoneyChanger\PartnerController@update');
+Route::post('/mc-partner/save', 'MoneyChanger\PartnerController@save');
 
+// LOOKUP VENDOR
+Route::post('/mc-select-partner', 'MoneyChanger\PartnerController@show_lookup');
+
+// BUSINESS PARTNER ADDRESS
+Route::post('/mc-partner-address/create', 'MoneyChanger\PartnerAddressController@create');
+Route::post('/mc-partner-address/update/{id}', 'MoneyChanger\PartnerAddressController@update');
+Route::post('/mc-partner-address/save', 'MoneyChanger\PartnerAddressController@save');
+Route::post('/mc-partner-address/delete', 'MoneyChanger\PartnerAddressController@delete');
+Route::post('/mc-partner-address/save-delete', 'MoneyChanger\PartnerAddressController@save_delete');
+Route::get('/mc-partner-address/reload/{id}', 'MoneyChanger\PartnerAddressController@reload');
+
+// VENDOR BANK
+Route::post('/mc-partner-bank/create', 'MoneyChanger\PartnerBankController@create');
+Route::post('/mc-partner-bank/update/{id}', 'MoneyChanger\PartnerBankController@update');
+Route::post('/mc-partner-bank/save', 'MoneyChanger\PartnerBankController@save');
+Route::post('/mc-partner-bank/delete', 'MoneyChanger\PartnerBankController@delete');
+Route::post('/mc-partner-bank/save-delete', 'MoneyChanger\PartnerBankController@save_delete');
+Route::get('/mc-partner-bank/reload/{id}', 'MoneyChanger\PartnerBankController@reload');
 
 Route::get('/mc-sop', 'MoneyChanger\PurchaseOrderController@sop');
