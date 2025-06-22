@@ -5,7 +5,7 @@
     <!-- Meta-Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
-    <meta name="keywords" content="ASBS">    
+    <meta name="keywords" content="AVK">    
 	<meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- //Meta-Tags -->
 
@@ -35,7 +35,7 @@
 	</script>
 
     <!-- WEB ICON -->
-	<link rel="shortcut icon" href="{{ URL::asset('public/logo-quality-small.png') }}" />
+	<link rel="shortcut icon" href="{{ URL::asset('public/assets/images/avk-logo-sm.png') }}" />
 	
 	<style>
 		@media print {
@@ -115,7 +115,7 @@
                     <header class="header">
                         <div class="wrapper">
                             <div class="logo">
-                                <img src="{{ url('public/logo-quality.jpeg') }}" width="142" height="60" />
+                                <img src="{{ url('public/assets/images/avk-logo.png') }}" width="142" height="60" />
                             </div>
                             <div class="header-text">
                                 @yield('pagetitle')     

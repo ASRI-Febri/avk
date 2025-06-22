@@ -11,6 +11,14 @@
     <input type="hidden" id="IDX_M_Valas" name="IDX_M_Valas" value="{{ $fields->IDX_M_Valas }}"/>
     <input type="hidden" id="ForeignAmount" name="ForeignAmount" value="{{ $fields->ForeignAmount }}"/>
 
+    <div class="alert alert-label-info">
+        <span class="text-muted">
+            <span class="text-info">Transaksi Jual</span> : Money changer menjual valuta asing, customer membeli valuta asing.
+            <br>
+            <span class="text-danger">Transaksi Beli</span> : Money changer membeli valuta asing, customer menjual valuta asing.
+        </span>
+    </div>
+
     <div class="d-grid gap-3">
 
         <x-select-horizontal label="Jenis Transaksi" id="IDX_M_TransactionType" :value="$fields->IDX_M_TransactionType" class="required" :array="$dd_transaction_type"/>

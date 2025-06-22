@@ -42,7 +42,7 @@
         { data: 'RowNumber', name: 'DT_RowIndex' },
 
         { data: "IDX_T_PurchaseOrder", visible: false }, 
-        { data: "CompanyName", visible: true }, 
+        { data: "CompanyName", visible: false }, 
         { data: "BranchName", visible: true },
         { data: "PONumber", visible: true,  "bSortable": false },
         { data: "PODate", visible: true },

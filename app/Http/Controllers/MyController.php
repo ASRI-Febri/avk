@@ -154,6 +154,7 @@ class MyController extends Controller
         $data['return_type'] = 'C';        
         $query_total = $this->exec_sp($this->sp_getinquiry,$data,'list');
         
+        $iFilteredTotal = 0;
         foreach($query_total as $row_total)
         {
             $iFilteredTotal = $row_total->TotalRows;

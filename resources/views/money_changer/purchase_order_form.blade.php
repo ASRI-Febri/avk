@@ -43,12 +43,14 @@
 
 @section('content-form')
 
-   
-
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_T_PurchaseOrder" name="IDX_T_PurchaseOrder" value="{{ $fields->IDX_T_PurchaseOrder }}"/>
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>
     <input type="hidden" id="POStatus" name="POStatus" value="{{ $fields->POStatus }}"/>
+
+    @if($state <> 'create')
+        <h5 class="text-secondary">{{ $fields->PONumber . ' - ' . $fields->StatusDesc }}</h5>
+    @endif
 
     <div class="row">
         <div class="col-md-6">
@@ -130,7 +132,7 @@
 
         function deleteDetail(idx,item_description)
         {
-            //alert('Delete ' + idx);
+            alert('Delete ' + idx);
             var url = "{{ url('mc-purchase-order-detail/delete') }}";
             
             // GET CURRENT SCROLL TOP POSITION
@@ -148,7 +150,7 @@
 
         function editDetail(idx)
         {
-            //alert('Delete ' + idx);
+            //alert('Edit ' + idx);
             var url = "{{ url('mc-purchase-order-detail/update') }}"+'/'+idx;
 
             // GET CURRENT SCROLL TOP POSITION

@@ -50,6 +50,10 @@
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>
     <input type="hidden" id="SOStatus" name="SOStatus" value="{{ $fields->SOStatus }}"/>
 
+    @if($state <> 'create')
+        <h5 class="text-secondary">{{ $fields->SONumber . ' - ' . $fields->StatusDesc }}</h5>
+    @endif
+
     <div class="row">
         <div class="col-md-6">
             <div class="card">
@@ -130,9 +134,9 @@
 
     <script>
 
-        function deleteDetail(idx,item_description)
+        function deleteDetailValas(idx,item_description)
         {
-            //alert('Delete ' + idx);
+            //alert('Delete data' + idx);
             var url = "{{ url('mc-sales-order-detail/delete') }}";
             
             // GET CURRENT SCROLL TOP POSITION
@@ -145,12 +149,12 @@
                 "ItemDesc": item_description
             }
             
-            callAjaxModalView(url,data);
+            callAjaxModalView(url, data);
         }
 
         function editDetail(idx)
         {
-            //alert('Delete ' + idx);
+            //alert('Edit data ' + idx);
             var url = "{{ url('mc-sales-order-detail/update') }}"+'/'+idx;
 
             // GET CURRENT SCROLL TOP POSITION
@@ -162,62 +166,11 @@
                 "IDX_T_SalesOrderDetail": idx            
             }
             
-            callAjaxModalView(url,data);
+            callAjaxModalView(url, data);
         }
 
-        function deleteTax(idx,item_description)
+        $(document).ready(function()
         {
-            //alert('Delete ' + idx);
-            var url = "{{ url('mc-sales-order-tax/delete') }}";
-            
-            // GET CURRENT SCROLL TOP POSITION
-            getScrollPosition();       
-
-            var data = {
-                "_token": $('#_token').val(),
-                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),
-                "IDX_T_PurchaseInvoiceTax": idx,
-                "ItemDesc": item_description
-            }
-            
-            callAjaxModalView(url,data);
-        }
-
-        function addTax(idx)
-        {
-            //alert('Delete ' + idx);
-            var url = "{{ url('mc-sales-order-tax/create') }}";
-
-            // GET CURRENT SCROLL TOP POSITION
-            getScrollPosition();
-
-            var data = {
-                "_token": $('#_token').val(),
-                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),                     
-            }
-            
-            callAjaxModalView(url,data);
-        }
-
-        function editTax(idx)
-        {
-            //alert('Delete ' + idx);
-            var url = "{{ url('mc-sales-order-tax/update') }}"+'/'+idx;
-
-            // GET CURRENT SCROLL TOP POSITION
-            getScrollPosition();
-
-            var data = {
-                "_token": $('#_token').val(),
-                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),
-                "IDX_T_PurchaseInvoiceTax": idx            
-            }
-            
-            callAjaxModalView(url,data);
-        }
-
-        $(document).ready(function(){
-
             $('#btn-find-partner').click(function(){
                 
                 var data = {

@@ -27,14 +27,14 @@ class StockCardController extends MyController
         
         // FORM TITLE
         $this->data['module_name'] = 'Money Changer';
-        $this->data['form_title'] = 'Purchase Order';
+        $this->data['form_title'] = 'Kartu Stok Rekap';
 
         // NAVIGATION
         $this->data['navbar'] = 'navigation.navbar_money_changer';     
         $this->data['sidebar'] = 'navigation.sidebar_money_changer'; 
 
         // BREADCRUMB
-        $this->data['breads'] = array('Pembelian','Purchase Order'); 
+        $this->data['breads'] = array('Transaction','Kartu Stok'); 
 
         // URL
         $this->data['url_create'] = url('mc-stock-card/create');
@@ -63,8 +63,8 @@ class StockCardController extends MyController
         
         // $access = TRUE;
         
-        $this->data['form_sub_title'] = 'Daftar Purchase Order';
-        $this->data['form_remark'] = 'Daftar PO pembelian valuta asing untuk persediaan dan untuk dijual kembali';        
+        $this->data['form_sub_title'] = 'Daftar Kartu Stok';
+        $this->data['form_remark'] = 'Daftar kartu stok transaksi valas berdasarkan Valas dan tanggal transaksi';        
         
         // BREADCRUMB
         array_push($this->data['breads'],'List');       

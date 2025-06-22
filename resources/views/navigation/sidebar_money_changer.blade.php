@@ -45,10 +45,10 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Transaksi
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-valas-rate') }}">
+                        {{-- <li><a href="{{ url('mc-valas-rate') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Nilai Tukar
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 

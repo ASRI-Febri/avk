@@ -221,7 +221,7 @@ class SalesOrderDetailController extends MyController
     {
         $this->sp_create = '[dbo].[USP_MC_SalesOrderDetail_Save]';
         $this->sp_update = '[dbo].[USP_MC_SalesOrderDetail_Save]';
-        $this->next_action = 'reload';
+        $this->next_action = '';
         $this->next_url = url('/mc-sales-order-detail/reload');
 
         $validator = Validator::make($request->all(), [

@@ -29,7 +29,7 @@
 
             @php 
                 $seq += 1;
-                $url_delete = url('mc-purchase-order-detail/delete/'.$row->IDX_T_SalesOrderDetail); 
+                //$url_delete = url('mc-purchase-order-detail/delete/'.$row->IDX_T_SalesOrderDetail); 
                                                
                 $subtotal_foreign_amount += ($row->ForeignAmount);
                 $subtotal_idr += ($row->ForeignAmount  * $row->ExchangeRate);
@@ -62,7 +62,7 @@
                     @if($row->SOStatus == 'D')
                     <div class="input-group-prepend text-center">
                         <x-btn-edit-detail :id="$row->IDX_T_SalesOrderDetail" />
-                        <x-btn-delete-detail :id="$row->IDX_T_SalesOrderDetail" :label="$row->ValasName" />                    
+                        <x-btn-delete-detail :id="$row->IDX_T_SalesOrderDetail" :label="$row->ValasName" function="deleteDetailValas" />                    
                     </div>
                     @endif
                 </td>

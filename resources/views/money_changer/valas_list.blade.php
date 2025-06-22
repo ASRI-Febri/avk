@@ -4,8 +4,8 @@
     <div class="row mb-3">
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Kode Mata Uang</span> 
-                <input id="CurrencyID" type="text" class="form-control" />
+                <span class="input-group-text" id="inputGroup-sizing-default">Mata Uang</span> 
+                <input id="CurrencyName" type="text" class="form-control" />
             </div>
         </div>
         <div class="col-4">

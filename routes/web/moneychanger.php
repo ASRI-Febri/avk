@@ -62,7 +62,7 @@ Route::post('/mc-sales-order-detail/create', 'MoneyChanger\SalesOrderDetailContr
 Route::post('/mc-sales-order-detail/update/{id}', 'MoneyChanger\SalesOrderDetailController@update');
 Route::post('/mc-sales-order-detail/save', 'MoneyChanger\SalesOrderDetailController@save');
 Route::get('/mc-sales-order-detail/reload/{id}', 'MoneyChanger\SalesOrderDetailController@reload'); // RELOAD TABLE AFTER SAVE
-Route::post('mc-sales-order-detail/delete/{id?}', 'MoneyChanger\SalesOrderDetailController@delete');
+Route::post('mc-sales-order-detail/delete', 'MoneyChanger\SalesOrderDetailController@delete');
 Route::post('/mc-sales-order-detail/save-delete', 'MoneyChanger\SalesOrderDetailController@save_delete');
 
 // STOCK CARD SUMMARY
@@ -96,3 +96,10 @@ Route::post('/mc-partner-bank/save-delete', 'MoneyChanger\PartnerBankController@
 Route::get('/mc-partner-bank/reload/{id}', 'MoneyChanger\PartnerBankController@reload');
 
 Route::get('/mc-sop', 'MoneyChanger\PurchaseOrderController@sop');
+
+// REPORT
+Route::get('/mc-rpt-transaction', 'MoneyChanger\RptTransactionController@period');
+Route::post('/mc-rpt-transaction', 'MoneyChanger\RptTransactionController@period_report');
+
+Route::get('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period');
+Route::post('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period_report');

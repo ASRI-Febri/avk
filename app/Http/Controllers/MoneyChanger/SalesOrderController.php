@@ -65,13 +65,13 @@ class SalesOrderController extends MyController
         if ($access == TRUE)
         {       
             // TABLE HEADER & FOOTER
-            $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','Nomor PO',
-            'Tanggal PO','Business Partner', 'Catatan PO','POStatus','Status','Action');         
+            $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','Nomor SO',
+            'Tanggal SO','Business Partner', 'Catatan SO','POStatus','Status','Action');         
 
-            $this->data['table_footer'] = array('','IDX_T_SalesOrder','CompanyName','BranchName','PONumber',
-            '','PartnerName','PONotes','','','Action');
+            $this->data['table_footer'] = array('','IDX_T_SalesOrder','CompanyName','BranchName','SONumber',
+            '','PartnerName','SONotes','','','Action');
 
-            $this->data['array_filter'] = array('CompanyName','BranchName','PONumber','PONotes','PartnerName');
+            $this->data['array_filter'] = array('CompanyName','BranchName','SONumber','SONotes','PartnerName');
 
             // VIEW
             $this->data['view'] = 'money_changer/sales_order_list';  
@@ -88,7 +88,7 @@ class SalesOrderController extends MyController
         // FILTER FOR STORED PROCEDURE       
         $array_filter['CompanyName'] = $request->input('CompanyName');  
         $array_filter['BranchName'] = $request->input('BranchName'); 
-        $array_filter['PONumber'] = $request->input('PONumber');
+        $array_filter['SONumber'] = $request->input('SONumber');
         $array_filter['PONotes'] = $request->input('PONotes');
         $array_filter['PartnerName'] = $request->input('PartnerName');
         $array_filter['UserID'] = 'XXX'.$this->data['user_id']; 
@@ -98,8 +98,8 @@ class SalesOrderController extends MyController
 
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
-        $this->array_column = array('RowNumber','IDX_T_SalesOrder','CompanyName','BranchName','PONumber',
-            'PODate','PartnerName', 'PONotes','POStatus','StatusDesc');
+        $this->array_column = array('RowNumber','IDX_T_SalesOrder','CompanyName','BranchName','SONumber',
+            'SODate','PartnerName', 'SONotes','SOStatus','StatusDesc');
 
         return $this->get_datatables($request); 
     }
@@ -391,7 +391,7 @@ class SalesOrderController extends MyController
 
             // DEFAULT VALUE                                  
             $this->data['fields']->ApprovalRemark = '';           
-            $this->data['fields']->ApprovalDate = date('Y-m-d',strtotime($this->data['fields']->PODate));
+            $this->data['fields']->ApprovalDate = date('Y-m-d',strtotime($this->data['fields']->SODate));
             $this->data['fields']->ApprovalBy = $this->data['user_id'];
 
             // URL
@@ -461,7 +461,7 @@ class SalesOrderController extends MyController
 
             // DEFAULT VALUE                                  
             $this->data['fields']->ApprovalRemark = '';           
-            $this->data['fields']->ApprovalDate = date('Y-m-d',strtotime($this->data['fields']->InvoiceDate));
+            $this->data['fields']->ApprovalDate = date('Y-m-d',strtotime($this->data['fields']->SODate));
             $this->data['fields']->ApprovalBy = $this->data['user_id'];
 
             // URL
@@ -490,7 +490,7 @@ class SalesOrderController extends MyController
         } 
         else
         {
-            $this->sp_approval = '[dbo].[USP_MC_SalesOrder_ReverseValidate]'; 
+            $this->sp_approval = '[dbo].[USP_MC_SalesOrder_Reverse]'; 
             $this->next_action = 'reload';
             $this->next_url = url("/mc-sales-order/update");
 

@@ -11,8 +11,8 @@
     <!-- //Meta-Tags -->    
 
     <!-- CSS FILES -->    
-    <link rel="shortcut icon" href="{{ URL::asset('public/logo-tunas-small.png') }}" />
-    <link href="{{ URL::asset('public/assets_view/css/pdf.css') }}" rel="stylesheet" type="text/css" media="all"/>
+    <link rel="shortcut icon" href="{{ URL::asset('public/logo-small.png') }}" />
+    <link href="{{ URL::asset('public/css/pdf.css') }}" rel="stylesheet" type="text/css" media="all"/>
     
     {{-- <style>
     @font-face {
