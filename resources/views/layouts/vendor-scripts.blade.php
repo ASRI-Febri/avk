@@ -5,7 +5,11 @@
 <script src="{{ URL::asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/node-waves/waves.min.js') }}"></script>
 
+<!-- FORM VALIDATION -->
 <script src="{{ URL::asset('assets/libs/parsleyjs/parsley.min.js') }}"></script>
+<script src="{{ URL::asset('assets/js/pages/form-validation.init.js') }}"></script>
+
+<!-- SWEETALERT -->
 <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 
 <!-- blockUI -->

@@ -67,7 +67,7 @@
 
                 @if($row_number > 1)
                     <tr>
-                        <td class="text-right" colspan="5"><strong>TOTAL</strong></td>
+                        <td class="text-right" colspan="7"><strong>TOTAL</strong></td>
                         {{-- <td class="text-right"><strong>{{ number_format($group_bb_qty,2,'.',',') }}</strong></td> --}}
                         <td class="text-right"><strong>{{ number_format($group_in_qty,2,'.',',') }}</strong></td>
                         <td class="text-right"><strong>{{ number_format($group_out_qty,2,'.',',') }}</strong></td>
@@ -77,7 +77,7 @@
                  
                 <thead>
                     <tr class="bg-info">   
-                        <th class="text-start" colspan="9">{{ strtoupper($group_a1) }}</th>
+                        <th class="text-start" colspan="11">{{ strtoupper($group_a1) }}</th>
                     </tr> 
                     <tr>
                         <th>#</th>            
@@ -85,6 +85,8 @@
                         <th>CURRENCY</th>
                         <th>SKU</th>
                         <th>NAMA BARANG</th>
+                        <th>KETERANGAN</th>
+                        <th>NO TRANSAKSI</th>
                         {{-- <th class="text-center">AWAL</th> --}}
                         <th class="text-center">MASUK</th>
                         <th class="text-center">KELUAR</th>
@@ -120,6 +122,8 @@
                 <td>{{ $row->CurrencyName }}</td>
                 <td>{{ $row->ValasSKU }}</td>
                 <td>{{ $row->ValasName }}</td>
+                <td>{{ $row->TransactionTypeName }}</td>
+                <td>{{ $row->TransactionNo }}</td>
                 
                 {{-- <td class="text-right">{{ number_format($row->BB_Quantity,2,'.',',') }}</td> --}}
                 <td class="text-right">{{ number_format($row->IN_Quantity,2,'.',',') }}</td>
@@ -129,7 +133,7 @@
 
         @endforeach
         <tr>
-            <td class="text-right" colspan="5"><strong>TOTAL</strong></td>
+            <td class="text-right" colspan="7"><strong>TOTAL</strong></td>
             {{-- <td class="text-right"><strong>{{ number_format($group_bb_qty,2,'.',',') }}</strong></td> --}}
             <td class="text-right"><strong>{{ number_format($group_in_qty,2,'.',',') }}</strong></td>
             <td class="text-right"><strong>{{ number_format($group_out_qty,2,'.',',') }}</strong></td>

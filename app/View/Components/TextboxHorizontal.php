@@ -11,19 +11,21 @@ class TextboxHorizontal extends Component
     public $class;
     public $value;    
     public $placeholder;
+    public $flag;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($label, $id, $class, $value, $placeholder)
+    public function __construct($label, $id, $class, $value, $placeholder, $flag = '')
     {
         $this->label = $label;
         $this->id = $id;
         $this->class = $class;
         $this->value = $value;        
         $this->placeholder = $placeholder;
+        $this->flag = $flag;
     }
 
     /**

@@ -41,7 +41,7 @@
                         </span>
                     </div>
                                         
-                    <form id="form-report" name="form-report" enctype="multipart/form-data" action="{{ $url_show_repoprt }}" role="form" method="post" target="_blank">   
+                    <form id="form-report" name="form-report" enctype="multipart/form-data" action="{{ $url_show_repoprt }}" role="form" method="post" target="_blank" class="needs-validation">   
 
                         <!-- CSRF TOKEN -->
                         <input type="hidden" id="_token" name="_token" value="{{ csrf_token() }}"/>

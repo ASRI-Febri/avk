@@ -11,19 +11,21 @@ class SelectHorizontal extends Component
     public $class;
     public $value;
     public $array;
+    public $flag;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($label, $id, $class, $value, $array)
+    public function __construct($label, $id, $class, $value, $array, $flag = '')
     {
         $this->label = $label;
         $this->id = $id;
         $this->class = $class;
         $this->value = $value;
         $this->array = $array;
+        $this->flag = $flag;
     }
 
     /**
