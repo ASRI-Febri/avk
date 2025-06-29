@@ -63,7 +63,6 @@
 @endsection
 
 @section('script')
-    @yield('script') 
 
     <script>
         $(document).ready(function()

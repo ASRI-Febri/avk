@@ -32,7 +32,7 @@
                                     <span class="grid-nav-subtitle">Buy, Sell Foreign Exchange</span>
                                 </div>
                             </a>                            
-                            <a href="{{ url('pawn') }}" class="grid-nav-item">
+                            {{-- <a href="{{ url('pawn') }}" class="grid-nav-item">
                                 <div class="grid-nav-icon">
                                     <i class="fas fa-handshake"></i>
                                 </div>
@@ -49,7 +49,7 @@
                                     <h3 class="grid-nav-title">Pinjaman</h3>
                                     <span class="grid-nav-subtitle">Pinjaman dengan BPKB</span>
                                 </div>
-                            </a>
+                            </a> --}}
                         </div>                        
                     </div>
                 </div>
