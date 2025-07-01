@@ -23,6 +23,36 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow ">
+                        <i class="fas fa-list"></i>
+                        <span>SOP</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ url('mc-sop') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Umum
+                            </a>
+                        </li>
+                        <li><a href="{{ url('mc-sop-risk-management') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Risk Management
+                            </a>
+                        </li>
+                        <li><a href="{{ url('mc-sop-money-laundry') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Money Laundry
+                            </a>
+                        </li>
+                        <li><a href="{{ url('mc-sop-penetapan-kurs') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Penetapan Kurs
+                            </a>
+                        </li>
+                        <li><a href="{{ url('mc-sop-perlindungan-konsumen') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Perlindungan Konsumen
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li>
                     <a href="javascript: void(0);" class="has-arrow ">
                         <i class="fas fa-file-invoice-dollar"></i>
@@ -120,10 +150,6 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Potongan Harga
                             </a>
                         </li> 
-                        <li><a href="{{ url('mc-sop') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP
-                            </a>
-                        </li>
                     </ul>
                 </li>
 

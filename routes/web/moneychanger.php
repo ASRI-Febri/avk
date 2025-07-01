@@ -95,7 +95,11 @@ Route::post('/mc-partner-bank/delete', 'MoneyChanger\PartnerBankController@delet
 Route::post('/mc-partner-bank/save-delete', 'MoneyChanger\PartnerBankController@save_delete');
 Route::get('/mc-partner-bank/reload/{id}', 'MoneyChanger\PartnerBankController@reload');
 
-Route::get('/mc-sop', 'MoneyChanger\PurchaseOrderController@sop');
+Route::get('/mc-sop', 'MoneyChanger\SOPController@sop');
+Route::get('/mc-sop-risk-management', 'MoneyChanger\SOPController@sop_risk_management');
+Route::get('/mc-sop-money-laundry', 'MoneyChanger\SOPController@sop_money_laundry');
+Route::get('/mc-sop-penetapan-kurs', 'MoneyChanger\SOPController@sop_penetapan_kurs');
+Route::get('/mc-sop-perlindungan-konsumen', 'MoneyChanger\SOPController@sop_perlindungan_konsumen');
 
 // REPORT
 Route::get('/mc-rpt-transaction', 'MoneyChanger\RptTransactionController@period');
