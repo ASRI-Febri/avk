@@ -27,14 +27,14 @@ class SalesOrderDetailController extends MyController
         
         // FORM TITLE
         $this->data['module_name'] = 'Procurement';
-        $this->data['form_title'] = 'Sales Order Detail Detail';
+        $this->data['form_title'] = 'Transaction Detail';
 
         // NAVIGATION
         $this->data['navbar'] = 'navigation.navbar_procurement';     
         $this->data['sidebar'] = 'navigation.sidebar_procurement'; 
 
         // BREADCRUMB
-        $this->data['breads'] = array('Transaction','Sales Order Detail'); 
+        $this->data['breads'] = array('Transaction','Transaction Detail'); 
 
         // URL
         $this->data['url_create'] = url('mc-sales-order-detail/create');
@@ -59,7 +59,7 @@ class SalesOrderDetailController extends MyController
     public function inquiry(Request $request)
     {   
         $this->data['form_sub_title'] = 'List';
-        $this->data['form_desc'] = 'Sales Order Detail List';        
+        $this->data['form_desc'] = 'Transaction Detail List';        
         
         // BREADCRUMB
         array_push($this->data['breads'],'List');       
@@ -115,9 +115,9 @@ class SalesOrderDetailController extends MyController
 
         //$access = TRUE;
 
-        $this->data['form_title'] = 'Sales Order Detail';
-        $this->data['form_sub_title'] = 'Create Sales Order Detail';
-        $this->data['form_desc'] = 'Create Sales Order Detail';       
+        $this->data['form_title'] = 'Transaction Detail';
+        $this->data['form_sub_title'] = 'Create Transaction Detail';
+        $this->data['form_desc'] = 'Create Transaction Detail';       
         $this->data['state'] = 'create';
 
         // BREADCRUMB
@@ -152,9 +152,9 @@ class SalesOrderDetailController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
 
-        $this->data['form_title'] = 'Sales Order Detail';
-        $this->data['form_sub_title'] = 'Update Sales Order Detail';
-        $this->data['form_desc'] = 'Update Sales Order Detail';              
+        $this->data['form_title'] = 'Transaction Detail';
+        $this->data['form_sub_title'] = 'Update Transaction Detail';
+        $this->data['form_desc'] = 'Update Transaction Detail';              
         $this->data['state'] = 'update';
 
         // BREADCRUMB

@@ -30,7 +30,7 @@
 
         <div class="dropdown-divider"></div>   
 
-        <a href="{{ url('pr-purchase-order/download-pdf').'/'.$fields->IDX_T_PurchaseOrder }}" id="btn-download2-pdf" 
+        <a href="{{ url('mc-purchase-order/download-pdf').'/'.$fields->IDX_T_PurchaseOrder }}" id="btn-download2-pdf" 
             target="_blank" class="dropdown-item text-info">
             <div class="dropdown-icon">
                 <i class="fa fa-file-pdf"></i>

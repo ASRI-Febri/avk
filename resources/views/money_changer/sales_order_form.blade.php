@@ -1,7 +1,7 @@
 @extends('layouts.master-form-transaction')
 
 @section('form-remark')
-    Sales Order untuk melakukan transaksi penjualan atau pembelian valuta asing dari customer. 
+    Transaki untuk melakukan penjualan atau pembelian valuta asing dari customer. 
     <br> 
     Contoh nomor SO <code>SO-100-2506-001</code> untuk kode cabang 100, bulan 05 tahun 2025.
 @endsection
@@ -75,12 +75,12 @@
 
             <div class="card">
                 <div class="card-header card-header-bordered">
-                    <h3 class="card-title">Informasi SO</h3>
+                    <h3 class="card-title">Informasi Transaksi</h3>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-3">
-                        <x-textbox-horizontal label="No SO" id="SONumber" :value="$fields->SONumber" placeholder="(Auto)" class="readonly" />
-                        <x-textbox-horizontal label="Tanggal SO" id="SODate" :value="$fields->SODate" placeholder="" class="required datepicker2" />
+                        <x-textbox-horizontal label="No Transaksi" id="SONumber" :value="$fields->SONumber" placeholder="(Auto)" class="readonly" />
+                        <x-textbox-horizontal label="Tanggal Transaksi" id="SODate" :value="$fields->SODate" placeholder="" class="required datepicker2" />
                         <x-lookup-horizontal label="Customer" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
                         <x-textbox-horizontal label="Keterangan" id="SONotes" :value="$fields->SONotes" placeholder="" class="required" />
                     </div>
@@ -103,7 +103,7 @@
             <div class="card-header">      
                 <div class="nav nav-lines card-header-lines mb-0" id="card-tab-1" role="tablist">
                     <a class="nav-item nav-link active" id="card-detail-tab" data-bs-toggle="tab" href="#card-detail" aria-selected="false" role="tab" tabindex="-1">
-                        <i class="fas fa-align-justify"></i> Detail Pembelian
+                        <i class="fas fa-align-justify"></i> Detail Transaksi
                     </a>    
                     <a class="nav-item nav-link" id="card-log-tab" data-bs-toggle="tab" href="#card-log" aria-selected="true" role="tab">
                             <i class="fas fa-coins"></i> Log</a>        
@@ -113,7 +113,7 @@
                 <div class="tab-content">
                     <div class="tab-pane fade active show" id="card-detail" role="tabpanel" aria-labelledby="#card-detail-tab">                        
                         @if($fields->SOStatus == 'D')                
-                            <x-btn-add-detail id="btn-add-detail" label="Add New Valas" />                        
+                            <x-btn-add-detail id="btn-add-detail" label="Input Transaksi" />                        
                         @endif
             
                         <div id="table-order-detail" class="table-responsive">

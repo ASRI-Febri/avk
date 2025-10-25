@@ -304,21 +304,6 @@ class PurchaseOrderController extends MyController
 
     }
 
-    // // Fetch records
-    // public function getInvoiceInfo($id=0){
-
-    //     $sql = "SELECT SUM((UntaxedAmount * Quantity) + DiscountAmount - TaxAmount) - SUM(PaymentAmount)
-    //     FROM CM_T_PurchaseOrderHeader PIH
-    //     JOIN CM_T_PurchaseOrderDetail PID ON PIH.IDX_T_PurchaseOrder = PID.IDX_T_PurchaseOrder
-    //     LEFT JOIN CM_T_FinancialPaymentDetail FPD ON PIH.IDX_T_PurchaseOrder = FPD.IDX_DocumentNo
-    //     WHERE PIH.IDX_T_PurchaseOrder = ". $id;
-
-    //     $result['data'] =  DB::connection('sqlsrv')->select($sql);
-
-    //     return response()->json($result);
-    
-    // }
-
     // =========================================================================================
     // SAVE DATA
     // =========================================================================================
@@ -525,18 +510,18 @@ class PurchaseOrderController extends MyController
     {
         $data['img_logo_w'] = '142';
         $data['img_logo_h'] = '60';
-        $data['img_logo'] = url('public/logo-quality.jpeg');
+        $data['img_logo'] = url('public/logo-avk.jpeg');
 
-        $this->sp_getdata = '[dbo].[USP_PR_PurchaseOrder_Info]';
+        $this->sp_getdata = '[dbo].[USP_MC_PurchaseOrder_Info]';
         $data['fields'] = $this->get_detail_by_id($data['IDX_T_PurchaseOrder'])[0];
         
         $data['show_action'] = FALSE;
 
         // GET NUP RECORDS        
         $param['IDX_T_PurchaseOrder'] = $data['IDX_T_PurchaseOrder'];
-        $data['records_detail'] = $this->exec_sp('USP_PR_PurchaseOrderDetail_List',$param,'list','sqlsrv');              
+        $data['records_detail'] = $this->exec_sp('USP_MC_PurchaseOrderDetail_List',$param,'list','sqlsrv');              
 
-        $pdf = PDF::loadView('procurement/purchase_order_pdf', $data);
+        $pdf = PDF::loadView('money_changer/purchase_order_pdf', $data);
 
         //return $pdf->download('test.pdf');        
 
@@ -559,7 +544,6 @@ class PurchaseOrderController extends MyController
             return storage_path().'/app/public/temp/purchase_order-'.$data['fields']->PONumber.'.pdf'; 
         }
     }
-
 
     // =========================================================================================
     // DUPLICATE

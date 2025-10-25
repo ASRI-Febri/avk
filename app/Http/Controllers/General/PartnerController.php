@@ -274,15 +274,15 @@ class PartnerController extends MyController
     // =========================================================================================
     public function show_lookup(Request $request)
     {
-        $this->data['form_title'] = 'Vendor';
-        $this->data['form_sub_title'] = 'Select Vendor';
-        $this->data['form_desc'] = 'Select Vendor';		
+        $this->data['form_title'] = 'Business Partner';
+        $this->data['form_sub_title'] = 'Select Business Partner';
+        $this->data['form_desc'] = 'Select business partner (customer or vendor)';		
         
         // URL TO DATATABLES
         $this->data['url_search'] = url('/gn-partner-list');        
 
         // TABLE HEADER & FOOTER
-        $this->data['table_header'] = array('No', 'IDX_M_Partner', 'BarcodeMember', 'Vendor ID', 'Vendor Name', 
+        $this->data['table_header'] = array('No', 'IDX_M_Partner', 'BarcodeMember', 'Partner ID', 'Partner Name', 
             'IsCustomer', 'IsMember', 'IsSupplier', 'SingleIdentityNumber',
             'TaxIdentityNumber', 'MobilePhone', 'Remarks', 'Street', 'ActiveDesc','Status','Action');         
 

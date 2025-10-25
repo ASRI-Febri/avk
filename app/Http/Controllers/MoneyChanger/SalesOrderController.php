@@ -27,14 +27,14 @@ class SalesOrderController extends MyController
         
         // FORM TITLE
         $this->data['module_name'] = 'Money Changer';
-        $this->data['form_title'] = 'Sales Order';
+        $this->data['form_title'] = 'Transaksi Valas';
 
         // NAVIGATION
         $this->data['navbar'] = 'navigation.navbar_money_changer';     
         $this->data['sidebar'] = 'navigation.sidebar_money_changer'; 
 
         // BREADCRUMB
-        $this->data['breads'] = array('Pembelian','Sales Order'); 
+        $this->data['breads'] = array('Transaksi','Valuta Asing'); 
 
         // URL
         $this->data['url_create'] = url('mc-sales-order/create');
@@ -56,7 +56,7 @@ class SalesOrderController extends MyController
         
         // $access = TRUE;
         
-        $this->data['form_sub_title'] = 'Daftar Sales Order';
+        $this->data['form_sub_title'] = 'Daftar Transaksi Valas';
         $this->data['form_remark'] = 'Daftar transaksi jual beli valuta asing antara customer dengan money changer';        
         
         // BREADCRUMB
@@ -113,9 +113,9 @@ class SalesOrderController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
 
-        $this->data['form_title'] = 'Sales Order';
-        $this->data['form_sub_title'] = 'Input Sales Order';
-        $this->data['form_desc'] = 'Input Sales Order';       
+        $this->data['form_title'] = 'Transaksi Valas';
+        $this->data['form_sub_title'] = 'Input Transaksi Valas';
+        $this->data['form_desc'] = 'Input Transaksi Valas';       
         $this->data['state'] = 'create';
 
         // BREADCRUMB
@@ -152,9 +152,9 @@ class SalesOrderController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
 
-        $this->data['form_title'] = 'Sales Order';
-        $this->data['form_sub_title'] = 'Update Sales Order';
-        $this->data['form_desc'] = 'Update Sales Order';              
+        $this->data['form_title'] = 'Update Transaksi Valas';
+        $this->data['form_sub_title'] = 'Update Transaksi Valas';
+        $this->data['form_desc'] = 'Update Transaksi Valas';              
         $this->data['state'] = 'update';
 
         // BREADCRUMB

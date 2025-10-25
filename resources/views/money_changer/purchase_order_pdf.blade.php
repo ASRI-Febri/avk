@@ -1,11 +1,13 @@
 @extends('layouts.pdf')
 
 @section('title')
-    {{ $fields->SONumber }}
+    {{ $fields->PONumber }}
 @endsection
 
 @section('content')    
 
+    {{ print_r($fields) }}
+    
     <div style="float:left;width:60%">
         
         {{-- <img src="{{ $img_logo }}" width="{{ $img_logo_w }}" height="{{ $img_logo_h }}" />
@@ -18,10 +20,10 @@
             </tr>
             <tr class="noborder nopadding">
                 <td class="td-85 bold noborder nopadding param-value">
-                    <span style="display:block;">{{ $fields->LegalAddress }}</span>
+                    <span style="display:block;">{{ $fields->PartnerAddress ?? 'Galaxy Kota Bekasi' }}</span>
                     
-                    <span style="display:block;">Phone: {{ $fields->Phone }} </span>  
-                    <span style="display:block;">Phone: {{ $fields->WhatsappNo }} </span>                   
+                    <span style="display:block;">Phone: {{ $fields->Phone ?? '' }} </span>  
+                    <span style="display:block;">Phone: {{ $fields->WhatsappNo ?? '' }} </span>                   
                 </td>
             </tr>            
         </table>  
@@ -32,11 +34,11 @@
         <table class="noborder nopadding">
             <tr class="noborder nopadding">
                 <td class="td-15 bold noborder nopadding param-key">No Nota</td>
-                <td class="td-50 bold noborder nopadding param-value">{{ $fields->SONumber }}</td>
+                <td class="td-50 bold noborder nopadding param-value">{{ $fields->PONumber }}</td>
             </tr>
             <tr class="noborder">
                 <td class="td-15 bold noborder nopadding param-key">Date</td>
-                <td class="td-50 bold noborder nopadding param-value">{{ date('d M Y',strtotime($fields->SODate)) }}</td>
+                <td class="td-50 bold noborder nopadding param-value">{{ date('d M Y',strtotime($fields->PODate)) }}</td>
             </tr>
         </table>
         
@@ -72,9 +74,9 @@
     </div> --}}
 
     <div style="float:left;width:40%">
-        <span class="bold" style="display:block;">Customer</span>
+        <span class="bold" style="display:block;">Vendor</span>
         <span style="display:block;">{{ $fields->PartnerName }}</span>
-        {{-- <span style="display:block;">{{ $fields->PartnerStreet }}</span> --}}
+        <span style="display:block;">{{ $fields->PartnerAddress ?? 'Alamat vendor' }}</span>
         {{-- <span style="display:block;">Phone: {{ $fields->PartnerPhone }}</span> --}}
     </div>
 
@@ -117,9 +119,9 @@
         </thead>
         <tbody>
             <tr>                
-                <td>{{ $fields->SONumber }}</td>
-                <td>{{ $fields->ReferenceNo }}</td>
-                <td>{{ $fields->UCreateName }}</td>
+                <td>{{ $fields->PONumber }}</td>
+                <td>{{ $fields->ReferenceNo ?? '' }}</td>
+                <td>{{ $fields->UCreateName ?? '' }}</td>
             </tr>
         </tbody>        
     </table>
@@ -152,7 +154,7 @@
 
             @php 
                 $seq += 1;
-                $url_delete = url('mc-sales-order-detail/delete/'.$row->IDX_T_SalesOrderDetail); 
+                $url_delete = url('mc-purchase-order-detail/delete/'.$row->IDX_T_PurchaseOrderDetail); 
 
                 $subtotal_foreign_amount += ($row->ForeignAmount);
                 $subtotal_base_amount += ($row->ForeignAmount  * $row->ExchangeRate);

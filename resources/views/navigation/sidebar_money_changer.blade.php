@@ -25,6 +25,13 @@
                 </li>
 
                 <li>
+                    <a href="{{ url('mc/kurs') }}" class="" target="_blank">
+                        <i class="fas fa-desktop"></i>
+                        <span>Daftar Kurs</span>
+                    </a>
+                </li>
+
+                <li>
                     <a href="javascript: void(0);" class="has-arrow ">
                         <i class="fas fa-list"></i>
                         <span>SOP</span>

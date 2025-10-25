@@ -107,3 +107,8 @@ Route::post('/mc-rpt-transaction', 'MoneyChanger\RptTransactionController@period
 
 Route::get('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period');
 Route::post('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period_report');
+
+// DAFTAR KURS VALAS
+Route::get('mc/kurs', function () {
+    return view('kurs_valas');
+});
