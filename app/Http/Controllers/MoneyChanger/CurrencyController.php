@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Finance;
+namespace App\Http\Controllers\MoneyChanger;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -23,26 +23,41 @@ class CurrencyController extends MyController
     // =========================================================================================
     public function __construct(Request $request)
     {        
-        $this->data['logo'] = 'Finance';
+        $this->data['logo'] = 'Money Changer';
         $this->data['title'] = 'Dashboard';        
 
         $this->data['form_title'] = 'Currency';
         
         // NAVIGATION
-        $this->data['navbar'] = 'navigation.navbar_finance';     
-        $this->data['sidebar'] = 'navigation.sidebar_finance';
+        $this->data['navbar'] = 'navigation.navbar_money_changer';     
+        $this->data['sidebar'] = 'navigation.sidebar_money_changer';
 
         // BREADCRUMB
         $this->data['breads'] = array('Setting','Currency'); 
 
         // URL
-        $this->data['url_create'] = url('fm-currency/create');
-        $this->data['url_search'] = url('fm-currency-list');           
-        $this->data['url_update'] = url('fm-currency/update/');        
-        $this->data['url_cancel'] = url('fm-currency'); 
+        $this->data['url_create'] = url('mc-currency/create');
+        $this->data['url_search'] = url('mc-currency-list');           
+        $this->data['url_update'] = url('mc-currency/update/');        
+        $this->data['url_cancel'] = url('mc-currency'); 
 
         
         parent::__construct($request);
+    }
+
+    public function display_kurs(Request $request)
+    {
+        $param['page'] = 1; 
+        $param['row'] = 100; 
+        $param['sort_by'] = 'SortPriority';
+        $param['sort_dir'] = 'ASC';
+        $param['return_type'] = 'R';
+        $param['CurrencyName'] = '';
+        $param['CurrencyID'] = '';
+        $this->data['records'] = $this->exec_sp('USP_MC_Currency_List',$param,'list','sqlsrv');   
+
+        $this->data['view'] = 'money_changer/display_kurs';
+        return view($this->data['view'], $this->data);
     }
 
     // =========================================================================================
@@ -57,11 +72,11 @@ class CurrencyController extends MyController
         $access = TRUE;
         
         $this->data['form_sub_title'] = 'Daftar Currency';
-        $this->data['form_remark'] = 'Daftar mata uang';    
+        $this->data['form_remark'] = 'Daftar mata uang yang digunakan untuk transaksi jual beli valuta asing';    
         
         if($status !== '')
         {
-            $this->data['url_search'] = url('fm-currency-list');
+            $this->data['url_search'] = url('mc-currency-list');
         }        
         
         // BREADCRUMB
@@ -71,15 +86,15 @@ class CurrencyController extends MyController
         {
             // TABLE HEADER & FOOTER
             $this->data['table_header'] = array('No','IDX_M_Currency','Currency ID','Currency Name','Country ID',
-                'Country Name','RecordStatus','Status','Action');         
+                '','Country Name','Rate Beli','Rate Jual','RecordStatus','Status','Action');         
 
-            $this->data['table_footer'] = array('','','','CurrencyName','',
-                'CountryName','','','Action');
+            $this->data['table_footer'] = array('','','CurrencyID','CurrencyName','',
+                '','','','','','','Action');
 
-            $this->data['array_filter'] = array('CurrencyName','CountryName');
+            $this->data['array_filter'] = array('CurrencyName','CurrencyID');
 
             // VIEW
-            $this->data['view'] = 'finance/currency_list';  
+            $this->data['view'] = 'money_changer/currency_list';  
             return view($this->data['view'], $this->data);
             
         } 
@@ -93,16 +108,16 @@ class CurrencyController extends MyController
     { 
         // FILTER FOR STORED PROCEDURE
         $array_filter['CurrencyName'] = $request->input('CurrencyName');
-        $array_filter['CountryName'] = $request->input('CountryName');  
+        $array_filter['CurrencyID'] = $request->input('CurrencyID');  
          
 
         // SET STORED PROCEDURE
-        $this->sp_getinquiry = 'dbo.[USP_GN_Currency_List]';
+        $this->sp_getinquiry = 'dbo.[USP_MC_Currency_List]';
 
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
         $this->array_column = array('RowNumber','IDX_M_Currency','CurrencyID','CurrencyName','CountryID',
-            'CountryName','RecordStatus','StatusDesc');
+            'IconFlag','CountryName','BuyRate','SellRate','RecordStatus','StatusDesc');
 
         return $this->get_datatables($request); 
     }
@@ -128,7 +143,7 @@ class CurrencyController extends MyController
 
         if ($access == TRUE) {
 
-            $this->sp_getdata = '[dbo].[USP_GN_Currency_Info]';
+            $this->sp_getdata = '[dbo].[USP_MC_Currency_Info]';
             $this->data['fields'] = (object) $this->get_detail_by_id(0);
 
             // SET DEFAULT VALUE
@@ -163,7 +178,7 @@ class CurrencyController extends MyController
 
         if ($access == TRUE)
         {
-            $this->sp_getdata = '[dbo].[USP_GN_Currency_Info]';
+            $this->sp_getdata = '[dbo].[USP_MC_Currency_Info]';
             $this->data['fields'] = $this->get_detail_by_id($id)[0];           
 
             return $this->show_form($id, 'update');
@@ -185,7 +200,7 @@ class CurrencyController extends MyController
         $this->data['dd_record_status'] = (array) $dd->active_status();        
 
         // URL
-        $this->data['url_save_header'] = url('/fm-currency/save');       
+        $this->data['url_save_header'] = url('/mc-currency/save');       
 
         // BUTTON SAVE
         //$this->data['label'] = 'danger';
@@ -194,7 +209,7 @@ class CurrencyController extends MyController
 
         // VIEW        
         $this->data['form_remark'] = 'Keterangan Currency';        
-        $this->data['view'] = 'finance/currency_form';
+        $this->data['view'] = 'money_changer/currency_form';
         return view($this->data['view'], $this->data);
     }
 
@@ -203,22 +218,26 @@ class CurrencyController extends MyController
     // =========================================================================================
     public function save(Request $request)
     {
-        $this->sp_create = '[dbo].[USP_GN_Currency_Save]';
-        $this->sp_update = '[dbo].[USP_GN_Currency_Save]';
+        $this->sp_create = '[dbo].[USP_MC_Currency_Save]';
+        $this->sp_update = '[dbo].[USP_MC_Currency_Save]';
         $this->next_action = 'reload';
-        $this->next_url = url('/fm-currency/update');
+        $this->next_url = url('/mc-currency/update');
 
         $validator = Validator::make($request->all(), [
             'IDX_M_Currency' => 'required',
             'IDX_M_Country' => 'required',
             'CurrencyID' => 'required',
             'CurrencyName' => 'required',
-            'Symbol' => 'required',            
+            'Symbol' => 'required',       
+            'BuyRate' => 'required',
+            'SellRate' => 'required',     
         ],[
             'IDX_M_Country.required' => 'Kode negara belum diisi!',
             'CurrencyName.required' => 'Nama mata uang belum diisi!',
-            'CurrencyID.required' => 'kode mata uang belum diisi!',
-            'Symbol.required' => 'simbol mata uang belum diisi!',
+            'CurrencyID.required' => 'Kode mata uang belum diisi!',
+            'Symbol.required' => 'Simbol mata uang belum diisi!',
+            'BuyRate.required' => 'Rate beli belum diisi!',
+            'SellRate.required' => 'Rate jual belum diisi!',
         ]);
 
         if ($validator->fails())
@@ -242,6 +261,10 @@ class CurrencyController extends MyController
             $param['Remarks'] = '';
             $param['Rounding'] = (double)str_replace(',','',$data['Rounding']);
             $param['Accuracy'] = (double)str_replace(',','',$data['Accuracy']);
+            $param['BuyRate'] = (double)str_replace(',','',$data['BuyRate']);
+            $param['SellRate'] = (double)str_replace(',','',$data['SellRate']);
+            $param['IconFlag'] = $data['IconFlag'];
+            $param['SortPriority'] = (double)str_replace(',','',$data['SortPriority']);
             
             $param['UserID'] = 'XXX'.$this->data['user_id'];
             $param['RecordStatus'] = $data['RecordStatus'];            

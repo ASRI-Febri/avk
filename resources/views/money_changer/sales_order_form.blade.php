@@ -35,7 +35,7 @@
             <div class="dropdown-icon">
                 <i class="fa fa-file-pdf"></i>
             </div> 
-            <span class="dropdown-content">Print SO</span>            
+            <span class="dropdown-content">Print Nota</span>            
         </a>        
     </x-btn-action>
 

@@ -89,7 +89,7 @@
 </head>
 <body>
   <div class="container-fluid mt-4">
-    <h1 class="title">💱 DAFTAR NILAI TUKAR MONEY CHANGER</h1>
+    <h1 class="title">💱 DAFTAR NILAI TUKAR AVK</h1>
 
     <table class="table table-borderless table-hover text-white mt-4">
       <thead>
@@ -105,52 +105,52 @@
         <tr>
           <td>🇺🇸 Amerika Serikat</td>
           <td>USD</td>
-          <td>Rp 16.050</td>
-          <td>Rp 15.950</td>
+          <td>Rp 16.630</td>
+          <td>Rp 16.602</td>
           <td class="rate-up">▲ +0.15%</td>
         </tr>
         <tr>
           <td>🇪🇺 Eropa</td>
           <td>EUR</td>
-          <td>Rp 17.100</td>
-          <td>Rp 16.950</td>
+          <td>Rp 19.414</td>
+          <td>Rp 19.348</td>
           <td class="rate-down">▼ -0.12%</td>
         </tr>
         <tr>
           <td>🇸🇬 Singapura</td>
           <td>SGD</td>
-          <td>Rp 11.800</td>
-          <td>Rp 11.650</td>
+          <td>Rp 12.855</td>
+          <td>Rp 12.812</td>
           <td class="rate-up">▲ +0.05%</td>
         </tr>
         <tr>
           <td>🇯🇵 Jepang</td>
           <td>JPY</td>
-          <td>Rp 110,50</td>
-          <td>Rp 108,90</td>
+          <td>Rp 109,60</td>
+          <td>Rp 108,70</td>
           <td class="rate-down">▼ -0.20%</td>
         </tr>
         <tr>
           <td>🇬🇧 Inggris</td>
           <td>GBP</td>
-          <td>Rp 19.250</td>
-          <td>Rp 19.050</td>
+          <td>Rp 22.243</td>
+          <td>Rp 22.170</td>
           <td class="rate-up">▲ +0.10%</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <footer>Update terakhir: 24 Oktober 2025 — Sumber: Money Changer ABC</footer>
+  <footer>Update terakhir: 24 Oktober 2025 — Sumber: Money Changer AVK</footer>
 
   <!-- ===== RUNNING TICKER ===== -->
   <div class="ticker-container">
     <div class="ticker" id="tickerContent">
-      <span>🇺🇸 USD: Jual Rp16.050 / Beli Rp15.950 <span class="rate-up-txt">▲ +0.15%</span></span>
-      <span>🇪🇺 EUR: Jual Rp17.100 / Beli Rp16.950 <span class="rate-down-txt">▼ -0.12%</span></span>
-      <span>🇸🇬 SGD: Jual Rp11.800 / Beli Rp11.650 <span class="rate-up-txt">▲ +0.05%</span></span>
-      <span>🇯🇵 JPY: Jual Rp110,50 / Beli Rp108,90 <span class="rate-down-txt">▼ -0.20%</span></span>
-      <span>🇬🇧 GBP: Jual Rp19.250 / Beli Rp19.050 <span class="rate-up-txt">▲ +0.10%</span></span>
+      <span>🇺🇸 USD: Jual Rp16.630 / Beli Rp16.602 <span class="rate-up-txt">▲ +0.15%</span></span>
+      <span>🇪🇺 EUR: Jual Rp19.414 / Beli Rp19.348 <span class="rate-down-txt">▼ -0.12%</span></span>
+      <span>🇸🇬 SGD: Jual Rp12.855 / Beli Rp12.812 <span class="rate-up-txt">▲ +0.05%</span></span>
+      <span>🇯🇵 JPY: Jual Rp109,60 / Beli Rp108,70 <span class="rate-down-txt">▼ -0.20%</span></span>
+      <span>🇬🇧 GBP: Jual Rp22.243 / Beli Rp22.170 <span class="rate-up-txt">▲ +0.10%</span></span>
     </div>
   </div>
 

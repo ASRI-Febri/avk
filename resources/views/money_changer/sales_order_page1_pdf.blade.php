@@ -1,10 +1,4 @@
-@extends('layouts.pdf')
-
-@section('title')
-    {{ $fields->SONumber }}
-@endsection
-
-@section('content')    
+ 
 
     <div style="float:left;width:60%">
         
@@ -42,34 +36,7 @@
         
     </div>
 
-    <br>
-
-    {{-- <div style="float:left; width:50%">
-        <p><strong>Vendor</strong></p>
-        <p>{{ $fields->PartnerName }}</p>
-        <p>{{ $fields->PartnerStreet }}</p>
-        <p>{{ $fields->PartnerPhone }}</p>
-    </div>
-
-    <div style="float:left; width:50%; margin-bottom:5px;">       
-        <p><strong>Shipping Address</strong></p>
-        <p>{{ $fields->ShippingAddress }}</p>
-    </div>
-
-    <br/> --}}
-
-    {{-- <div style="float:left;width:60%">
-        <span class="bold" style="display:block;">Shipping Address</span>
-        <span>{{ $fields->ShippingAddress }}</span>
-
-        @if($fields->IDX_M_Project > 1)
-        <br><br>
-        <tr class="noborder">
-            <td class="td-50 noborder param-value">Project {{ $fields->ProjectName }}</td>
-            
-        </tr>
-        @endif
-    </div> --}}
+    <br>   
 
     <div style="float:left;width:25%">
         <span class="bold" style="display:block;">Customer</span>
@@ -90,38 +57,9 @@
         <span class="bold" style="display:block;">Tujuan Transaksi</span>
         <span style="display:block;">{{ $fields->TransactionPurpose }}</span>
         
-    </div>
+    </div>  
 
-    {{-- <br>
-
-    <table class="noborder nopadding">
-        <tr class="noborder nopadding">
-            <td class="td-50 bold noborder nopadding param-key">Vendor</td>
-            <td class="td-50 bold noborder nopadding param-key">Shipping Address</td>
-        </tr>
-        <tr class="noborder">
-            <td class="td-50 noborder nopadding param-value">{{ $fields->PartnerName }}</td>
-            <td class="td-50 noborder nopadding param-value">{{ $fields->ShippingAddress }}</td>
-        </tr>
-        <tr class="noborder">
-            <td class="td-50 noborder nopadding param-value">{{ $fields->PartnerStreet }}</td>
-            <td class="td-50 noborder nopadding param-key">PO Description</td>
-        </tr>
-        <tr class="noborder">
-            <td class="td-50 noborder nopadding param-value">{{ $fields->PartnerPhone }}</td>
-            <td class="td-50 noborder nopadding param-value">{{ $fields->PODescription }}</td>
-        </tr>
-        @if($fields->IDX_M_Project > 1)
-        <tr class="noborder">
-            <td class="td-50 noborder param-value">Project {{ $fields->ProjectName }}</td>
-            
-        </tr>
-        @endif
-    </table> --}}
-
-    <br>
-
-   
+    <br>   
    
     <table>
         <thead>
@@ -203,14 +141,3 @@
             </tr>
         </tbody>        
     </table>
-
-    <br>   
-    <hr>
-    <br>
-
-    <!-- Force a page break after the first copy -->
-    {{-- <div class="page-break"></div> --}}
-
-    @include('money_changer.sales_order_page1_pdf')
-
-@endsection

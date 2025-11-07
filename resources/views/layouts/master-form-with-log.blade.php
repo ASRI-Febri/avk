@@ -72,6 +72,14 @@
                                     <th scope="row"><i class="mdi mdi-calendar align-middle text-primary me-2"></i> Date :</th>
                                     <td>{{ $fields->DCreate ?? ''}}</td>
                                 </tr>
+                                <tr>
+                                    <th scope="row"><i class="mdi mdi-account align-middle text-primary me-2"></i> Last Modified</th>
+                                    <td>{{ $fields->UModified ?? ''}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><i class="mdi mdi-calendar align-middle text-primary me-2"></i> Date :</th>
+                                    <td>{{ $fields->DModified ?? ''}}</td>
+                                </tr>
                             </tbody>
                         </table>
 

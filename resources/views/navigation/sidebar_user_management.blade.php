@@ -18,55 +18,10 @@
                 <li class="menu-title">USER MANAGEMENT</li>
 
                 <li>
-                    <a href="{{ url('money-changer') }}" class="">
+                    <a href="{{ url('user-management') }}" class="">
                         <i class="fas fa-desktop"></i>
                         <span>Dashboard</span>
                     </a>
-                </li>
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <span>Transaction</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('mc-sales-order/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Baru
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-sales-order/buy-list') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Transaksi Beli
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-sales-order/sell-list') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Transaksi Jual
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-valas') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Nilai Tukar
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
-                        <i class="fas fa-list-ul"></i>
-                        <span>Report</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('mc-bank') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Bank
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-currency') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Currency
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-valas') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Valas
-                            </a>
-                        </li>
-                    </ul>
                 </li>
 
                 <li>
@@ -75,16 +30,16 @@
                         <span>Setting</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('mc-bank') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Bank
+                        <li><a href="{{ url('sm-user') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> User ID
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-currency') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Currency
+                        <li><a href="{{ url('sm-group-user') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Group ID
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-valas') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Valas
+                        <li><a href="{{ url('sm-form') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Form ID
                             </a>
                         </li>
                     </ul>

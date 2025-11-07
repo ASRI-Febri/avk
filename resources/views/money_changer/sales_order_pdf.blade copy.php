@@ -135,25 +135,7 @@
         </thead>
         <tbody>
             @if($records_detail)
-
-            @php 
-                $seq = 0; 
-
-                $subtotal_foreign_amount = 0;
-                $subtotal_base_amount = 0;			
-                
-            @endphp
-
             @foreach($records_detail as $row)
-
-            @php 
-                $seq += 1;
-                $url_delete = url('mc-sales-order-detail/delete/'.$row->IDX_T_SalesOrderDetail); 
-
-                $subtotal_foreign_amount += ($row->ForeignAmount);
-                $subtotal_base_amount += ($row->ForeignAmount  * $row->ExchangeRate);
-                
-            @endphp
             <tr>   
                 <td>{{ $row->TransactionTypeName }}</td>
                 <td>
@@ -171,10 +153,6 @@
             </tr>
             @endforeach
             @endif
-            <tr>
-                <td colspan="4" class="bold text-right">TOTAL</td>
-                <td class="bold text-right">{{ $row->BaseCurrencyID }} {{ number_format($subtotal_base_amount, 2, '.', ',') }}</td>
-            </tr>
         </tbody>        
     </table>
     
@@ -204,13 +182,148 @@
         </tbody>        
     </table>
 
-    <br>   
-    <hr>
     <br>
 
-    <!-- Force a page break after the first copy -->
-    {{-- <div class="page-break"></div> --}}
+    <table class="table noborder">
+    <thead>
+        <tr style="border-bottom: 0.5px;">        
+            <th class="noborder w-5" style="border-bottom: 1px solid; width: 5%;">No</th>    
+            <th class="noborder w-20" style="border-bottom: 1px solid; width: 20%;" scope="col">Description</th>            
+            <th class="noborder text-right w-10" style="border-bottom: 1px solid; width: 10%;" scope="col" class="text-left">Qty</th>
+            <th class="noborder text-right w-20" style="border-bottom: 1px solid; width: 10%;" scope="col" class="text-right">Foreign Amount</th>            
+            <th class="noborder text-right w-20" style="border-bottom: 1px solid; width: 10%;" scope="col" class="text-right">Rate</th>
+            <th class="noborder text-right w-20" style="border-bottom: 1px solid; width: 10%;" scope="col" class="text-right">Base Amount</th>           
+        </tr>
+    </thead>
+    <tbody>
+    @if($records_detail)
 
-    @include('money_changer.sales_order_page1_pdf')
+        @php 
+            $seq = 0; 
+
+            $subtotal_foreign_amount = 0;
+            $subtotal_base_amount = 0;			
+             
+        @endphp
+
+        @foreach($records_detail as $row)
+
+            @php 
+                $seq += 1;
+                $url_delete = url('mc-sales-order-detail/delete/'.$row->IDX_T_SalesOrderDetail); 
+
+                $subtotal_foreign_amount += ($row->ForeignAmount);
+                $subtotal_base_amount += ($row->ForeignAmount  * $row->ExchangeRate);
+                
+            @endphp
+
+            <tr class="noborder">
+                <td class="text-center noborder w-5">{{ $seq }}</td>
+                <td class="noborder w-20">
+                    <span style="display:block;">{{ $row->ValasSKU }}</span>
+                    <span style="display:block;">{{ $row->ValasName }}</span>
+                    <span style="display:block;">{{ $row->DetailNotes }}</span>
+                </td>
+                <td class="text-right noborder w-10">{{ number_format($row->Quantity,0,'.',',') }}</td>              
+                <td class="text-right noborder">{{ $row->ForeignCurrencyID . ' ' . number_format($row->ForeignAmount, 2, '.', ',') }}</td>
+                <td class="text-right noborder">{{ number_format($row->ExchangeRate, 2, '.', ',') }}</td>
+                <td class="text-right noborder">{{ $row->BaseCurrencyID . ' ' . number_format($row->ForeignAmount  * $row->ExchangeRate, 2, '.', ',') }}</td>
+            </tr>
+
+        @endforeach
+
+       <tr class="noborder">
+            <td class="noborder" colspan="6"><hr style="border: 0.5px;"></td>
+        </tr>
+        
+        <tr class="font-weight-bold noborder">
+            <td colspan="4" rowspan="2" class="noborder">
+                Catatan:
+                <br/>
+                Harap periksa kembali transaksi Anda, pengaduan setelah meninggalkan loket tidak akan kami layani.
+                <br>
+                Sesuai ketentuan Bank Indonesia PIB No 12/3/210 dan PBI No 18/20/2016, Customer wajib memberikan foto copy 
+                kartu identitas diri dan setiap transaksi minimum 25.000 USD, Customer wajib memberikan informasi 
+                tujuan transaksi (underlying)
+            </td>            
+            <td colspan="2" class="text-right text-secondary noborder bold">TOTAL {{ $row->BaseCurrencyID }} {{ number_format($subtotal_base_amount, 2, '.', ',') }}</td>   
+        </tr>
+    @endif
+    </tbody>
+    </table>
+    
+    <br>
+    
+    {{-- <table class="noborder nomargin" cellspacing="0">
+        <tr class="noborder nomargin">     
+            <td class="td-25 noborder nomargin" style="text-align: center;"></td>            
+            <td class="td-100 noborder nomargin" colspan="4" style="text-align: center;">Disetujui Oleh,</td> 
+           
+        </tr>
+        <tr class="noborder nomargin"> 
+            <td class="noborder" colspan="4" height="90px;" style="">&nbsp;</td>
+        </tr>
+        <tr class="noborder nomargin">     
+            <td class="td-35 noborder nomargin" style="text-align: center;">
+                (
+                @for($i=0; $i < 20; $i++)    
+                    &nbsp;
+                @endfor
+                )
+            </td>
+            <td class="td-30 noborder nomargin" colspan="2" style="text-align: center;">
+                (
+                @for($i=0; $i < 25; $i++)    
+                    &nbsp;
+                @endfor
+                )
+            </td>
+            <td class="td-35 noborder nomargin" colspan="2" style="text-align: center;">
+                (
+                @for($i=0; $i < 25; $i++)    
+                    &nbsp;
+                @endfor
+                )
+            </td>
+        </tr>
+        <tr class="noborder nomargin">     
+            <td class="td-35 noborder nomargin" style="text-align: center;">Supplier / Kontraktor Project</td>
+            <td class="td-30 noborder nomargin" colspan="2" style="text-align: center;"></td>
+            <td class="td-35 noborder nomargin" colspan="2" style="text-align: center;">Direktur</td>
+        </tr>
+    </table> --}}
+    
+
+
+    {{-- <table class="noborder">
+        <tr class="noborder">
+            <td class="td-15 bold noborder">Company</td>
+            <td class="td-35 noborder">{{ $fields->CompanyName }}</td>
+            <td class="td-15 bold noborder">Branch</td>
+            <td class="td-35 noborder">{{ $fields->BranchName }}</td>
+        </tr>
+        <tr class="noborder">            
+            <td class="td-15 bold noborder">Order No</td>
+            <td class="td-35 noborder">{{ $fields->PONumber }}</td>
+            <td class="td-15 bold noborder">Vendor</td>
+            <td class="td-35 noborder">{{ $fields->PartnerName }}</td>
+        </tr>
+        <tr class="noborder">            
+            <td class="td-15 bold noborder">Order Date</td>
+            <td class="td-35 noborder">{{ date('d M Y',strtotime($fields->PODate)) }}</td>
+            <td class="td-15 bold noborder">Expected Date</td>
+            <td class="td-35 noborder">{{ date('d M Y',strtotime($fields->POExpectedDate)) }}</td>           
+        </tr>        
+        <tr class="noborder">       
+            <td class="td-15 bold noborder">Notes</td>
+            <td class="td-35 noborder">{{ $fields->PODescription }}</td>                 
+        </tr>
+        <tr class="noborder">
+                        
+        </tr>
+    </table> --}}
+    <br>
+   
+    
 
 @endsection

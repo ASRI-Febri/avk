@@ -532,6 +532,8 @@ class SalesOrderController extends MyController
         $data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetail_List',$param,'list','sqlsrv');              
 
         $pdf = PDF::loadView('money_changer/sales_order_pdf', $data);
+        //$pdf->setPaper('A5','landscape');
+        $pdf->setPaper('A4','portrait');
 
         //return $pdf->download('test.pdf');        
 

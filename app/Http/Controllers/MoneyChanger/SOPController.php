@@ -34,7 +34,7 @@ class SOPController extends MyController
         $this->data['sidebar'] = 'navigation.sidebar_money_changer'; 
 
         // BREADCRUMB
-        $this->data['breads'] = array('Money Changer','PSOP'); 
+        $this->data['breads'] = array('Money Changer','SOP'); 
 
         // URL
         $this->data['url_create'] = url('mc-purchase-order/create');

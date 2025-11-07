@@ -44,14 +44,14 @@
                             <span class="dropdown-content">Money Changer</span>
                             <div class="dropdown-addon"><span class="badge badge-warning rounded-pill">*</span></div>
                         </a>
-                        <a href="{{ url('pawn') }}" class="dropdown-item">
+                        {{-- <a href="{{ url('pawn') }}" class="dropdown-item">
                             <div class="dropdown-icon"><i class="fas fa-handshake"></i></div>
                             <span class="dropdown-content">Pawn (Gadai)</span>                            
                         </a>
                         <a href="{{ url('loan') }}" class="dropdown-item">
                             <div class="dropdown-icon"><i class="fas fa-coins"></i></div>
                             <span class="dropdown-content">Pinjaman</span>                            
-                        </a>
+                        </a> --}}
                         <a href="{{ url('finance') }}" class="dropdown-item">
                             <div class="dropdown-icon"><i class="fas fa-money-bill"></i></div>
                             <span class="dropdown-content">Finance</span>                            

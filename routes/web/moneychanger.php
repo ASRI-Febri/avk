@@ -2,6 +2,20 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('display-kurs', function () {
+    return view('kurs_valas');
+});
+
+Route::get('/mc-display-kurs', 'MoneyChanger\CurrencyController@display_kurs');
+
+// CURRENCY LIST
+Route::get('/mc-currency', 'MoneyChanger\CurrencyController@inquiry');
+Route::post('/mc-currency-list', 'MoneyChanger\CurrencyController@inquiry_data');
+Route::get('/mc-currency/create', 'MoneyChanger\CurrencyController@create');
+Route::get('/mc-currency/update/{id}', 'MoneyChanger\CurrencyController@update');
+Route::get('/mc-currency/duplicate/{id}', 'MoneyChanger\CurrencyController@duplicate');
+Route::post('/mc-currency/save', 'MoneyChanger\CurrencyController@save');
+
 // VALAS LIST
 Route::get('/mc-valas', 'MoneyChanger\ValasController@inquiry');
 Route::post('/mc-valas-list', 'MoneyChanger\ValasController@inquiry_data');

@@ -24,10 +24,17 @@
                     </a>
                 </li>
 
-                <li>
+                {{-- <li>
                     <a href="{{ url('mc/kurs') }}" class="" target="_blank">
                         <i class="fas fa-desktop"></i>
                         <span>Daftar Kurs</span>
+                    </a>
+                </li> --}}
+
+                <li>
+                    <a href="{{ url('mc-display-kurs') }}" class="" target="_blank">
+                        <i class="fas fa-money-check-alt"></i>
+                        <span>Display Kurs</span>
                     </a>
                 </li>
 
@@ -38,23 +45,23 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ url('mc-sop') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Umum
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Flow Chart
                             </a>
                         </li>
                         <li><a href="{{ url('mc-sop-risk-management') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Risk Management
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Risk Management
                             </a>
                         </li>
                         <li><a href="{{ url('mc-sop-money-laundry') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Money Laundry
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Money Laundry
                             </a>
                         </li>
                         <li><a href="{{ url('mc-sop-penetapan-kurs') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Penetapan Kurs
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Penetapan Kurs
                             </a>
                         </li>
                         <li><a href="{{ url('mc-sop-perlindungan-konsumen') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> SOP Perlindungan Konsumen
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perlindungan Konsumen
                             </a>
                         </li>
                     </ul>
@@ -89,7 +96,7 @@
                     </ul>
                 </li>
 
-                <li>
+                {{-- <li>
                     <a href="javascript: void(0);" class="has-arrow ">
                         <i class="fas fa-cart-plus"></i>
                         <span>Pembelian Stok</span>
@@ -108,7 +115,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow ">
@@ -133,6 +140,10 @@
                         <span>Setting</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">   
+                        <li><a href="{{ url('mc-currency') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Currency
+                            </a>
+                        </li>
                         <li><a href="{{ url('mc-valas') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Valas
                             </a>

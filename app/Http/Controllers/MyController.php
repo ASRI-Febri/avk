@@ -45,6 +45,7 @@ class MyController extends Controller
             'login',            
             'login/validate_user',
             'logout',
+            'mc-display-kurs',
             'test'
         );
 

@@ -20,13 +20,13 @@
                     <a href="{{ url('money-changer') }}"><i class="fas fa-dollar-sign"></i> <span>Money Changer</span></a>
                 </li>
 
-                <li>
+                {{-- <li>
                     <a href="{{ url('pawn') }}"><i class="fas fa-handshake"></i> <span>Gadai</span></a>
                 </li>
 
                 <li>
                     <a href="{{ url('loan') }}"><i class="fas fa-coins"></i> <span>Pinjaman</span></a>
-                </li>
+                </li> --}}
 
                 <li>
                     <a href="{{ url('finance') }}"><i class="fas fa-money-bill"></i> <span>Finance</span></a>
