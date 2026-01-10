@@ -31,6 +31,26 @@ Route::get('/mc-valas-change/create', 'MoneyChanger\ValasChangeController@create
 Route::get('/mc-valas-change/update/{id}', 'MoneyChanger\ValasChangeController@update');
 Route::post('/mc-valas-change/save', 'MoneyChanger\ValasChangeController@save');
 
+// OPENING & CLOSING DAILY
+Route::get('/mc-open-close', 'MoneyChanger\OpenCloseController@inquiry');
+Route::post('/mc-open-close-list', 'MoneyChanger\OpenCloseController@inquiry_data');
+Route::get('/mc-open-close/create', 'MoneyChanger\OpenCloseController@create');
+Route::get('/mc-open-close/update/{id}', 'MoneyChanger\OpenCloseController@update');
+Route::post('/mc-open-close/save', 'MoneyChanger\OpenCloseController@save');
+Route::post('/mc-open-close/approve', 'MoneyChanger\OpenCloseController@approve');
+Route::post('/mc-open-close/save-approve', 'MoneyChanger\OpenCloseController@save_approve');
+Route::get('/mc-open-close/download-pdf/{id}', 'MoneyChanger\OpenCloseController@download_pdf');
+
+// OPENING & CLOSING DETAIL DAILY
+Route::get('/mc-open-close-detail', 'MoneyChanger\OpenCloseDetailController@inquiry');
+Route::post('/mc-open-close-detail-list', 'MoneyChanger\OpenCloseDetailController@inquiry_data');
+Route::post('/mc-open-close-detail/create', 'MoneyChanger\OpenCloseDetailController@create');
+Route::post('/mc-open-close-detail/update/{id}', 'MoneyChanger\OpenCloseDetailController@update');
+Route::post('/mc-open-close-detail/save', 'MoneyChanger\OpenCloseDetailController@save');
+Route::get('/mc-open-close-detail/reload/{id}', 'MoneyChanger\OpenCloseDetailController@reload'); // RELOAD TABLE AFTER SAVE
+Route::post('mc-open-close-detail/delete/{id?}', 'MoneyChanger\OpenCloseDetailController@delete');
+Route::post('/mc-open-close-detail/save-delete', 'MoneyChanger\OpenCloseDetailController@save_delete');
+
 // PURCHASE ORDER
 Route::get('/mc-purchase-order', 'MoneyChanger\PurchaseOrderController@inquiry');
 Route::post('/mc-purchase-order-list', 'MoneyChanger\PurchaseOrderController@inquiry_data');
@@ -108,6 +128,11 @@ Route::post('/mc-partner-bank/save', 'MoneyChanger\PartnerBankController@save');
 Route::post('/mc-partner-bank/delete', 'MoneyChanger\PartnerBankController@delete');
 Route::post('/mc-partner-bank/save-delete', 'MoneyChanger\PartnerBankController@save_delete');
 Route::get('/mc-partner-bank/reload/{id}', 'MoneyChanger\PartnerBankController@reload');
+
+
+
+Route::get('/download-files/{filename}', 'MoneyChanger\FileController@servePdf');
+Route::get('/show-files/{filename}', 'MoneyChanger\FileController@showPdf');
 
 Route::get('/mc-sop', 'MoneyChanger\SOPController@sop');
 Route::get('/mc-sop-risk-management', 'MoneyChanger\SOPController@sop_risk_management');

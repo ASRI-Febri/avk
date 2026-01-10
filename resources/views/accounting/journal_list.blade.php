@@ -1,4 +1,4 @@
-@extends('layouts.datatables')
+@extends('layouts.master-datatable')
 
 @section('datatables_array')
     columns: [
@@ -6,7 +6,7 @@
         { data: "IDX_M_Company", visible: false },
         { data: "CompanyName", visible: true },
         { data: "IDX_M_Branch", visible: false }, 
-        { data: "BranchName", visible: true },
+        { data: "BranchName", visible: false },
         { data: "IDX_T_JournalHeader", visible: false },
         { data: "IDX_M_Partner", visible: false },
 

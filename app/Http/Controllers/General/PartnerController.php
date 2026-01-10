@@ -282,9 +282,9 @@ class PartnerController extends MyController
         $this->data['url_search'] = url('/gn-partner-list');        
 
         // TABLE HEADER & FOOTER
-        $this->data['table_header'] = array('No', 'IDX_M_Partner', 'BarcodeMember', 'Partner ID', 'Partner Name', 
-            'IsCustomer', 'IsMember', 'IsSupplier', 'SingleIdentityNumber',
-            'TaxIdentityNumber', 'MobilePhone', 'Remarks', 'Street', 'ActiveDesc','Status','Action');         
+        $this->data['table_header'] = array('No', 'IDX_M_Partner', 'BarcodeMember', 'ID', 'Nama', 
+            'IsCustomer', 'IsMember', 'IsSupplier', 'KTP',
+            'NPWP', 'MobilePhone', 'Remarks', 'Street', 'ActiveDesc','Status','Action');         
 
         $this->data['table_footer'] = array('', 'IDX_M_Partner', 'BarcodeMember', 'PartnerID', 'PartnerName', 
             'IsCustomer', 'IsMember', 'IsSupplier', 'SingleIdentityNumber',

@@ -63,7 +63,7 @@ Route::post('/ac-journal-detail/save', 'Accounting\JournalDetailController@save'
 Route::post('/ac-journal-detail/duplicate/{id}', 'Accounting\JournalDetailController@duplicate');
 Route::post('/ac-journal-detail/save-duplicate', 'Accounting\JournalDetailController@save_duplicate');
 Route::get('/ac-journal-detail/reload/{id}', 'Accounting\JournalDetailController@reload'); // RELOAD TABLE AFTER SAVE
-Route::post('ac-journal-detail/delete/{id?}', 'Accounting\JournalDetailController@delete');
+Route::post('ac-journal-detail/delete', 'Accounting\JournalDetailController@delete');
 Route::post('/ac-journal-detail/save-delete', 'Accounting\JournalDetailController@save_delete');
 
 // JOURNAL ITEM

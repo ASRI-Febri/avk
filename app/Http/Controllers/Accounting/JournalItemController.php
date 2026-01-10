@@ -60,7 +60,7 @@ class JournalItemController extends MyController
         $this->data['table_header'] = array('No','IDX_M_Company','Company Name','IDX_M_Branch','Branch Name','IDX_T_JournalHeader','IDX_T_JournalDetail',
             'IDX_M_Partner','Business Partner','Voucher No','Journal Date','Remark Header','PostingStatus','Status',
             'COA ID','COA Desc','COADesc2','Remark Detail','OriginalCurrencyID','ODebetAmount','OCreditAmount','BaseCurrencyID',
-            'Debet Amount','Credit Amount','Action');         
+            'Debet','Credit','Action');         
 
         $this->data['table_footer'] = array('','IDX_M_Company','CompanyName','IDX_M_Branch','BranchName','IDX_T_JournalHeader','IDX_T_JournalDetail',
             'IDX_M_Partner','PartnerDesc','VoucherNo','JournalDate','RemarkHeader','PostingStatus','PostingStatusDesc',

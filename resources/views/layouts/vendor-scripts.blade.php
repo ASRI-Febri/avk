@@ -51,7 +51,8 @@
 
         var t = "rtl" === $("html").attr("dir") ? "right" : "left";
         $(".datepicker2").datepicker({
-            orientation: t,
+            //orientation: t,
+            orientation: "bottom auto",
             todayBtn: "linked",
             clearBtn: !0,
             todayHighlight: !0,
@@ -63,7 +64,8 @@
             changeYear: true,
             yearRange: '1900:+30',
             format: 'yyyy-mm-dd',
-            autoclose: true
+            autoclose: true,
+            zIndexOffset: 9999999,
         });
 
         $('.readonly').attr('readonly', true);

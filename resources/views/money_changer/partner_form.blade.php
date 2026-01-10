@@ -15,6 +15,8 @@
     <!-- HIDDEN FIELDS -->        
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>  
     <input type="hidden" id="ARAccount" name="ARAccount" value="{{ $fields->ARAccount }}"/>  
+    <input type="hidden" id="APAccount" name="APAccount" value="{{ $fields->APAccount }}"/>  
+    <input type="hidden" id="APAccount" name="APAccount" value="{{ $fields->APAccount }}"/>  
     <input type="hidden" id="APAccount" name="APAccount" value="{{ $fields->APAccount }}"/>     
     
     @if($state <> 'create')
@@ -46,8 +48,8 @@
                         <div class="tab-pane fade active show" id="card-general" role="tabpanel" aria-labelledby="#card-general-tab">
                             
                             <x-textbox-horizontal label="Kode" id="PartnerID" :value="$fields->PartnerID" placeholder="(Auto)" class="readonly mb-2" />
-                            <x-textbox-horizontal label="Prefix" id="Prefix" :value="$fields->Prefix" placeholder="(PT atau CV)" class="required mb-2" />
-                            <x-textbox-horizontal label="Nama" id="PartnerName" :value="$fields->PartnerName" placeholder="" class="required mb-2" />
+                            <x-textbox-horizontal label="Bpk/Ibu/PT/CV" id="Prefix" :value="$fields->Prefix" placeholder="(Bpk/Ibu/PT/CV)" class="required mb-2" />
+                            <x-textbox-horizontal label="Nama Lengkap" id="PartnerName" :value="$fields->PartnerName" placeholder="" class="required mb-2" />
                             <x-textbox-horizontal label="Alias" id="PartnerAlias" :value="$fields->PartnerAlias" placeholder="" class="required mb-2" />
                             <x-textbox-horizontal label="KTP" id="SingleIdentityNumber" :value="$fields->SingleIdentityNumber" placeholder="" class="required mb-2" />
                             <x-textbox-horizontal label="NPWP" id="TaxIdentityNumber" :value="$fields->TaxIdentityNumber" placeholder="" class="TaxIdentityNumber mb-2" />
@@ -70,6 +72,9 @@
 
                                         $IsMember = '';
                                         if($fields->IsMember == 'Y'){ $IsMember = 'checked'; }
+
+                                        $IsDTTOT = '';
+                                        if($fields->IsDTTOT == 'Y'){ $IsDTTOT = 'checked'; }
                                     @endphp      
                                     
                                     <div class="d-grid gap-1">
@@ -108,6 +113,10 @@
                                             <input class="form-check-input" type="checkbox" role="switch" id="IsMember" name="IsMember" {{ $IsMember }} />
                                             <label class="form-check-label" for="IsMember">is Member ?</label>
                                         </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="IsDTTOT" name="IsDTTOT" {{ $IsDTTOT }} />
+                                            <label class="form-check-label" for="IsDTTOT">is DTTOT ?</label>
+                                        </div>
                                         {{-- <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" disabled="disabled" />
                                             <label class="form-check-label" for="flexSwitchCheckDisabled">Disabled switch checkbox input</label>
@@ -120,12 +129,12 @@
                                 </div>
                             </div>
 
-                            <x-textbox-horizontal label="Barcode Member" id="BarcodeMember" :value="$fields->BarcodeMember" placeholder="" class=" mb-2" />                        
+                            {{-- <x-textbox-horizontal label="Barcode Member" id="BarcodeMember" :value="$fields->BarcodeMember" placeholder="" class=" mb-2" />                         --}}
                             <x-select-horizontal label="Gender" id="Gender" :value="$fields->Gender" class="required mb-2" :array="$dd_gender"/>
-                            <x-textbox-horizontal label="Birth Date" id="DateOfBirth" :value="$fields->DateOfBirth" placeholder="" class="required datepicker2 mt-2 mb-2" />
-                            <x-textbox-horizontal label="Place of Birth" id="PlaceOfBirth" :value="$fields->PlaceOfBirth" placeholder="" class=" mb-2" />
-                            <x-textbox-horizontal label="Credit Limit" id="CreditLimit" :value="$fields->CreditLimit" placeholder="" class="required auto mb-2" /> 
-                            <x-textbox-horizontal label="Remarks" id="Remarks" :value="$fields->Remarks" placeholder="" class=" mb-2" />                    
+                            <x-textbox-horizontal label="Tanggal Lahir" id="DateOfBirth" :value="$fields->DateOfBirth" placeholder="" class="required datepicker2 mt-2 mb-2" />
+                            <x-textbox-horizontal label="Tempat Lahir" id="PlaceOfBirth" :value="$fields->PlaceOfBirth" placeholder="" class=" mb-2" />
+                            {{-- <x-textbox-horizontal label="Credit Limit" id="CreditLimit" :value="$fields->CreditLimit" placeholder="" class="required auto mb-2" />  --}}
+                            <x-textbox-horizontal label="Keterangan" id="Remarks" :value="$fields->Remarks" placeholder="" class=" mb-2" />                    
 
 
                         </div>

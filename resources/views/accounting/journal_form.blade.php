@@ -1,7 +1,55 @@
-@extends('layouts.form')
+@extends('layouts.master-form-transaction')
 
-@section('left_header')    
-    
+@section('form-remark')
+   Journal 
+@endsection
+
+@section('action')
+
+    @if($fields->PostingStatus == 'U')
+    @include('form_helper.btn_save_header')
+    @endif
+
+    <x-btn-action>
+        
+        @if($fields->PostingStatus == 'U')
+        <a id="btn-posting" class="dropdown-item" href="#">
+            <div class="dropdown-icon">
+                <i class="fa fa-check-double"></i> 
+            </div>
+            <span class="dropdown-content">Posting</span>            
+        </a>
+        @endif
+
+        @if($fields->PostingStatus == 'P')
+        <a id="btn-unposting" class="dropdown-item text-danger" href="#">
+            <div class="dropdown-icon">
+                <i class="fas fa-undo"></i> 
+            </div>
+            <span class="dropdown-content">Unposting</span> 
+        </a>
+        @endif
+
+        <div class="dropdown-divider"></div>   
+
+        <a href="{{ url('ac-journal/download-pdf').'/'.$fields->IDX_T_JournalHeader }}" id="btn-download2-pdf" 
+            target="_blank" class="dropdown-item text-info">
+            <div class="dropdown-icon">
+                <i class="fa fa-file-pdf"></i> 
+            </div>
+            <span class="dropdown-content">Print</span>
+        </a>      
+        
+        <a id="btn-duplicate-header" class="dropdown-item text-primary" href="#" title="Duplicate this data">
+            <div class="dropdown-icon">
+                <i class="fas fa-copy"></i> 
+            </div>
+            <span class="dropdown-content">Duplicate</span>
+        </a>
+        
+    </x-btn-action>
+
+
 @endsection
 
 @section('right_header')    
@@ -46,76 +94,84 @@
     </div>
 @endsection
 
-@section('content_form')    
+@section('content-form')    
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_T_JournalHeader" name="IDX_T_JournalHeader" value="{{ $fields->IDX_T_JournalHeader }}"/>   
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>
     <input type="hidden" id="IDX_ReferenceNo" name="IDX_ReferenceNo" value="{{ $fields->IDX_ReferenceNo }}"/> 
     <input type="hidden" id="PostingStatus" name="PostingStatus" value="{{ $fields->PostingStatus }}"/> 
-    <input type="hidden" id="JournalSource" name="JournalSource" value="{{ $fields->JournalSource }}"/>    
+    <input type="hidden" id="JournalSource" name="JournalSource" value="{{ $fields->JournalSource }}"/>   
     
-    <ul class="nav nav-tabs pb-3" role="tablist">    
-        <li class="nav-item">
-        <a class="nav-link text-muted active" href="#general" role="tab" data-toggle="tab"><i class="fas fa-align-justify"></i> <strong>General</strong></a>
-        </li>
+    @if($state <> 'create')
+        <h6 class="text-secondary">{{ $fields->VoucherNo }}</h6>
+    @endif
 
-        @if($fields->IDX_T_JournalHeader <> 0)
-            <li class="nav-item">
-                <a class="nav-link text-muted" href="#journal-item" role="tab" data-toggle="tab"><i class="fas fa-align-justify"></i> <strong>Journal Item</strong></a>
-            </li>           
-        @endif
-    </ul>
+    <div class="row">
+        <div class="col-xl-12 col-md-12 col-sm-12">
 
-    <!-- Tab panes -->
-    <div class="tab-content mb-3">
-        <div role="tabpanel" class="tab-pane fade in active" id="general">            
-            <div class="card">
-                <div class="card-body">
-                    <legend><h6 class="text-muted font-weight-bold">Journal Info</h6></legend>
-                    <x-select-horizontal label="Company" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
-                    <x-select-horizontal label="Branch" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/>
-                    <x-select-horizontal label="Journal Type" id="IDX_M_JournalType" :value="$fields->IDX_M_JournalType" class="required" :array="$dd_journal_type"/>
-                    <x-textbox-horizontal label="Voucher No" id="VoucherNo" :value="$fields->VoucherNo" placeholder="Voucher No" class="readonly" />
-                    <x-textbox-horizontal label="Reference No" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="Reference No" class="required" />
-                    <x-textbox-horizontal label="Journal Date" id="JournalDate" :value="$fields->JournalDate" placeholder="Invoice Date" class="required datepicker2" />                    
-                    <x-textbox-horizontal label="Voucher Notes" id="RemarkHeader" :value="$fields->RemarkHeader" placeholder="Notes" class="required" />
+            <div class="card border">
+                <div class="card-header">
+                    
+                    <div class="nav nav-lines card-header-lines mb-0" id="card-tab-1" role="tablist">
+                        <a class="nav-item nav-link active" id="card-general-tab" data-bs-toggle="tab" href="#card-general" aria-selected="false" role="tab" tabindex="-1">
+                            <i class="fas fa-align-justify"></i> General
+                        </a>
+                        @if($state <> 'create')
+                        <a class="nav-item nav-link" id="card-detail-tab" data-bs-toggle="tab" href="#card-detail" aria-selected="false" role="tab" tabindex="-1">
+                            <i class="fas fa-list"></i> Journal Detail</a>
+                        @endif
+                    </div>
 
-                    <legend><h6 class="text-muted font-weight-bold">Business Partner</h6></legend>
-                    <x-lookup-horizontal label="Business Partner" id="PartnerDesc" :value="$fields->PartnerDesc" class="required" button="btn-find-partner"/>
                 </div>
-                
-                <hr>
-                
-                <div class="form-row m-2"> 
-                    <div class="col-12 mb-3">           
-                        @include('form_helper.btn_save_header')
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="card-general" role="tabpanel" aria-labelledby="#card-general-tab">
+                            
+                            <div class="mb-2">
+                            <x-select-horizontal label="Company" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
+                            </div>
+
+                            <div class="mb-2">
+                            <x-select-horizontal label="Profit Center" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/>
+                            </div>
+
+                            <div class="mb-2">
+                            <x-select-horizontal label="Journal Type" id="IDX_M_JournalType" :value="$fields->IDX_M_JournalType" class="required" :array="$dd_journal_type"/>
+                            </div>
+
+                            <x-textbox-horizontal label="Voucher No" id="VoucherNo" :value="$fields->VoucherNo" placeholder="(Auto)" class="readonly mb-2" />
+                            <x-textbox-horizontal label="Reference No" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="Reference No" class="required mb-2" />
+                            <x-textbox-horizontal label="Journal Date" id="JournalDate" :value="$fields->JournalDate" placeholder="Journal Date" class="required datepicker2 mb-2" />                    
+                            <x-textbox-horizontal label="Voucher Notes" id="RemarkHeader" :value="$fields->RemarkHeader" placeholder="Notes" class="required mb-2" />
+
+                            
+                            <x-lookup-horizontal label="Business Partner" id="PartnerDesc" :value="$fields->PartnerDesc" class="required" button="btn-find-partner"/>
+
+                        </div>
+
+                        @if($state <> 'create')
+                        <div class="tab-pane fade" id="card-detail" role="tabpanel" aria-labelledby="#card-detail-tab">
+                            @if($fields->PostingStatus == 'U')
+                                <x-btn-add-detail id="btn-add-detail" label="Add New" />
+                                <br><br>
+                            @endif 
+
+                            <div id="table-journal-detail" class="table-responsive">
+                                @include('accounting.journal_detail_list')            
+                            </div>  
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
-
         </div>
+    </div>
 
-        @if($fields->IDX_T_JournalHeader <> 0)
-            <div role="tabpanel" class="tab-pane fade in" id="journal-item">            
-                <div class="card">
-                    <div class="card-body">
     
-                        @if($fields->PostingStatus == 'U')
-                        <x-btn-add-detail id="btn-add-detail" label="Add New" />
-                        <br><br>
-                        @endif 
+   
 
-                        <div id="table-journal-detail" class="table-responsive">
-                            @include('accounting.journal_detail_list')            
-                        </div>  
     
-                    </div>            
-                </div>
-            </div> 
-        @endif
-
-    </div>    
 
 @endsection
 
@@ -123,10 +179,12 @@
 
     <script>
 
-        function deleteDetail(idx,item_description)
+        function deleteDetail2(idx,item_description)
         {
             //alert('Delete ' + idx);
             var url = "{{ url('ac-journal-detail/delete') }}";
+
+            //alert(url);
             
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();       

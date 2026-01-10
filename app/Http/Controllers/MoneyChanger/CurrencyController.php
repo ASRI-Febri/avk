@@ -179,7 +179,10 @@ class CurrencyController extends MyController
         if ($access == TRUE)
         {
             $this->sp_getdata = '[dbo].[USP_MC_Currency_Info]';
-            $this->data['fields'] = $this->get_detail_by_id($id)[0];           
+            $this->data['fields'] = $this->get_detail_by_id($id)[0];   
+            
+            $this->data['fields']->BuyRate = number_format($this->data['fields']->BuyRate, 2, '.',',');
+            $this->data['fields']->SellRate = number_format($this->data['fields']->SellRate, 2, '.',',');
 
             return $this->show_form($id, 'update');
         } 

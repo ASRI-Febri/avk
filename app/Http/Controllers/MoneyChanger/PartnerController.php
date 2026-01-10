@@ -118,7 +118,19 @@ class PartnerController extends MyController
 
             // SET DEFAULT VALUE
             $this->data['fields']->IDX_M_Partner = '0';    
-            $this->data['fields']->ActiveStatus = 'A';        
+            $this->data['fields']->CreditLimit = '0'; 
+            $this->data['fields']->IsCustomer = 'Y'; 
+            $this->data['fields']->BarcodeMember = '0'; 
+            $this->data['fields']->CreditLimit = '0'; 
+            $this->data['fields']->ActiveStatus = 'A';  
+            $this->data['fields']->Phone1 = '0'; 
+            $this->data['fields']->TaxIdentityNumber = '0'; 
+            $this->data['fields']->MobilePhone = '0';  
+            $this->data['fields']->ARAccount = '5'; 
+            $this->data['fields']->ARAccountDesc = '1115-001 - Piutang Usaha';
+            
+            $this->data['fields']->APAccount = '12'; 
+            $this->data['fields']->APAccountDesc = '2110-001 - Hutang Usaha';
             $this->data['fields']->RecordStatus = 'A';
             
             return $this->show_form(0, 'create');
@@ -212,14 +224,14 @@ class PartnerController extends MyController
             'Phone1' => 'required',
             'PartnerName' => 'required',
             'SingleIdentityNumber' => 'required',
-            'Email' => 'required|email:rfc,dns',
+            // 'Email' => 'required|email:rfc,dns',
             'MobilePhone' => 'required',
         ],[
             'IDX_M_Partner.required' => 'Index vendor is required',
             'Phone1.required' => 'No telp belum diisi!',
             'PartnerName.required' => 'Nama belum diisi!',
             'SingleIdentityNumber.required' => 'No KTP belum diisi',
-            'Email.required' => 'Alamat email belum diisi!',
+            // 'Email.required' => 'Alamat email belum diisi!',
             'MobilePhone.required' => 'No HP belum diisi!',
         ]);
 
@@ -233,7 +245,7 @@ class PartnerController extends MyController
             
             $param['IDX_M_Partner'] = $data['IDX_M_Partner'];
             $param['PartnerID'] = $data['PartnerID'];
-            $param['BarcodeMember'] = $data['BarcodeMember'];
+            $param['BarcodeMember'] = isset($_POST['BarcodeMember']) ? $_POST['BarcodeMember'] : '0';
             $param['Prefix'] = $data['Prefix'];
             $param['PartnerName'] = $data['PartnerName'];
             $param['PartnerAlias'] = $data['PartnerAlias'];
@@ -245,7 +257,7 @@ class PartnerController extends MyController
             $param['Email'] = $data['Email'];
             $param['Phone1'] = $data['Phone1'];
             $param['Phone2'] = $data['Phone2'];
-            $param['FaxNo'] = $data['FaxNo'];
+            $param['FaxNo'] = isset($_POST['FaxNo']) ? $_POST['FaxNo'] : '0';
             $param['MobilePhone'] = $data['MobilePhone'];
             $param['Remarks'] = $data['Remarks'];
 
@@ -253,13 +265,14 @@ class PartnerController extends MyController
             $param['IsCustomer'] = isset($_POST['IsCustomer']) ? 'Y' : 'N'; 
             $param['IsCompany'] = isset($_POST['IsCompany']) ? 'Y' : 'N'; 
             $param['IsMember'] = isset($_POST['IsMember']) ? 'Y' : 'N'; 
+            $param['IsDTTOT'] = isset($_POST['IsDTTOT']) ? 'Y' : 'N'; 
 
             $param['StartDate'] = isset($_POST['StartDate']) ? $_POST['StartDate'] : '';
             $param['EndDate'] = isset($_POST['StartDate']) ? $_POST['StartDate'] : '';
-            $param['ARAccount'] = $data['ARAccount'];
-            $param['APAccount'] = $data['APAccount'];
+            $param['ARAccount'] = isset($_POST['ARAccount']) ? $_POST['ARAccount'] : '5';
+            $param['APAccount'] = isset($_POST['APAccount']) ? $_POST['APAccount'] : '12';
             $param['ActiveStatus'] = $data['ActiveStatus'];
-            $param['CreditLimit'] = (double)str_replace(',','',$data['CreditLimit']);
+            $param['CreditLimit'] = 0; //(double)str_replace(',','',$data['CreditLimit']);
             $param['DiscountMember'] = '0.00'; //(double)str_replace(',','',$data['DiscountMember']);
             
             $param['UserID'] = 'XXX'.$this->data['user_id'];
@@ -283,8 +296,8 @@ class PartnerController extends MyController
 
         // TABLE HEADER & FOOTER
         $this->data['table_header'] = array('No', 'IDX_M_Partner', 'BarcodeMember', 'Vendor ID', 'Vendor Name', 
-            'IsCustomer', 'IsMember', 'IsSupplier', 'SingleIdentityNumber',
-            'TaxIdentityNumber', 'MobilePhone', 'Remarks', 'Street', 'ActiveDesc','Status','Action');         
+            'IsCustomer', 'IsMember', 'IsSupplier', 'KTP',
+            'NPWP', 'MobilePhone', 'Remarks', 'Street', 'ActiveDesc','Status','Action');         
 
         $this->data['table_footer'] = array('', 'IDX_M_Partner', 'BarcodeMember', 'PartnerID', 'PartnerName', 
             'IsCustomer', 'IsMember', 'IsSupplier', 'SingleIdentityNumber',

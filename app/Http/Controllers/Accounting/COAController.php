@@ -323,6 +323,34 @@ class COAController extends MyController
     // =========================================================================================
     public function search_coa(Request $request)
     {
+        $page = $request->input('page',10);			
+        $search_value = $request->input('q','');
+        
+        $param['SearchValue'] = $search_value;
+        $records = $this->exec_sp('USP_GL_COASearch_List',$param,'list','sqlsrv');
+
+        $items = array();
+        $row_array = array();
+
+        foreach ($records as $row)
+        {
+            $row_array['id'] = (double)$row->IDX_M_COA;
+            $row_array['text'] = $row->COAID . ' - ' . $row->COADesc;				            
+            
+            $row_array['IDX_M_COA'] = (double)$row->IDX_M_COA;
+            $row_array['COAID'] = $row->COAID;
+            
+            array_push($items, $row_array);	            
+        }
+
+        $result["results"] = $items;
+        $result["pagination"] = array("more" => true);
+
+        return response()->json($items); 
+    }
+
+    public function search_coa_autocomplete(Request $request)
+    {
         $search_value = $request->input('q','');          
 
         $param['SearchValue'] = $search_value;
@@ -345,7 +373,6 @@ class COAController extends MyController
         $result["rows"] = $items;
 			
         echo json_encode($items);
-
     }
 
     // ============================================ AJAX FUNCTION - CHAINED DROPDOWN ==============================================

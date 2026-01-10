@@ -226,8 +226,8 @@ class ValasController extends MyController
         $dd_finance = new DropdownFinanceController;                
         $this->data['dd_valas_change'] = (array) $dd_finance->valas_change();
 
-        $dd = new DropdownController;  
-        $this->data['dd_currency'] = (array) $dd->currency();
+        $ddf = new DropdownFinanceController;  
+        $this->data['dd_currency'] = (array) $ddf->currency();
         
 
         // URL

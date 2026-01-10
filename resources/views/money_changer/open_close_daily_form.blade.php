@@ -1,41 +1,39 @@
 @extends('layouts.master-form-transaction')
 
 @section('form-remark')
-    Transaki untuk melakukan penjualan atau pembelian valuta asing dari customer. 
-    <br> 
-    Contoh nomor SO <code>SO-100-2506-001</code>.
+    Transaki untuk melakukan perhitungan persiapan dan penutupan harian     
 @endsection
 
 @section('action')
 
     <x-btn-action>
         
-        @if($fields->SOStatus == 'D')
+        @if($fields->TransactionStatus == 'O')
         <a id="btn-approval" class="dropdown-item" href="#">
             <div class="dropdown-icon">
                 <i class="fa fa-check-double"></i> 
             </div>
-            <span class="dropdown-content">Approval</span>            
+            <span class="dropdown-content">Closing</span>            
         </a>
         @endif
 
-        @if($fields->SOStatus == 'A')
+        @if($fields->TransactionStatus == 'C')
         <a id="btn-reverse" class="dropdown-item text-danger" href="#">
             <div class="dropdown-icon">
                 <i class="fas fa-undo"></i> 
             </div>
-            <span class="dropdown-content">Reverse to Draft</span> 
+            <span class="dropdown-content">Reverse to Open</span> 
         </a>
         @endif
 
         <div class="dropdown-divider"></div>   
 
-        <a href="{{ url('mc-sales-order/download-pdf').'/'.$fields->IDX_T_SalesOrder }}" id="btn-download2-pdf" 
+        <a href="{{ url('mc-open-close/download-pdf').'/'.$fields->IDX_T_OpenCloseDaily }}" id="btn-download2-pdf" 
             target="_blank" class="dropdown-item text-info">
             <div class="dropdown-icon">
                 <i class="fa fa-file-pdf"></i>
             </div> 
-            <span class="dropdown-content">Print Nota</span>            
+            <span class="dropdown-content">Print Document</span>            
         </a>        
     </x-btn-action>
 
@@ -44,53 +42,44 @@
 @section('content-form')
 
     <!-- HIDDEN FIELDS -->
-    <input type="hidden" id="IDX_T_SalesOrder" name="IDX_T_SalesOrder" value="{{ $fields->IDX_T_SalesOrder }}"/>
-    <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>
-    <input type="hidden" id="SOStatus" name="SOStatus" value="{{ $fields->SOStatus }}"/>
-    <input type="hidden" id="IDX_M_Company" name="IDX_M_Company" value="{{ $fields->IDX_M_Company }}"/>
-    <input type="hidden" id="IDX_M_Branch" name="IDX_M_Branch" value="{{ $fields->IDX_M_Branch }}"/>
+    <input type="hidden" id="IDX_T_OpenCloseDaily" name="IDX_T_OpenCloseDaily" value="{{ $fields->IDX_T_OpenCloseDaily }}"/>    
+    <input type="hidden" id="TransactionStatus" name="TransactionStatus" value="{{ $fields->TransactionStatus }}"/>    
 
     @if($state <> 'create')
-        <h5 class="text-secondary">{{ $fields->SONumber . ' - ' . $fields->StatusDesc }}</h5>
+        <h5 class="text-secondary">{{ $fields->TransactionDate . ' - ' . $fields->StatusDesc }}</h5>
     @endif
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header card-header-bordered">
-                    <h3 class="card-title">General</h3>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-3">
-                        {{-- <x-select-horizontal label="Perusahaan" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
-                        <x-select-horizontal label="Cabang" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/> --}}
-                        <x-textbox-horizontal label="No Referensi" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="(No Quotation atau Penawaran)" class="" />
-                        <x-textbox-horizontal label="Sumber Dana" id="FundSource" :value="$fields->FundSource" placeholder="(Pribadi/Perusahaan)" class="" />
-                        <x-textbox-horizontal label="Tujuan Transaksi" id="TransactionPurpose" :value="$fields->TransactionPurpose" placeholder="(Traveling/Medical/Education/Lain2)" class="" />        
-                    </div>
-                </div>
-            </div>            
-        </div>
+    <div class="row">        
         <div class="col-md-6">
 
             <div class="card">
-                <div class="card-header card-header-bordered">
-                    <h3 class="card-title">Informasi Transaksi</h3>
-                </div>
+                
                 <div class="card-body">
-                    <div class="d-grid gap-3">
-                        <x-textbox-horizontal label="No Transaksi" id="SONumber" :value="$fields->SONumber" placeholder="(Auto)" class="readonly" />
-                        <x-textbox-horizontal label="Tanggal Transaksi" id="SODate" :value="$fields->SODate" placeholder="" class="required datepicker2" />
-                        <x-lookup-horizontal label="Konsumen" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
-                        <x-textbox-horizontal label="Keterangan" id="SONotes" :value="$fields->SONotes" placeholder="" class="required" />
+                    <div class="d-grid gap-3">                        
+                        <x-textbox-horizontal label="Tanggal Transaksi" id="TransactionDate" :value="$fields->TransactionDate" placeholder="" class="required datepicker2" />
                     </div>
                 </div>
+
             </div> 
             
         </div>
+        <div class="col-md-6">
+            <div class="card">
+                
+                <div class="card-body">
+                    <div class="d-grid gap-3">                        
+                        <x-textbox-horizontal label="Teller" id="TellerID" :value="$fields->TellerID" placeholder="" class="required" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="d-grid gap-3">
+                            </div>            
+        </div>
     </div>
 
-    @if($fields->SOStatus == 'D')
+    @if($fields->TransactionStatus == 'O')
     <div class="row"> 
         <div class="col-12 mb-2">           
             @include('form_helper.btn_save_header')
@@ -112,12 +101,12 @@
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane fade active show" id="card-detail" role="tabpanel" aria-labelledby="#card-detail-tab">                        
-                        @if($fields->SOStatus == 'D')                
-                            <x-btn-add-detail id="btn-add-detail" label="Input Transaksi" />                        
+                        @if($fields->TransactionStatus == 'O')                
+                            <x-btn-add-detail id="btn-add-detail" label="Input Valas" />                        
                         @endif
             
                         <div id="table-order-detail" class="table-responsive">
-                            @include('money_changer.sales_order_detail_list')            
+                            @include('money_changer.open_close_detail_list')            
                         </div>
                     </div>
                     <div class="tab-pane fade" id="card-log" role="tabpanel" aria-labelledby="#card-log-tab">
@@ -137,15 +126,15 @@
         function deleteDetailValas(idx,item_description)
         {
             //alert('Delete data' + idx);
-            var url = "{{ url('mc-sales-order-detail/delete') }}";
+            var url = "{{ url('mc-open-close-detail/delete') }}";
             
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();       
 
             var data = {
                 "_token": $('#_token').val(),
-                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),
-                "IDX_T_SalesOrderDetail": idx,
+                "IDX_T_OpenCloseDaily": $("#IDX_T_OpenCloseDaily").val(),
+                "IDX_T_OpenCloseDailyDetail": idx,
                 "ItemDesc": item_description
             }
             
@@ -155,15 +144,15 @@
         function editDetail(idx)
         {
             //alert('Edit data ' + idx);
-            var url = "{{ url('mc-sales-order-detail/update') }}"+'/'+idx;
+            var url = "{{ url('mc-open-close-detail/update') }}"+'/'+idx;
 
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();
 
             var data = {
                 "_token": $('#_token').val(),
-                "IDX_T_SalesOrder": $("#IDX_T_SalesOrder").val(),
-                "IDX_T_SalesOrderDetail": idx            
+                "IDX_T_OpenCloseDaily": $("#IDX_T_OpenCloseDaily").val(),
+                "IDX_T_OpenCloseDailyDetail": idx            
             }
             
             callAjaxModalView(url, data);
@@ -199,50 +188,30 @@
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
+                    IDX_T_OpenCloseDaily: $("#IDX_T_OpenCloseDaily").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-sales-order-detail/create') }}',data);            
-            });
-
-            $('#btn-add-tax').click(function()
-            {           
-                var data = {
-                    _token: $("#_token").val(),
-                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
-                }                
-
-                callAjaxModalView('{{ url('mc-sales-order-tax/create') }}',data);            
-            });
-            
-            $('#btn-add-payment').click(function()
-            {           
-                var data = {
-                    _token: $("#_token").val(),
-                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
-                }                
-
-                callAjaxModalView('{{ url('mc-sales-order-payment/create') }}',data);            
+                callAjaxModalView('{{ url('mc-open-close-detail/create') }}',data);            
             });
 
             $('#btn-approval').click(function()
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
+                    IDX_T_OpenCloseDaily: $("#IDX_T_OpenCloseDaily").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-sales-order/approve') }}',data);            
+                callAjaxModalView('{{ url('mc-open-close/approve') }}',data);            
             });
 
             $('#btn-reverse').click(function()
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
+                    IDX_T_OpenCloseDaily: $("#IDX_T_OpenCloseDaily").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-sales-order/reverse') }}',data);            
+                callAjaxModalView('{{ url('mc-open-close/reverse') }}',data);            
             });
 
             // $("#ReferenceNo").autocomplete({                
@@ -272,10 +241,10 @@
             {           
                 var data = {
                     _token: $("#_token").val(),
-                    IDX_T_SalesOrder: $("#IDX_T_SalesOrder").val(),
+                    IDX_T_OpenCloseDaily: $("#IDX_T_OpenCloseDaily").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-sales-order/duplicate') }}',data);            
+                callAjaxModalView('{{ url('mc-open-close/duplicate') }}',data);            
             });
 
         });

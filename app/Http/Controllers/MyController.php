@@ -471,6 +471,93 @@ class MyController extends Controller
     }
 
     // =======================================================================================================
+    // EXEC SP WITH MULTIPLE RECORDSET RESULT 
+    // =======================================================================================================
+    public function exec_sp_multi($sp_name, $sp_param, $connection = 'sqlsrv')
+    {
+        $pdo = DB::connection($connection)->getPdo();
+
+        $list_params = '';
+		foreach ($sp_param as $value)
+		{			
+			if (is_numeric($value)){
+				$list_params .= $value . ',';
+			} else {
+                if(substr($value,0,3) == 'XXX'){
+                    $list_params .= "'" . substr($value,3,strlen($value)-3) . "',";
+                } else {
+                    $list_params .= "'" . $value . "',";
+                }				
+			}			
+		}
+
+
+        // $list_params = '';
+        // foreach($sp_param as $key => $value) {
+        //     if(is_numeric($value)) {
+        //         $list_params .= $key . ' = ' . $value . ', ';
+        //     } else {
+        //         $list_params .= $key . " = '" . $value . "', ";
+        //     }
+        // }
+
+        // $query = "EXEC $sp_name " . substr($list_params, 0, -2);
+
+        $query = "EXEC $sp_name " . substr($list_params,0,-1); 
+
+        //echo $query;
+
+        $stmt = $pdo->prepare($query);
+
+        $exec = $stmt->execute();
+
+        if (!$exec) return $pdo->errorInfo();
+
+        // if ($isExecute) return $exec;
+
+        $results = [];
+
+        do {
+            try {
+                $results[] = $stmt->fetchAll(\PDO::FETCH_OBJ);
+            } catch (\Exception $ex) {
+                $obj = new \stdClass;
+                $obj->ReturnStatus = 'Error';
+                $obj->ReturnMessage = $ex->getMessage();
+                $obj->ReturnUrl = '';
+
+                $results[] = $obj;
+            }
+        } while ($stmt->nextRowset());
+    
+    
+        // if (1 === count($results)) return $results[0];
+        //return json_encode($results);
+        
+        // return json_encode($stmt->fetchAll(\PDO::FETCH_OBJ));
+
+        return $results;
+    }
+
+    public function validate_return($data) {
+        $length = sizeof($data);
+
+        if($length > 0) {
+            if($data[$length - 1][0]->StatusCode == 'success') {
+                return true;
+            } else if($data[$length - 1][0]->StatusCode == 'unauthorized') { 
+                return false;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    
+    // =======================================================================================================
     // EXEC SQL SERVER STORED PROCEDURED AND PARAMETERS
     // =======================================================================================================
     public function getColumnName($sql,$return_type = 'list',$connection = 'sqlsrv')

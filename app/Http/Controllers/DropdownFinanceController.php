@@ -8,6 +8,21 @@ use App\Http\Controllers\Controller;
 
 class DropdownFinanceController extends Controller
 {
+    public function currency($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Currency, CurrencyID, CurrencyName 
+                FROM MC_M_Currency 
+                WHERE RecordStatus = 'A' ORDER BY CurrencyName";
+
+        $result =  DB::connection($connection)->select($sql);     
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Currency)] = trim($row->CurrencyID) . ' - ' .trim($row->CurrencyName);
+        }
+        return $value;
+    }
+
     public function valas_change($connection = 'sqlsrv')
     {
         $sql = "SELECT IDX_M_ValasChange, ValasChangeID, ValasChangeName, ValasChangeNumber
@@ -32,7 +47,7 @@ class DropdownFinanceController extends Controller
                     MV.[UCreate],MV.[DCreate],MV.[UModified],MV.[DModified],MV.[RecordStatus], 
                     StatusDesc = CASE MV.RecordStatus WHEN 'A' THEN 'Active' ELSE 'Inactive' END
                 FROM MC_M_Valas MV
-                LEFT JOIN GN_M_Currency C ON C.IDX_M_Currency = MV.IDX_M_Currency
+                LEFT JOIN MC_M_Currency C ON C.IDX_M_Currency = MV.IDX_M_Currency
                 LEFT JOIN MC_M_ValasChange MVC ON MVC.IDX_M_ValasChange = MV.IDX_M_ValasChange";
 
         $result =  DB::connection($connection)->select($sql);     

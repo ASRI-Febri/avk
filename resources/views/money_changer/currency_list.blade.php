@@ -24,6 +24,7 @@
         { data: "CurrencyID", visible: true },
         { data: "CurrencyName", visible: true },
         { data: "CountryID", visible: false },
+        { data: "IconFlag", visible: false },
         { data: "CountryName", visible: true },       
 
         { "data": "BuyRate", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-end", 

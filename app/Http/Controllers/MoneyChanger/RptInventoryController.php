@@ -71,14 +71,16 @@ class RptInventoryController extends MyController
             // DROPDOWN
             $dd = new DropdownController;  
             $this->data['dd_branch'] = (array) $dd->branch(''); 
-            $this->data['dd_currency'] = (array) $dd->currency();
+            
 
             $ddf = new DropdownFinanceController; 
             $this->data['dd_valas'] = (array) $ddf->valas(); 
+            $this->data['dd_currency'] = (array) $ddf->currency();
                        
             // DEFAULT PARAMETER
             $this->data['IDX_M_Currency'] = 0;
             $this->data['IDX_M_Valas'] = 0;
+            $this->data['IDX_M_Branch'] = 1;
             $this->data['start_date'] = date('Y-m-01');
             $this->data['end_date'] = date('Y-m-d');
 
@@ -113,7 +115,19 @@ class RptInventoryController extends MyController
             // REPORT INFORMATION
             $this->data['page_title'] = 'Laporan Inventory Valas';   
             $this->data['title'] = 'Laporan Inventory Valas';            
-            $this->data['form_title'] = 'Laporan Inventory Valas';      
+            $this->data['form_title'] = 'Laporan Inventory Valas';    
+            
+            if($request->CurrencyName == ''){
+                $this->data['CurrencyName'] = 'Semua Mata Uang';
+            } else {
+                $this->data['CurrencyName'] = $request->CurrencyName;
+            }
+
+            if($request->ValasName == ''){
+                $this->data['ValasName'] = 'Semua Valas';
+            } else {
+                $this->data['ValasName'] = $request->ValasName;
+            }
 
             // REPORT PARAMETER ** Param sequence must refer to param sequence in stored procedure **
             $param['IDX_M_Branch'] = $this->data['fields']['IDX_M_Branch'];	

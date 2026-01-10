@@ -72,15 +72,19 @@ class RptTransactionController extends MyController
             // DROPDOWN
             $dd = new DropdownController;  
             $this->data['dd_branch'] = (array) $dd->branch(''); 
-            $this->data['dd_currency'] = (array) $dd->currency();
+            
 
             $ddf = new DropdownFinanceController; 
             $this->data['dd_valas'] = (array) $ddf->valas();
             $this->data['dd_transaction_type'] = (array) $ddf->transaction_type(); 
+            $this->data['dd_currency'] = (array) $ddf->currency();
                        
             // DEFAULT PARAMETER
             $this->data['IDX_M_Currency'] = 0;
             $this->data['IDX_M_Valas'] = 0;
+            $this->data['IDX_M_Branch'] = 1;
+            $this->data['IDX_M_Partner'] = 0;
+            $this->data['PartnerDesc'] = '';
             $this->data['IDX_M_TransactionType'] = 0;
             $this->data['start_date'] = date('Y-m-01');
             $this->data['end_date'] = date('Y-m-d');
@@ -116,7 +120,25 @@ class RptTransactionController extends MyController
             // REPORT INFORMATION
             $this->data['page_title'] = 'Laporan Transaksi Valas';   
             $this->data['title'] = 'Laporan Transaksi Valas';            
-            $this->data['form_title'] = 'Laporan Transaksi Valas';      
+            $this->data['form_title'] = 'Laporan Transaksi Valas';    
+            
+            if($request->PartnerDesc == ''){
+                $this->data['PartnerName'] = 'Semua Konsumen';
+            } else {
+                $this->data['PartnerName'] = $request->PartnerDesc;
+            }
+
+            if($request->CurrencyName == ''){
+                $this->data['CurrencyName'] = 'Semua Mata Uang';
+            } else {
+                $this->data['CurrencyName'] = $request->CurrencyName;
+            }
+
+            if($request->ValasName == ''){
+                $this->data['ValasName'] = 'Semua Valas';
+            } else {
+                $this->data['ValasName'] = $request->ValasName;
+            }
 
             // REPORT PARAMETER ** Param sequence must refer to param sequence in stored procedure **
             $param['IDX_M_Branch'] = $this->data['fields']['IDX_M_Branch'];	
@@ -124,7 +146,8 @@ class RptTransactionController extends MyController
             $param['start_date'] = $this->data['fields']['start_date'];	
             $param['end_date'] = $this->data['fields']['end_date'];	
             $param['IDX_M_Valas'] = $this->data['fields']['IDX_M_Valas'];	   
-            $param['IDX_M_Currency'] = $this->data['fields']['IDX_M_Currency'];	                  
+            $param['IDX_M_Currency'] = $this->data['fields']['IDX_M_Currency'];	 
+            $param['IDX_M_Partner'] = $this->data['fields']['IDX_M_Partner'];	                  
 
             // RECORDS
             $this->data['records'] = $this->exec_sp('USP_MC_R_Transaction',$param,'list','sqlsrv');

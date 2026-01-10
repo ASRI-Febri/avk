@@ -13,9 +13,17 @@
     <!-- BEGIN REPORT PARAMETER -->
     <div style="width:100%;">
         <div style="float:left;width:70%;">
-            <table>               
+            <table>     
                 <tr>
-                    <td class="param-key">Tanggal Transaksi</td>
+                    <td class="param-key">MATA UANG</td>
+                    <td class="param-value">: {{ $CurrencyName }}</td>
+                </tr>  
+                <tr>
+                    <td class="param-key">VALUTA ASING</td>
+                    <td class="param-value">: {{ $ValasName }}</td>
+                </tr>           
+                <tr>
+                    <td class="param-key">TANGGAL TRANSAKSI</td>
                     <td class="param-value">: {{ date('d M Y',strtotime($fields['start_date'])) . ' - ' .date('d M Y',strtotime($fields['end_date'])) }}</td>
                 </tr>  
             </table>
@@ -81,12 +89,13 @@
                     </tr> 
                     <tr>
                         <th>#</th>            
-                        <th>CABANG</th>
+                        {{-- <th>CABANG</th> --}}
                         <th>CURRENCY</th>
                         <th>SKU</th>
                         <th>NAMA BARANG</th>
                         <th>KETERANGAN</th>
                         <th>NO TRANSAKSI</th>
+                        <th>TANGGAL</th>
                         {{-- <th class="text-center">AWAL</th> --}}
                         <th class="text-center">MASUK</th>
                         <th class="text-center">KELUAR</th>
@@ -118,12 +127,23 @@
 
             <tr>
                 <td>{{ $group_number }}</td>
-                <td class="text-center">{{ $row->BranchName }}</td>
+                {{-- <td class="text-center">{{ $row->BranchName }}</td> --}}
                 <td>{{ $row->CurrencyName }}</td>
                 <td>{{ $row->ValasSKU }}</td>
                 <td>{{ $row->ValasName }}</td>
                 <td>{{ $row->TransactionTypeName }}</td>
-                <td>{{ $row->TransactionNo }}</td>
+                
+                <td>
+                    @if($row->IDX_Transaction > 0)
+                        @if($row->IDX_M_TransactionType == 3) <!-- Purchase Order Valas -->
+                            <a href="{{ url('mc-purchase-order/update') . '/' . $row->IDX_Transaction }}" target="_blank">{{ $row->TransactionNo }}</a>
+                        @else
+                            <a href="{{ url('mc-sales-order/update') . '/' . $row->IDX_Transaction }}" target="_blank">{{ $row->TransactionNo }}</a>
+                        @endif
+                    @endif
+                </td>
+
+                <td>{{ date('d M Y',strtotime($row->TransactionDate)) }}</td>
                 
                 {{-- <td class="text-right">{{ number_format($row->BB_Quantity,2,'.',',') }}</td> --}}
                 <td class="text-right">{{ number_format($row->IN_Quantity,2,'.',',') }}</td>

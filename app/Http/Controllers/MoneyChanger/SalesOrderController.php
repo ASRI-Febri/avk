@@ -65,8 +65,8 @@ class SalesOrderController extends MyController
         if ($access == TRUE)
         {       
             // TABLE HEADER & FOOTER
-            $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','Nomor SO',
-            'Tanggal SO','Business Partner', 'Catatan SO','POStatus','Status','Action');         
+            $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','Nomor Transaksi',
+            'Tanggal Transaksi','Konsumen', 'Keterangan','POStatus','Status','Action');         
 
             $this->data['table_footer'] = array('','IDX_T_SalesOrder','CompanyName','BranchName','SONumber',
             '','PartnerName','SONotes','','','Action');

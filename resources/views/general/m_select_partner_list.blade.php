@@ -2,22 +2,16 @@
 
 @section('advance-search')
     <div class="row mb-3">
-        <div class="col-4">
+        <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Kode CoA</span> 
-                <input id="COAID" type="text" class="form-control" />
+                <span class="input-group-text" id="inputGroup-sizing-default">Kode Konsumen</span> 
+                <input id="PartnerID" type="text" class="form-control" />
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Nama CoA</span> 
-                <input id="COADesc" type="text" class="form-control" />
-            </div>
-        </div>      
-        <div class="col-4">
-            <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Nama CoA 2</span> 
-                <input id="COADesc2" type="text" class="form-control" />
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Konsumen</span> 
+                <input id="PartnerName" type="text" class="form-control" />
             </div>
         </div>  
     </div>
@@ -34,8 +28,8 @@
         { data: "IsCustomer", visible: false },
         { data: "IsMember", visible: false },
         { data: "IsSupplier", visible: false },        
-        { data: "SingleIdentityNumber", visible: false }, 
-        { data: "TaxIdentityNumber", visible: false },
+        { data: "SingleIdentityNumber", visible: true }, 
+        { data: "TaxIdentityNumber", visible: true },
         { data: "MobilePhone", visible: false },   
         { data: "Remarks", visible: false },                          
         { data: "Street", visible: false }, 

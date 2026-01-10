@@ -13,9 +13,21 @@
     <!-- BEGIN REPORT PARAMETER -->
     <div style="width:100%;">
         <div style="float:left;width:70%;">
-            <table>               
+            <table>      
                 <tr>
-                    <td class="param-key">Tanggal Transaksi</td>
+                    <td class="param-key">MATA UANG</td>
+                    <td class="param-value">: {{ $CurrencyName }}</td>
+                </tr>  
+                <tr>
+                    <td class="param-key">VALUTA ASING</td>
+                    <td class="param-value">: {{ $ValasName }}</td>
+                </tr>    
+                <tr>
+                    <td class="param-key">KONSUMEN</td>
+                    <td class="param-value">: {{ $PartnerName }}</td>
+                </tr>     
+                <tr>
+                    <td class="param-key">TANGGAL TRANSAKSI</td>
                     <td class="param-value">: {{ date('d M Y',strtotime($fields['start_date'])) . ' - ' .date('d M Y',strtotime($fields['end_date'])) }}</td>
                 </tr>  
             </table>
@@ -33,10 +45,7 @@
     <!-- BEGIN REPORT DATA -->
     <table id="table-report" class="minimalistBlack">
         @php
-            $row_number = 0;  
-            
-            $row_number = 0;
-
+            $row_number = 0;              
             $group_number = 0;
             $group_a1 = '';    
             $group_a2 = '';
@@ -57,7 +66,7 @@
                 $row_number += 1;
                 $group_a1 = $row->ValasSKU;           
                 
-                //$bb_qty += $row->BB_Quantity;
+                $bb_qty += $row->Quantity;
                 $in_qty += $row->ForeignAmount;
                 $out_qty += $row->ExchangeRate;
                 $eb_qty += $row->BaseAmount;
@@ -69,7 +78,7 @@
                     <tr>
                         <td class="text-right" colspan="8"><strong>TOTAL</strong></td>
                         
-                        {{-- <td class="text-right"><strong>{{ number_format($group_bb_qty,2,'.',',') }}</strong></td> --}}
+                        <td class="text-right"><strong>{{ number_format($group_bb_qty,2,'.',',') }}</strong></td>
                         <td class="text-right"><strong>{{ number_format($group_in_qty,2,'.',',') }}</strong></td>
                         
                         <td class="text-right"><strong>{{ number_format($group_out_qty,2,'.',',') }}</strong></td>
@@ -83,12 +92,13 @@
                     </tr> 
                     <tr>
                         <th>#</th>            
-                        <th>CABANG</th>
+                        <th>KONSUMEN</th>
                         <th>CURRENCY</th>
                         <th>SKU</th>
                         <th>NAMA BARANG</th>
                         <th>KETERANGAN</th>
                         <th>NO TRANSAKSI</th>
+                        <th>TANGGAL</th>
                         {{-- <th class="text-center">AWAL</th> --}}
                         <th class="text-center">QTY</th>
                         <th class="text-center">NILAI VALAS</th>
@@ -113,7 +123,7 @@
             @php 
                 $group_number += 1;
 
-                //$group_bb_qty += $row->BB_Quantity;
+                $group_bb_qty += $row->Quantity;
                 $group_in_qty += $row->ForeignAmount;
                 $group_out_qty += $row->ExchangeRate;
                 $group_eb_qty += $row->BaseAmount;
@@ -121,14 +131,20 @@
 
             <tr>
                 <td>{{ $group_number }}</td>
-                <td class="text-center">{{ $row->BranchName }}</td>
+                <td class="text-center">{{ $row->PartnerName }}</td>
                 <td>{{ $row->CurrencyName }}</td>
                 <td>{{ $row->ValasSKU }}</td>
                 <td>{{ $row->ValasName }}</td>
                 <td>{{ $row->TransactionTypeName }}</td>
-                <td>{{ $row->TransactionNo }}</td>
+                <td>
+                    @if($row->IDX_M_TransactionType == 3) <!-- Purchase Order Valas -->
+                        <a href="{{ url('mc-purchase-order/update') . '/' . $row->IDX_Transaction }}" target="_blank">{{ $row->TransactionNo }}</a>
+                    @else
+                        <a href="{{ url('mc-sales-order/update') . '/' . $row->IDX_Transaction }}" target="_blank">{{ $row->TransactionNo }}</a>
+                    @endif 
+                </td>
+                <td>{{ date('d M Y',strtotime($row->TransactionDate)) }}</td>
                 
-                {{-- <td class="text-right">{{ number_format($row->BB_Quantity,2,'.',',') }}</td> --}}
                 <td class="text-right">{{ number_format($row->Quantity,2,'.',',') }}</td>
                 <td class="text-right">{{ $row->CurrencyID . ' ' . number_format($row->ForeignAmount,2,'.',',') }}</td>
                 
@@ -140,7 +156,7 @@
         <tr>
             <td class="text-right" colspan="8"><strong>TOTAL</strong></td>
             
-            {{-- <td class="text-right"><strong>{{ number_format($group_bb_qty,2,'.',',') }}</strong></td> --}}
+            <td class="text-right"><strong>{{ number_format($group_bb_qty,2,'.',',') }}</strong></td>
             <td class="text-right"><strong>{{ $row->CurrencyID . ' ' .  number_format($group_in_qty,2,'.',',') }}</strong></td>
             
             <td class="text-right"><strong>{{ number_format($group_out_qty,2,'.',',') }}</strong></td>

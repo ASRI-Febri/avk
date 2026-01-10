@@ -1,4 +1,4 @@
-@extends('layouts.datatables')
+@extends('layouts.master-datatable')
 
 @section('datatables_array')
     columns: [
@@ -6,7 +6,7 @@
         { data: "IDX_M_Company", visible: false },
         { data: "CompanyName", visible: false },
         { data: "IDX_M_Branch", visible: false }, 
-        { data: "BranchName", visible: true },
+        { data: "BranchName", visible: false },
         { data: "IDX_T_JournalHeader", visible: false },
         { data: "IDX_T_JournalDetail", visible: false },
         { data: "IDX_M_Partner", visible: false },
@@ -44,13 +44,13 @@
         { data: "OCreditAmount", visible: false },
         { data: "BaseCurrencyID", visible: false },
 
-        { "data": "BDebetAmount", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-right", 
+        { "data": "BDebetAmount", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-end", 
           "render": function ( data, type, row ){								
                         return commaSeparateNumber(data); 
                     }
         }, 
 
-        { "data": "BCreditAmount", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-right", 
+        { "data": "BCreditAmount", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-end", 
           "render": function ( data, type, row ){								
                         return commaSeparateNumber(data); 
                     }

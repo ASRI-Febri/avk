@@ -86,7 +86,7 @@
                     <td class="text-right"><span class="total">{{ number_format($group_balance,2,'.',',') }}</span></td>    
                 </tr>
 
-                    @if($group_project1 <> $group_project2)
+                    {{-- @if($group_project1 <> $group_project2)
                          @if($row_number > 1 && $init > 1)
                         <tr>
                             <td class="text-right" colspan="5"><strong>TOTAL</strong></td>
@@ -113,7 +113,7 @@
                             $total_balance = 0;
                             $group_project2 = $group_project1;
                         @endphp 
-                    @endif
+                    @endif --}}
                 @endif                
                  
                 <thead>

@@ -2,7 +2,7 @@
 
 @section('advance-search')
     <div class="row mb-3">
-        <div class="col-4">
+        {{-- <div class="col-4">
             <div class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default">Perusahaan</span> 
                 <input id="CompanyName" type="text" class="form-control" />
@@ -13,10 +13,10 @@
                 <span class="input-group-text" id="inputGroup-sizing-default">Cabang</span> 
                 <input id="BranchName" type="text" class="form-control" />
             </div>
-        </div>
+        </div> --}}
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">No PO</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">No Transaksi</span> 
                 <input id="SONumber" type="text" class="form-control" />
             </div>
         </div>
@@ -24,13 +24,13 @@
     <div class="row mb-3">
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Catatan PO</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Keterangan</span> 
                 <input id="SONotes" type="text" class="form-control" />
             </div>
         </div>
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Business Partner</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Konsumen</span> 
                 <input id="PartnerName" type="text" class="form-control" />
             </div>
         </div>
@@ -43,7 +43,7 @@
 
         { data: "IDX_T_SalesOrder", visible: false }, 
         { data: "CompanyName", visible: false }, 
-        { data: "BranchName", visible: true },
+        { data: "BranchName", visible: false },
         { data: "SONumber", visible: true,  "bSortable": false },
         { data: "SODate", visible: true },
         { data: "PartnerName", visible: true },

@@ -6,6 +6,124 @@
 
 @section('content')
 
+    <div class="row g-3">
+        <div class="col-xl-6 col-md-6 col-sm-12">
+
+            <div class="card">
+                <div class="card-header card-header-bordered">
+                    <h3 class="card-title">Valas</h3>
+
+                    <div class="card-addon">
+                        
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive-md">
+                        <table class="table text-nowrap mb-0">
+                            @php 
+                                $row_number = 0;
+                                $group_number = 0;
+
+                                $group_a1 = '';    
+                                $group_a2 = '';
+
+                                $group_valas_amount = 0;
+                                $total_valas_amount = 0;
+
+                                $prev_currency_id = '';
+                            @endphp
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Valas</th>
+                                    <th class="text-end">Qty</th>
+                                    <th class="text-end">Valas Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($records_stock)   
+                                    
+                                    @foreach($records_stock as $row)
+                                    @php
+                                        $row_number += 1;
+                                        $group_a1 = $row->CurrencyID;           
+                
+                                        $total_valas_amount += ($row->EB_Quantity * $row->ValasChangeNumber);
+                                    @endphp 
+
+                                    @if($group_a1 <> $group_a2)
+
+                                        @if($row_number > 1)
+                                            <tr>
+                                                <td class="text-end" colspan="3"><strong>TOTAL</strong></td>
+                                                <td class="text-end"><strong>{{ $prev_currency_id   . ' ' . number_format($group_valas_amount,2,'.',',') }}</strong></td>
+                                            </tr>
+                                        @endif 
+
+                                        @php
+                                            $group_number = 0;
+                                            $group_valas_amount = 0;
+
+                                            $group_a2 = $group_a1;
+                                        @endphp 
+                                    @endif 
+
+                                    @php 
+                                        $group_number += 1;
+
+                                        $group_valas_amount += ($row->EB_Quantity * $row->ValasChangeNumber);
+                                        $prev_currency_id = $row->CurrencyID;
+                                    @endphp
+
+                                    <tr>
+                                        <td>{{ $row_number }}</td>
+                                        <td>{{ $row->ValasName }}</td>
+                                        <td class="text-end">{{ number_format($row->EB_Quantity,0,'.',',') }}</td>
+                                        <td class="text-end">{{ $row->CurrencyID . ' ' . number_format($row->EB_Quantity * $row->ValasChangeNumber,0,'.',',') }}</td>
+                                    </tr>
+                                    @endforeach
+                                @endif 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-xl-6 col-md-6 col-sm-12">
+
+            <div class="card">
+                <div class="card-header card-header-bordered">
+                    <h3 class="card-title">Top 10 Sales by Valas</h3>
+
+                    <div class="card-addon">
+                        
+                    </div>
+                </div>
+                <div class="card-body">
+
+                </div>
+            </div>
+
+        </div>
+        <div class="col-xl-6 col-md-6 col-sm-12">
+
+            <div class="card">
+                <div class="card-header card-header-bordered">
+                    <h3 class="card-title">Top 10 Sales by Customer</h3>
+
+                    <div class="card-addon">
+                        
+                    </div>
+                </div>
+                <div class="card-body">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     {{-- <div class="row">
         <div class="col-md-6 col-sm-12">
             <div class="card">

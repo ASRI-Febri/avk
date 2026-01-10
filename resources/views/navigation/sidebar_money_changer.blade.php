@@ -44,24 +44,24 @@
                         <span>SOP</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('mc-sop') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Flow Chart
+                        <li><a href="{{ url('show-files/so-tupoksi.pdf') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Struktur Organisasi
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-sop-risk-management') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Risk Management
+                        <li><a href="{{ url('show-files/sop-daily-operation.pdf') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Operasional Harian
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-sop-money-laundry') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Money Laundry
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-sop-penetapan-kurs') }}" target="_blank">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Penetapan Kurs
-                            </a>
-                        </li>
-                        <li><a href="{{ url('mc-sop-perlindungan-konsumen') }}" target="_blank">
+                        <li><a href="{{ url('show-files/sop-perlindungan-konsumen.pdf') }}" target="_blank">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perlindungan Konsumen
+                            </a>
+                        </li>
+                        <li><a href="{{ url('show-files/sop-manajemen-risiko.pdf') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Manajemen Risiko
+                            </a>
+                        </li>
+                        <li><a href="{{ url('show-files/sop-apu-ppt-pppspm.pdf') }}" target="_blank">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> APU PPT PPPSPM
                             </a>
                         </li>
                     </ul>
@@ -79,6 +79,10 @@
                         </li>
                         <li><a href="{{ url('mc-partner') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Customer
+                            </a>
+                        </li>
+                        <li><a href="{{ url('mc-open-close') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Opening & Closing
                             </a>
                         </li>
                         <li><a href="{{ url('mc-sales-order/create') }}">
@@ -120,15 +124,16 @@
                 <li>
                     <a href="javascript: void(0);" class="has-arrow ">
                         <i class="fas fa-list-ul"></i>
-                        <span>Report</span>
+                        <span>Laporan</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ url('mc-rpt-transaction') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Transaction by Period
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Jual Beli Harian
                             </a>
                         </li>
+                        
                         <li><a href="{{ url('mc-rpt-inventory') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Valas Inventory
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Stok Valas
                             </a>
                         </li>                        
                     </ul>

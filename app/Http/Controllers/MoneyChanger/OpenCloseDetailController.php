@@ -15,7 +15,7 @@ use PDF;
 use App\File;
 use Image;
 
-class SalesOrderDetailController extends MyController
+class OpenCloseDetailController extends MyController
 {   
     // =========================================================================================
     // CONSTRUCTOR
@@ -26,31 +26,31 @@ class SalesOrderDetailController extends MyController
         $this->table_name = '';    
         
         // FORM TITLE
-        $this->data['module_name'] = 'Procurement';
+        $this->data['module_name'] = 'Money Changer';
         $this->data['form_title'] = 'Transaction Detail';
 
         // NAVIGATION
-        $this->data['navbar'] = 'navigation.navbar_procurement';     
-        $this->data['sidebar'] = 'navigation.sidebar_procurement'; 
+        $this->data['navbar'] = 'navigation.navbar_money_changer';     
+        $this->data['sidebar'] = 'navigation.sidebar_money_changer';
 
         // BREADCRUMB
         $this->data['breads'] = array('Transaction','Transaction Detail'); 
 
         // URL
-        $this->data['url_create'] = url('mc-sales-order-detail/create');
-        $this->data['url_search'] = url('mc-sales-order-detail-list');           
-        $this->data['url_update'] = url('mc-sales-order-detail/update/'); 
-        $this->data['url_cancel'] = url('mc-sales-order-detail'); 
+        $this->data['url_create'] = url('mc-open-close-detail/create');
+        $this->data['url_search'] = url('mc-open-close-detail-list');           
+        $this->data['url_update'] = url('mc-open-close-detail/update/'); 
+        $this->data['url_cancel'] = url('mc-open-close-detail'); 
 
         parent::__construct($request);
     }
 
-    public function reload($IDX_T_SalesOrder,Request $request)
+    public function reload($IDX_T_OpenCloseDaily,Request $request)
     {   
-        $param['IDX_T_SalesOrder'] = $IDX_T_SalesOrder;
-        $this->data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetail_List',$param,'list','sqlsrv');        
+        $param['IDX_T_OpenCloseDaily'] = $IDX_T_OpenCloseDaily;
+        $this->data['records_detail'] = $this->exec_sp('USP_MC_OpenCloseDailyDetail_List',$param,'list','sqlsrv');        
         
-        return view('money_changer/sales_order_detail_list', $this->data);
+        return view('money_changer/open_close_detail_list', $this->data);
     }
 
     // =========================================================================================
@@ -65,7 +65,7 @@ class SalesOrderDetailController extends MyController
         array_push($this->data['breads'],'List');       
 
         // TABLE HEADER & FOOTER
-        $this->data['table_header'] = array('No', 'IDX_T_SalesOrder', 'IDX_M_Company', 'IDX_M_Branch', 'IDX_M_Partner', 
+        $this->data['table_header'] = array('No', 'IDX_T_OpenCloseDaily', 'IDX_M_Company', 'IDX_M_Branch', 'IDX_M_Partner', 
             'PO Number', 'CompanyName', 'Branch Name', 'Vendor',
             'Reference No', 'PO Date', 'PO Description', 'POStatus', 'Status','Action');         
 
@@ -93,11 +93,11 @@ class SalesOrderDetailController extends MyController
         $array_filter['PODescription'] = $request->input('PODescription'); 
                 
         // SET STORED PROCEDURE
-        $this->sp_getinquiry = 'dbo.[USP_MC_SalesOrderItem_List]';
+        $this->sp_getinquiry = 'dbo.[USP_MC_OpenCloseDailyItem_List]';
 
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
-        $this->array_column = array('RowNumber', 'IDX_T_SalesOrder', 'IDX_M_Company', 'IDX_M_Branch', 'IDX_M_Partner', 
+        $this->array_column = array('RowNumber', 'IDX_T_OpenCloseDaily', 'IDX_M_Company', 'IDX_M_Branch', 'IDX_M_Partner', 
             'PONumber', 'CompanyName', 'BranchName', 'PartnerName',
             'ReferenceNo', 'PODate', 'PODescription', 'POStatus', 'StatusDesc');
 
@@ -125,12 +125,12 @@ class SalesOrderDetailController extends MyController
 
         if ($access == TRUE) {
 
-            $this->sp_getdata = '[dbo].[USP_MC_SalesOrderDetail_Info]';
+            $this->sp_getdata = '[dbo].[USP_MC_OpenCloseDailyDetail_Info]';
             $this->data['fields'] = (object) $this->get_detail_by_id(0);
 
             // SET DEFAULT VALUE
-            $this->data['fields']->IDX_T_SalesOrderDetail = '0';
-            $this->data['fields']->IDX_T_SalesOrder = $request->IDX_T_SalesOrder;  
+            $this->data['fields']->IDX_T_OpenCloseDailyDetail = '0';
+            $this->data['fields']->IDX_T_OpenCloseDaily = $request->IDX_T_OpenCloseDaily;  
             $this->data['fields']->ForeignAmount = '0.00';
             $this->data['fields']->Quantity = '0.00';            
             $this->data['fields']->RecordStatus = 'A';
@@ -162,17 +162,12 @@ class SalesOrderDetailController extends MyController
 
         if ($access == TRUE)
         {
-            $this->sp_getdata = '[dbo].[USP_MC_SalesOrderDetail_Info]';
+            $this->sp_getdata = '[dbo].[USP_MC_OpenCloseDailyDetail_Info]';
             $this->data['fields'] = $this->get_detail_by_id($id)[0];
 
             // DEFAULT VALUE & FORMAT
-            //$this->data['fields']->ItemLabel = $this->data['fields']->ItemSKU . ' - ' . $this->data['fields']->ItemName; 
-            //$this->data['fields']->PODate = date('Y-m-d', strtotime($this->data['fields']->PODate));
-            //$this->data['fields']->POExpectedDate = date('Y-m-d', strtotime($this->data['fields']->POExpectedDate));
-            $this->data['fields']->ExchangeRate = number_format($this->data['fields']->ExchangeRate,2,'.',',');
-            $this->data['fields']->Quantity = number_format($this->data['fields']->Quantity,2,'.',',');
-            //$this->data['fields']->UnitPrice = number_format($this->data['fields']->UnitPrice,2,'.',',');
-           
+            $this->data['fields']->OpenQty = number_format($this->data['fields']->OpenQty,2,'.',',');
+            $this->data['fields']->CloseQty = number_format($this->data['fields']->CloseQty,2,'.',',');
 
             return $this->show_form($id, 'update');
         } 
@@ -190,17 +185,17 @@ class SalesOrderDetailController extends MyController
         // DROPDOWN
         $ddf = new DropdownFinanceController; 
         $this->data['dd_valas'] = (array) $ddf->valas(); 
-        $this->data['dd_transaction_type'] = (array) $ddf->transaction_type(); 
+        //$this->data['dd_transaction_type'] = (array) $ddf->transaction_type(); 
 
         // RECORDS
         if($state !== 'create')
         {
-            //$param['IDX_T_SalesOrder'] = $this->data['fields']->IDX_T_SalesOrder;
-            //$this->data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetailDetail_List',$param,'list','sqlsrv');             
+            //$param['IDX_T_OpenCloseDaily'] = $this->data['fields']->IDX_T_OpenCloseDaily;
+            //$this->data['records_detail'] = $this->exec_sp('USP_MC_OpenCloseDailyDetailDetail_List',$param,'list','sqlsrv');             
         }
 
         // URL
-        $this->data['url_save_modal'] = url('/mc-sales-order-detail/save');
+        $this->data['url_save_modal'] = url('/mc-open-close-detail/save');
        
 
         // BUTTON SAVE
@@ -209,8 +204,8 @@ class SalesOrderDetailController extends MyController
         $this->data['button_change_status'] = '';      
 
         // VIEW        
-        $this->data['form_remark'] = 'Pilih jenis transaksi jual atau beli dan jumlah valas';        
-        $this->data['view'] = 'money_changer/sales_order_detail_form';
+        $this->data['form_remark'] = 'Pilih valas dan edit jumlah quantity';        
+        $this->data['view'] = 'money_changer/open_close_daily_detail_form';
         return view($this->data['view'], $this->data);
     }
 
@@ -219,25 +214,23 @@ class SalesOrderDetailController extends MyController
     // =========================================================================================
     public function save(Request $request)
     {
-        $this->sp_create = '[dbo].[USP_MC_SalesOrderDetail_Save]';
-        $this->sp_update = '[dbo].[USP_MC_SalesOrderDetail_Save]';
+        $this->sp_create = '[dbo].[USP_MC_OpenCloseDailyDetail_Save]';
+        $this->sp_update = '[dbo].[USP_MC_OpenCloseDailyDetail_Save]';
         $this->next_action = '';
-        $this->next_url = url('/mc-sales-order-detail/reload');
+        $this->next_url = url('/mc-open-close-detail/reload');
 
         $validator = Validator::make($request->all(), [
-            'IDX_T_SalesOrder' => 'required',
+            'IDX_T_OpenCloseDaily' => 'required',
             'IDX_M_Valas' => 'required',
-            'IDX_M_TransactionType' => 'required',
-            'ForeignAmount' => 'required',
-            'ExchangeRate' => 'required',
-            'IDX_T_SalesOrderDetail' => 'required',
+            'IDX_T_OpenCloseDailyDetail' => 'required',
+            'OpenQty' => 'required',
+            'CloseQty' => 'required',            
         ],[
-            'IDX_T_SalesOrder.required' => 'Index PO is required',
-            'IDX_M_Valas.required' => 'Valas belum diisi!',
-            'IDX_M_TransactionType.required' => 'Jenis transaksi belum diisi!',
-            'ForeignAmount.required' => 'Jumlah Valas belum diisi',
-            'ExchangeRate.required' => 'Nilai tukar belum diisi!',
-            'IDX_T_SalesOrderDetail.required' => 'Index transaksi belum diisi!',
+            'IDX_T_OpenCloseDaily.required' => 'Index header is required',
+            'IDX_M_Valas.required' => 'Valas belum diisi!',            
+            'OpenQty.required' => 'Opening qty belum diisi',
+            'CloseQty.required' => 'Closing qty belum diisi!',
+            'IDX_T_OpenCloseDailyDetail.required' => 'Index transaksi belum diisi!',
         ]);
 
         if ($validator->fails()) {
@@ -248,14 +241,14 @@ class SalesOrderDetailController extends MyController
             
             $state = $data['state'];
             
-            $param['IDX_T_SalesOrderDetail'] = $data['IDX_T_SalesOrderDetail'];
-            $param['IDX_T_SalesOrder'] = $data['IDX_T_SalesOrder'];
-            $param['IDX_M_Valas'] = $data['IDX_M_Valas'];
-            $param['IDX_M_Tax'] = 0;     
-            $param['IDX_M_TransactionType'] = $data['IDX_M_TransactionType'];
-            $param['Quantity'] = (double)str_replace(',','',$data['Quantity']);       
-            $param['ForeignAmount'] = (double)str_replace(',','',$data['ForeignAmount']);
-            $param['ExchangeRate'] = (double)str_replace(',','',$data['ExchangeRate']);            
+            $param['IDX_T_OpenCloseDailyDetail'] = $data['IDX_T_OpenCloseDailyDetail'];
+            $param['IDX_T_OpenCloseDaily'] = $data['IDX_T_OpenCloseDaily'];
+            $param['IDX_M_Valas'] = $data['IDX_M_Valas'];                          
+            $param['OpenQty'] = (double)str_replace(',','',$data['OpenQty']);       
+            $param['InQty'] = (double)str_replace(',','',$data['InQty']);
+            $param['OutQty'] = (double)str_replace(',','',$data['OutQty']);  
+            $param['CloseQty'] = (double)str_replace(',','',$data['CloseQty']);  
+            $param['DiffQty'] = (double)str_replace(',','',$data['DiffQty']);   
             $param['DetailNotes'] = $data['DetailNotes'];           
             
             $param['UserID'] = 'XXX'.$this->data['user_id'];
@@ -272,22 +265,22 @@ class SalesOrderDetailController extends MyController
     {
         $this->data['form_desc'] = 'Delete Data';        
 
-        $this->data['item_index'] = $request->IDX_T_SalesOrderDetail;
+        $this->data['item_index'] = $request->IDX_T_OpenCloseDailyDetail;
         $this->data['item_description'] = $request->ItemDesc;
 
         $this->data['state'] = 'delete'; 
 
         // URL SAVE
-        $this->data['url_save_modal'] = url('mc-sales-order-detail/save-delete');
+        $this->data['url_save_modal'] = url('mc-open-close-detail/save-delete');
 
         return view('general/delete_detail_form', $this->data);
     }
 
     public function save_delete(Request $request)
     {
-        $this->sp_delete = '[dbo].[USP_MC_SalesOrderDetail_Delete]';
+        $this->sp_delete = '[dbo].[USP_MC_OpenCloseDailyDetail_Delete]';
         $this->next_action = 'reload';
-        $this->next_url = url('/mc-sales-order-detail/reload');
+        $this->next_url = url('/mc-open-close-detail/reload');
 
         $validator = Validator::make($request->all(),[            
             'item_index' => 'required',
@@ -301,7 +294,7 @@ class SalesOrderDetailController extends MyController
             
             $state = 'delete';
             
-            $param['IDX_T_SalesOrderDetail'] = $data['item_index'];            
+            $param['IDX_T_OpenCloseDailyDetail'] = $data['item_index'];            
             
             //$param['UserID'] = $this->data['user_id'];
             //$param['RecordStatus'] = 'A';            

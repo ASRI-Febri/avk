@@ -81,20 +81,10 @@ class HomeController extends MyController
         $this->data['sidebar'] = 'navigation.sidebar_money_changer'; 
 
         // // RECORDS
-        // $sql_po = ' SELECT TOP 10 IDX_T_PurchaseOrder, PONumber, MP.PartnerName, PODate, PODescription
-        //             FROM PR_T_PurchaseOrder PO
-        //             LEFT JOIN GN_M_Partner MP ON MP.IDX_M_Partner = PO.IDX_M_Partner
-        //             WHERE PO.IDX_M_DocumentType = 8
-        //             ORDER BY IDX_T_PurchaseOrder DESC';
-
-        // $sql_spk = ' SELECT TOP 10 IDX_T_PurchaseOrder, PONumber, MP.PartnerName, PODate, PODescription
-        // FROM PR_T_PurchaseOrder PO
-        // LEFT JOIN GN_M_Partner MP ON MP.IDX_M_Partner = PO.IDX_M_Partner
-        // WHERE PO.IDX_M_DocumentType = 9
-        // ORDER BY IDX_T_PurchaseOrder DESC';
-
-        // $this->data['records_po'] = $this->exec_sql($sql_po, 'list', 'sqlsrv'); 
-        // $this->data['records_spk'] = $this->exec_sql($sql_spk, 'list', 'sqlsrv');
+        $param['AsOfDate'] = date('Y-m-d');   
+        $this->data['records_stock'] = $this->exec_sp('USP_MC_R_Dashboard_Stock',$param,'list','sqlsrv');
+        //$this->data['records_sales_by_valas'] = $this->exec_sp('USP_MC_R_Dashboard_SalesValas',$param,'list','sqlsrv');
+        //$this->data['records_sales_by_partner'] = $this->exec_sp('USP_MC_R_Dashboard_SalesPartner',$param,'list','sqlsrv');
 
         // URL
         $this->data['url_save_header'] = '#';       

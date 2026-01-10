@@ -5,8 +5,8 @@
             <th scope="col">Project</th>           
             <th scope="col">COA</th>
             <th scope="col">Remark</th>
-            <th scope="col">Debet</th>
-            <th scope="col">Credit</th>
+            <th scope="col" class="text-end">Debet</th>
+            <th scope="col" class="text-end">Credit</th>
 
             @if(!isset($show_action) || $show_action == TRUE)
             <th scope="col" class="text-center">Action</th>
@@ -26,7 +26,7 @@
 
             @php 
                 $seq += 1;
-                $url_delete = url('ac-journal-detail/delete/'.$row->IDX_T_JournalDetail);       
+                //$url_delete = url('ac-journal-detail/delete/'.$row->IDX_T_JournalDetail);       
                 $groupdebet += $row->BDebetAmount;
                 $groupcredit += $row->BCreditAmount;
             @endphp
@@ -35,22 +35,22 @@
                 <td>{{ $seq }}</td>   
                 
                 <td>                    
-                    <span>{{ $row->ProjectName }}</span>
+                    <span>{{ $row->ProjectName ?? '' }}</span>
                 </td>   
                 
                 <td>                    
                     <span>{{ $row->COAID . ' - ' . $row->COADesc }}</span>
                 </td>               
 
-                <td>                    
+                <td class="w-40">                    
                     <span>{{ $row->RemarkDetail }}</span>
                 </td>
 
-                <td class="text-right">                    
+                <td class="text-end">                    
                     <span>{{ number_format($row->BDebetAmount,2,'.',',') }}</span>
                 </td>
                 
-                <td class="text-right">                    
+                <td class="text-end">                    
                     <span>{{ number_format($row->BCreditAmount,2,'.',',') }}</span>
                 </td>
 
@@ -59,7 +59,7 @@
                     @if($row->PostingStatus == 'U')
                     <div class="input-group-prepend text-center">
                         <x-btn-edit-detail :id="$row->IDX_T_JournalDetail" />
-                        <x-btn-delete-detail :id="$row->IDX_T_JournalDetail" :label="$row->COADesc" />  
+                        <x-btn-delete-detail :id="$row->IDX_T_JournalDetail" :label="$row->COADesc" function="deleteDetail2"/>  
                         <x-btn-duplicate-detail :id="$row->IDX_T_JournalDetail" />            
                     </div>
                     @endif
@@ -69,13 +69,13 @@
         @endforeach
         <tr>
             <td><td><td></td>
-            <td class="text-right">                    
+            <td class="text-end">                    
                     <span style="font-weight:bold">TOTAL</span>
                 </td>
-            <td class="text-right">                    
+            <td class="text-end">                    
                 <span style="font-weight:bold">{{ number_format($groupdebet,2,'.',',') }}</span>
             </td>
-            <td class="text-right">                    
+            <td class="text-end">                    
                 <span style="font-weight:bold">{{ number_format($groupcredit,2,'.',',') }}</span>
             </td>
             <td></td>

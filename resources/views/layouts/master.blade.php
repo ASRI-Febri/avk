@@ -12,6 +12,12 @@
 
     <!-- include head css -->
     @include('layouts.head-css')
+
+    <!-- DATEPICKER POSITION -->	
+	<style>		
+		.datepicker2 { z-index: 10000 !important; }
+    </style>
+
 </head>
 
 <body>

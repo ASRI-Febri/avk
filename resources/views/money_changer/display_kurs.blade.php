@@ -132,10 +132,10 @@
                 @if($records)
                 @foreach($records as $row)
                 <tr>
-                    <td style="background: rgb(206, 205, 205);"><span class="{{ $row->IconFlag }}"></span>&nbsp; {{ $row->CountryName }}</td>
-                    <td style="background: rgb(206, 205, 205);">{{ $row->CurrencyID }}</td>
-                    <td style="background: rgb(206, 205, 205);">{{ number_format($row->SellRate,2,'.',',') }}</td>
-                    <td style="background: rgb(206, 205, 205);">{{ number_format($row->BuyRate,2,'.',',') }}</td>
+                    <td style="background: rgb(248, 243, 243);"><span class="{{ $row->IconFlag }}"></span>&nbsp; {{ $row->CountryName }}</td>
+                    <td style="background: rgb(248, 243, 243);">{{ $row->CurrencyID }}</td>
+                    <td style="background: rgb(248, 243, 243);">{{ number_format($row->SellRate,2,'.',',') }}</td>
+                    <td style="background: rgb(248, 243, 243);">{{ number_format($row->BuyRate,2,'.',',') }}</td>
                 </tr>
                 @endforeach
                 @endif

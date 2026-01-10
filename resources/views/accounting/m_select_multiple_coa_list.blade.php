@@ -1,4 +1,4 @@
-@extends('layouts.datatables_modal')
+@extends('layouts.master-datatable-modal')
 
 @section('datatables_array')
 

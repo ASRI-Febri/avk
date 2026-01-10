@@ -1,4 +1,4 @@
-@extends('layouts.form')
+@extends('layouts.master-form-with-log')
 
 @section('right_header')    
     {{-- @include('form_helper.btn_save_header') --}}
@@ -8,7 +8,7 @@
     @endif 
 @endsection
 
-@section('content_form')  
+@section('content-form')  
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_M_COAGroup3" name="IDX_M_COAGroup3" value="{{ $fields->IDX_M_COAGroup3 }}"/> 
@@ -20,7 +20,11 @@
     <x-textbox-horizontal label="Group 3 - Name 2" id="COAGroup3Name2" :value="$fields->COAGroup3Name2" placeholder="" class="required" />    
 
     <x-checkbox-horizontal id="add-new-after-save" name="add-new-after-save" label="add new data after save ?" :value="''" checked="" />
-    <br><br>
-    @include('form_helper.btn_save_header')
+    <br>
+    <div class="row"> 
+        <div class="col-12">           
+            @include('form_helper.btn_save_header')
+        </div>
+    </div>
 
 @endsection

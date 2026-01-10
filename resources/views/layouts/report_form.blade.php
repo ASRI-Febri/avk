@@ -72,6 +72,20 @@
             $("input:text").focus(function(){ 
                 $(this).select(); 
             });
+
+            $('#btn-find-partner').click(function(){
+                
+                var data = {
+                    _token: $("#_token").val(),  
+                    target_index: 'IDX_M_Partner',
+                    target_name: 'PartnerDesc'                  
+                }              
+
+                callAjaxModalView('{{ url('/gn-select-partner') }}',data);                
+            });
+            
         });
     </script>
+
+    @yield('report-script')
 @endsection
