@@ -42,8 +42,8 @@
                 <td class="bold">NO</td>
                 <td class="bold">KETERANGAN</td>
                 <td class="bold text-right">AWAL</td>
-                <td class="bold text-right">BELI</td>
-                <td class="bold text-right">JUAL</td>
+                {{-- <td class="bold text-right">BELI</td>
+                <td class="bold text-right">JUAL</td> --}}
                 <td class="bold text-right">AKHIR</td>
             </tr>
         </thead>
@@ -81,8 +81,8 @@
                     <tr>
                         <td colspan="2" class="text-right"><strong>SUB TOTAL {{  $prev_group }}</strong></td>
                         <td class="text-right"><strong>{{ $prev_group . ' ' . number_format($subtotal_open_qty, 2, '.', ',') }}</strong></td>
-                        <td class="text-right"><strong>{{ $prev_group . ' ' . number_format($subtotal_in_qty, 2, '.', ',') }}</strong></td>
-                        <td class="text-right"><strong>{{ $prev_group . ' ' . number_format($subtotal_out_qty, 2, '.', ',') }}</strong></td>
+                        {{-- <td class="text-right"><strong>{{ $prev_group . ' ' . number_format($subtotal_in_qty, 2, '.', ',') }}</strong></td>
+                        <td class="text-right"><strong>{{ $prev_group . ' ' . number_format($subtotal_out_qty, 2, '.', ',') }}</strong></td> --}}
                         <td class="text-right"><strong>{{ $prev_group . ' ' . number_format($subtotal_close_qty, 2, '.', ',') }}</strong></td>
                     </tr>
                 @endif
@@ -122,14 +122,14 @@
                     <span style="display:block">{{ 'QTY: ' . number_format($row->OpenQty, 2, '.', ',') }}</span>
                     <span style="display:block">{{ $row->CurrencyID . ' ' . number_format($row->OpenValue, 2, '.', ',') }}</span>
                 </td>
-                <td class="text-right">
+                {{-- <td class="text-right">
                     <span style="display:block">{{ 'QTY: ' . number_format($row->InQty, 2, '.', ',') }}</span>
                     <span style="display:block">{{ $row->CurrencyID . ' ' . number_format($row->InValue, 2, '.', ',') }}</span>
                 </td>
                 <td class="text-right">
                     <span style="display:block">{{ 'QTY: ' . number_format($row->OutQty, 2, '.', ',') }}</span>
                     <span style="display:block">{{ $row->CurrencyID . ' ' . number_format($row->OutValue, 2, '.', ',') }}</span>
-                </td>
+                </td> --}}
                 <td class="text-right">
                     <span style="display:block">{{ 'QTY: ' . number_format($row->CloseQty, 2, '.', ',') }}</span>
                     <span style="display:block">{{ $row->CurrencyID . ' ' . number_format($row->CloseValue, 2, '.', ',') }}</span>
@@ -155,8 +155,8 @@
         <tr class="font-weight-bold">
             <td colspan="2" class="text-right"><strong>SUB TOTAL {{ $row->CurrencyID }}</strong></td>
             <td class="text-right"><strong>{{ $row->CurrencyID . ' ' . number_format($subtotal_open_qty, 2, '.', ',') }}</strong></td>
-            <td class="text-right"><strong>{{ $row->CurrencyID . ' ' . number_format($subtotal_in_qty, 2, '.', ',') }}</strong></td>
-            <td class="text-right"><strong>{{ $row->CurrencyID . ' ' . number_format($subtotal_out_qty, 2, '.', ',') }}</strong></td>
+            {{-- <td class="text-right"><strong>{{ $row->CurrencyID . ' ' . number_format($subtotal_in_qty, 2, '.', ',') }}</strong></td>
+            <td class="text-right"><strong>{{ $row->CurrencyID . ' ' . number_format($subtotal_out_qty, 2, '.', ',') }}</strong></td> --}}
             <td class="text-right"><strong>{{ $row->CurrencyID . ' ' . number_format($subtotal_close_qty, 2, '.', ',') }}</strong></td>
         </tr>
 
@@ -180,6 +180,18 @@
             <tr>                
                 <td class="w-50">
                     Harap periksa dan hitung kembali jumlah masing-masing valas
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                </td>
+                <td class="w-15">&nbsp;</td>
+                <td class="w-15">&nbsp;</td>
+                <td class="w-15">&nbsp;</td>
+            </tr>
+            <tr>                
+                <td class="w-50">
+                    &nbsp;
                     <br>
                     <br>
                     <br>

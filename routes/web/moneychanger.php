@@ -37,8 +37,10 @@ Route::post('/mc-open-close-list', 'MoneyChanger\OpenCloseController@inquiry_dat
 Route::get('/mc-open-close/create', 'MoneyChanger\OpenCloseController@create');
 Route::get('/mc-open-close/update/{id}', 'MoneyChanger\OpenCloseController@update');
 Route::post('/mc-open-close/save', 'MoneyChanger\OpenCloseController@save');
-Route::post('/mc-open-close/approve', 'MoneyChanger\OpenCloseController@approve');
-Route::post('/mc-open-close/save-approve', 'MoneyChanger\OpenCloseController@save_approve');
+Route::post('/mc-open-close/calculate', 'MoneyChanger\OpenCloseController@calculate');
+Route::post('/mc-open-close/save-calculate', 'MoneyChanger\OpenCloseController@save_calculate');
+Route::post('/mc-open-close/closing', 'MoneyChanger\OpenCloseController@closing');
+Route::post('/mc-open-close/save-closing', 'MoneyChanger\OpenCloseController@save_closing');
 Route::get('/mc-open-close/download-pdf/{id}', 'MoneyChanger\OpenCloseController@download_pdf');
 
 // OPENING & CLOSING DETAIL DAILY
@@ -146,6 +148,9 @@ Route::post('/mc-rpt-transaction', 'MoneyChanger\RptTransactionController@period
 
 Route::get('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period');
 Route::post('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period_report');
+
+Route::get('/mc-rpt-daily-calculation', 'MoneyChanger\RptTransactionController@daily_calculation');
+Route::post('/mc-rpt-daily-calculation', 'MoneyChanger\RptTransactionController@daily_calculation_report');
 
 // DAFTAR KURS VALAS
 Route::get('mc/kurs', function () {

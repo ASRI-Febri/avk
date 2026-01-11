@@ -6,14 +6,22 @@
 
 @section('action')
 
+    @if($state <> 'create')
     <x-btn-action>
         
         @if($fields->TransactionStatus == 'O')
-        <a id="btn-approval" class="dropdown-item" href="#">
+        {{-- <a id="btn-calculate" class="dropdown-item" href="#">
             <div class="dropdown-icon">
                 <i class="fa fa-check-double"></i> 
             </div>
-            <span class="dropdown-content">Closing</span>            
+            <span class="dropdown-content">Proses Perhitungan</span>  
+        </a> --}}
+
+        <a id="btn-closing" class="dropdown-item" href="#">
+            <div class="dropdown-icon">
+                <i class="fa fa-check-double"></i> 
+            </div>
+            <span class="dropdown-content">Closing</span> 
         </a>
         @endif
 
@@ -36,6 +44,7 @@
             <span class="dropdown-content">Print Document</span>            
         </a>        
     </x-btn-action>
+    @endif
 
 @endsection
 
@@ -92,8 +101,11 @@
             <div class="card-header">      
                 <div class="nav nav-lines card-header-lines mb-0" id="card-tab-1" role="tablist">
                     <a class="nav-item nav-link active" id="card-detail-tab" data-bs-toggle="tab" href="#card-detail" aria-selected="false" role="tab" tabindex="-1">
-                        <i class="fas fa-align-justify"></i> Detail Transaksi
-                    </a>    
+                        <i class="fas fa-align-justify"></i> Detail Valas
+                    </a> 
+                    <a class="nav-item nav-link" id="card-calculation-tab" data-bs-toggle="tab" href="#card-calculation" aria-selected="false" role="tab" tabindex="-1">
+                        <i class="fas fa-align-justify"></i> Perhitungan Harian
+                    </a>   
                     <a class="nav-item nav-link" id="card-log-tab" data-bs-toggle="tab" href="#card-log" aria-selected="true" role="tab">
                             <i class="fas fa-coins"></i> Log</a>        
                 </div>
@@ -108,6 +120,9 @@
                         <div id="table-order-detail" class="table-responsive">
                             @include('money_changer.open_close_detail_list')            
                         </div>
+                    </div>
+                    <div class="tab-pane fade" id="card-calculation" role="tabpanel" aria-labelledby="#card-calculation-tab">
+
                     </div>
                     <div class="tab-pane fade" id="card-log" role="tabpanel" aria-labelledby="#card-log-tab">
 
@@ -194,14 +209,24 @@
                 callAjaxModalView('{{ url('mc-open-close-detail/create') }}',data);            
             });
 
-            $('#btn-approval').click(function()
+            $('#btn-calculate').click(function()
             {           
                 var data = {
                     _token: $("#_token").val(),
                     IDX_T_OpenCloseDaily: $("#IDX_T_OpenCloseDaily").val(),
                 }                
 
-                callAjaxModalView('{{ url('mc-open-close/approve') }}',data);            
+                callAjaxModalView('{{ url('mc-open-close/calculate') }}',data);            
+            });
+
+            $('#btn-closing').click(function()
+            {           
+                var data = {
+                    _token: $("#_token").val(),
+                    IDX_T_OpenCloseDaily: $("#IDX_T_OpenCloseDaily").val(),
+                }                
+
+                callAjaxModalView('{{ url('mc-open-close/closing') }}',data);            
             });
 
             $('#btn-reverse').click(function()

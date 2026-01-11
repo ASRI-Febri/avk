@@ -72,11 +72,11 @@
             <td class="text-right text-secondary">Rp {{ number_format($subtotal_tax, 2, '.', ',') }}</td>
             <td></td>
         </tr> --}}        
-        <tr class="font-weight-bold">
+        {{-- <tr class="font-weight-bold">
             <td colspan="5" class="text-end"><strong>Total</strong></td>
             <td class="text-end"><strong>{{ number_format($subtotal_idr, 2, '.', ',') }}</strong></td>
             <td></td>
-        </tr>
+        </tr> --}}
 
     @endif
     </tbody>

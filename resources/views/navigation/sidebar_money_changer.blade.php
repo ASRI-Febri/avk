@@ -127,11 +127,14 @@
                         <span>Laporan</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ url('mc-rpt-daily-calculation') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Closing Harian
+                            </a>
+                        </li>
                         <li><a href="{{ url('mc-rpt-transaction') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Jual Beli Harian
                             </a>
                         </li>
-                        
                         <li><a href="{{ url('mc-rpt-inventory') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Stok Valas
                             </a>

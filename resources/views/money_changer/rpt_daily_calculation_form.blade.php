@@ -27,10 +27,9 @@
 
         <x-lookup-horizontal label="Konsumen (Opsional)" id="PartnerDesc" :value="$PartnerDesc" class="required"  button="btn-find-partner"/>
 
-        <x-textbox-horizontal label="Tanggal Awal" id="start_date" :value="$start_date" placeholder="YYYY-MM-DD" class="readonly datepicker2 required" flag="required" />
+        <x-textbox-horizontal label="Tanggal Transaksi" id="TransactionDate" :value="$TransactionDate" placeholder="YYYY-MM-DD" class="readonly datepicker2 required" flag="required" />
 
-        <x-textbox-horizontal label="Tanggal Akhir" id="end_date" :value="$end_date" placeholder="YYYY-MM-DD" class="readonly datepicker2 required" flag="required" />
-    </div>
+            </div>
    
 @endsection
 

@@ -247,17 +247,17 @@ class OpenCloseController extends MyController
     }
 
     // =========================================================================================
-    // APPROVE
+    // CALCULATE
     // =========================================================================================
-    public function approve(Request $request)
+    public function calculate(Request $request)
     {
         $this->data['form_id'] = 'FM-PI-A';
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
        
-        $this->data['form_title'] = 'Approval Sales Order';
-        $this->data['form_sub_title'] = 'Approval';        
-        $this->data['form_desc'] = 'Approval Sales Order';
+        $this->data['form_title'] = 'Perhitungan Harian';
+        $this->data['form_sub_title'] = 'Proses';        
+        $this->data['form_desc'] = 'Proses Perhitungan Harian';
         
         $this->data['state'] = 'approve';
 
@@ -268,16 +268,16 @@ class OpenCloseController extends MyController
             $this->data['fields'] = $this->get_detail_by_id($request->IDX_T_OpenCloseDaily)[0];         
 
             // DEFAULT VALUE                                  
-            $this->data['fields']->ApprovalRemark = '';           
-            $this->data['fields']->ApprovalDate = date('Y-m-d',strtotime($this->data['fields']->SODate));
-            $this->data['fields']->ApprovalBy = $this->data['user_id'];
+            $this->data['fields']->Notes = '';           
+            $this->data['fields']->TransactionDate = date('Y-m-d',strtotime($this->data['fields']->TransactionDate));
+            $this->data['fields']->UserID = $this->data['user_id'];
 
             // URL
-            $this->data['url_save_modal'] = url('/mc-sales-order/save-approve');            
+            $this->data['url_save_modal'] = url('/mc-sales-order/save-calculate');            
 
             // VIEW                          
-            $this->data['view'] = 'money_changer/sales_order_approval_form';
-            $this->data['submit_title'] = 'Approve';
+            $this->data['view'] = 'money_changer/open_close_daily_calculate_form';
+            $this->data['submit_title'] = 'Proses Perhitungan';
 
             return view($this->data['view'], $this->data);
         } 
@@ -287,7 +287,7 @@ class OpenCloseController extends MyController
         }
     }
 
-    public function save_approve(Request $request)
+    public function save_calculate(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'IDX_T_OpenCloseDaily' => 'required'                                  
@@ -298,17 +298,86 @@ class OpenCloseController extends MyController
         } 
         else
         {
-            $this->sp_approval = '[dbo].[USP_MC_OpenCloseDaily_Approve]'; 
+            $this->sp_approval = '[dbo].[USP_MC_OpenCloseDaily_Calculate]'; 
             $this->next_action = 'reload';
-            $this->next_url = url("/mc-sales-order/update");
+            $this->next_url = url("/mc-open-close/update");
 
             $state = 'approve';
             
             $data = $request->all();
             
             $param['IDX_T_OpenCloseDaily'] = $data['IDX_T_OpenCloseDaily'];
-            $param['ApprovalDate'] = date('Y-m-d',strtotime($data['ApprovalDate']));
-            $param['ApprovalRemark'] = $data['ApprovalRemark'];
+            $param['TransactionDate'] = date('Y-m-d',strtotime($data['TransactionDate']));
+            $param['Notes'] = $data['Notes'];
+            $param['UserID'] = 'XXX'.$this->data['user_id']; 
+
+            return $this->store($state,$param);
+        }   
+    }
+
+    // =========================================================================================
+    // CLOSING
+    // =========================================================================================
+    public function closing(Request $request)
+    {
+        $this->data['form_id'] = 'FM-PI-A';
+
+        $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
+       
+        $this->data['form_title'] = 'Closing Harian';
+        $this->data['form_sub_title'] = 'Approval';        
+        $this->data['form_desc'] = 'Closing Harian';
+        
+        $this->data['state'] = 'approve';
+
+        if ($access == TRUE)
+        {
+            // GET DATA
+            $this->sp_getdata = '[dbo].[USP_MC_OpenCloseDaily_Info]';
+            $this->data['fields'] = $this->get_detail_by_id($request->IDX_T_OpenCloseDaily)[0];         
+
+            // DEFAULT VALUE                                  
+            $this->data['fields']->Notes = '';           
+            $this->data['fields']->TransactionDate = date('Y-m-d',strtotime($this->data['fields']->TransactionDate));
+            
+
+            // URL
+            $this->data['url_save_modal'] = url('/mc-sales-order/save-closing');            
+
+            // VIEW                          
+            $this->data['view'] = 'money_changer/open_close_daily_closing_form';
+            $this->data['submit_title'] = 'Closing';
+
+            return view($this->data['view'], $this->data);
+        } 
+        else 
+        {
+            return $this->show_no_access_modal($this->data);
+        }
+    }
+
+    public function save_closing(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'IDX_T_OpenCloseDaily' => 'required'                                  
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validation_fails($validator->errors(), $request->input('IDX_T_OpenCloseDaily'));
+        } 
+        else
+        {
+            $this->sp_approval = '[dbo].[USP_MC_OpenCloseDaily_Closing]'; 
+            $this->next_action = 'reload';
+            $this->next_url = url("/mc-open-close/update");
+
+            $state = 'approve';
+            
+            $data = $request->all();
+            
+            $param['IDX_T_OpenCloseDaily'] = $data['IDX_T_OpenCloseDaily'];
+            $param['TransactionDate'] = date('Y-m-d',strtotime($data['TransactionDate']));
+            $param['Notes'] = $data['Notes'];
             $param['UserID'] = 'XXX'.$this->data['user_id']; 
 
             
