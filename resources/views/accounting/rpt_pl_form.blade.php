@@ -16,7 +16,7 @@
     </div>
 
     <div class="mb-2">
-        <x-select-horizontal label="Branch" id="IDX_M_Branch" :value="$IDX_M_Branch" class="required" :array="$dd_branch"/>
+        <x-select-horizontal label="Profit Center" id="IDX_M_Branch" :value="$IDX_M_Branch" class="required" :array="$dd_branch"/>
     </div>
 
     <div class="mb-2">

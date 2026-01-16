@@ -15,11 +15,11 @@
             {	
                 if(row['RecordStatus'] == 'I')
                 {
-                    return '<span class="label label-danger"><strong>In-Active</strong></span>';
+                    return '<x-badge-danger label="In-Active" />';
                 }
                 else if(row['RecordStatus'] == 'A')
                 {
-                    return '<span class="label label-info"><strong>Active</strong></span>';
+                    return '<x-badge-info label="Active" />';
                 }                
             }
             , class: "text-center"
@@ -30,11 +30,11 @@
             {	
                 if(row['RecordStatus'] == 'I')
                 {
-                    return '<span class="badge outline-badge-danger">In-Active</span>';
+                    return '<x-badge-danger label="In-Active" />';
                 }
                 else if(row['RecordStatus'] == 'A')
                 {
-                    return '<span class="badge outline-badge-info">Active</span>';
+                    return '<x-badge-info label="Active" />';
                 }                
             }
             , class: "text-center"

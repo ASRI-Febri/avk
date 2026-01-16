@@ -1,5 +1,11 @@
 @extends('layouts.master-form-transaction')
 
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-setting-opening-closing').addClass('mm-active');
+@endsection
+
 @section('form-remark')
     Transaki untuk melakukan perhitungan persiapan dan penutupan harian     
 @endsection

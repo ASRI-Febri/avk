@@ -31,7 +31,11 @@
         <h2>Nota Transaksi Valas</h2>
         <table class="noborder nopadding">
             <tr class="noborder nopadding">
-                <td class="td-20 bold noborder nopadding param-key">No Transaksi</td>
+                <td class="td-20 bold noborder nopadding param-key">No Nota</td>
+                <td class="td-50 bold noborder nopadding param-value">: {{ $fields->ReferenceNo }}</td>
+            </tr>
+            <tr class="noborder nopadding">
+                <td class="td-20 bold noborder nopadding param-key">No System</td>
                 <td class="td-50 bold noborder nopadding param-value">: {{ $fields->SONumber }}</td>
             </tr>
             <tr class="noborder">
@@ -91,6 +95,13 @@
         <span style="display:block;">{{ $fields->TransactionPurpose }}</span>
         
     </div>
+    <br>
+    <div style="float:left;width:50%">
+        <span class="bold" style="display:block;">Catatan</span>
+        <span style="display:block;">{{ $fields->SONotes }}</span>
+        
+    </div>
+
 
     {{-- <br>
 
@@ -211,6 +222,6 @@
     <!-- Force a page break after the first copy -->
     {{-- <div class="page-break"></div> --}}
 
-    @include('money_changer.sales_order_page1_pdf')
+    {{-- @include('money_changer.sales_order_page1_pdf') --}}
 
 @endsection

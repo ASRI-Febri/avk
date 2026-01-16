@@ -342,7 +342,7 @@ class OpenCloseController extends MyController
             
 
             // URL
-            $this->data['url_save_modal'] = url('/mc-sales-order/save-closing');            
+            $this->data['url_save_modal'] = url('/mc-open-close/save-closing');            
 
             // VIEW                          
             $this->data['view'] = 'money_changer/open_close_daily_closing_form';

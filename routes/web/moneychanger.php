@@ -149,6 +149,9 @@ Route::post('/mc-rpt-transaction', 'MoneyChanger\RptTransactionController@period
 Route::get('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period');
 Route::post('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period_report');
 
+Route::get('/mc-rpt-inventory-calculation', 'MoneyChanger\RptInventoryController@inventory_calculation');
+Route::post('/mc-rpt-inventory-calculation', 'MoneyChanger\RptInventoryController@inventory_calculation_report');
+
 Route::get('/mc-rpt-daily-calculation', 'MoneyChanger\RptTransactionController@daily_calculation');
 Route::post('/mc-rpt-daily-calculation', 'MoneyChanger\RptTransactionController@daily_calculation_report');
 

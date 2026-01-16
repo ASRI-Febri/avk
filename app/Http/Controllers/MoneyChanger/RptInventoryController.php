@@ -145,4 +145,105 @@ class RptInventoryController extends MyController
         }
     }
 
+    public function inventory_calculation()
+    { 
+        //$access = $this->check_permission($this->data['user_index'], 'sm-acct-002');
+
+        $access = TRUE;
+        
+        $this->data['title'] = 'AVK';
+        $this->data['form_title'] = 'Laporan Perhitungan Persediaan';
+        $this->data['form_sub_title'] = 'Laporan Perhitungan Persediaan';
+        $this->data['form_desc'] = 'Laporan Perhitungan Persediaan';
+
+        $this->data['form_remark'] = 'Laporan perhitungan persediaan dengan metode rata-rata / average';
+
+        // BREADCRUMB
+        array_push($this->data['breads'],'Inventory'); 
+
+        $this->data['state'] = 'update';        
+
+        if($access == TRUE)
+        {            
+            $this->sp_getdata = '[dbo].[USP_MC_PurchaseOrder_Info]';
+            $this->data['fields'] = (object) $this->get_detail_by_id(0);
+            
+            // DROPDOWN
+            $dd = new DropdownController;  
+            $this->data['dd_branch'] = (array) $dd->branch(''); 
+            
+
+            $ddf = new DropdownFinanceController; 
+            $this->data['dd_valas'] = (array) $ddf->valas(); 
+            $this->data['dd_currency'] = (array) $ddf->currency();
+                       
+            // DEFAULT PARAMETER
+            $this->data['Period'] = date('Ym');
+            
+
+            // URL SAVE
+            $this->data['url_show_repoprt'] = url('mc-rpt-inventory-calculation');
+            return view('money_changer/rpt_inventory_calculation_form', $this->data);
+        }
+        else
+        {
+            return $this->show_no_access();
+        }
+    }
+
+    public function inventory_calculation_report(Request $request)
+    {
+        $validator = Validator::make($request->all(),[   
+            'Period' => 'required',
+        ]);
+
+        if($validator->fails())
+        {
+            return $this->validation_fails($validator->errors(),$request->input('start_date'));     
+        } 
+        else 
+        {
+            // GET POST VALUE
+            $this->data['fields'] = $request->all();
+
+            // REPORT INFORMATION
+            $this->data['page_title'] = 'Laporan Perhitungan Persediaan';   
+            $this->data['title'] = 'Laporan Perhitungan Persediaan';            
+            $this->data['form_title'] = 'Laporan Perhitungan Persediaan';    
+            
+            if($request->CurrencyName == ''){
+                $this->data['CurrencyName'] = 'Semua Mata Uang';
+            } else {
+                $this->data['CurrencyName'] = $request->CurrencyName;
+            }
+
+            if($request->ValasName == ''){
+                $this->data['ValasName'] = 'Semua Valas';
+            } else {
+                $this->data['ValasName'] = $request->ValasName;
+            }
+
+            // REPORT PARAMETER ** Param sequence must refer to param sequence in stored procedure **
+            $param['Period'] = $this->data['fields']['Period'];	
+
+            // RECORDS
+            //$this->data['records'] = $this->exec_sp('USP_MC_R_InventoryCalculation',$param,'list','sqlsrv');
+
+            $query = $this->exec_sp_multi('USP_MC_R_InventoryCalculation', $param);
+
+            $result = $query;
+
+            if($result)
+            {
+                // RECORDS
+                //$this->data['records_summary'] = $result[0];
+                //$this->data['records_detail'] = $result[1];
+                $this->data['records'] = $result[1];
+            }
+
+            // VIEW
+            $this->data['view'] = 'money_changer/rpt_inventory_calculation_report';                                 
+            return view($this->data['view'], $this->data);
+        }
+    }
 }

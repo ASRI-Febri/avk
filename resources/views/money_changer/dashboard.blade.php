@@ -82,6 +82,10 @@
                                         <td class="text-end">{{ $row->CurrencyID . ' ' . number_format($row->EB_Quantity * $row->ValasChangeNumber,0,'.',',') }}</td>
                                     </tr>
                                     @endforeach
+                                    <tr>
+                                        <td class="text-end" colspan="3"><strong>TOTAL</strong></td>
+                                        <td class="text-end"><strong>{{ $prev_currency_id   . ' ' . number_format($group_valas_amount,2,'.',',') }}</strong></td>
+                                    </tr>
                                 @endif 
                             </tbody>
                         </table>

@@ -14,7 +14,7 @@
     <div style="width:100%;">
         <div style="float:left;width:70%;">
             <table>      
-                <tr>
+                {{-- <tr>
                     <td class="param-key">MATA UANG</td>
                     <td class="param-value">: {{ $CurrencyName }}</td>
                 </tr>  
@@ -25,10 +25,10 @@
                 <tr>
                     <td class="param-key">KONSUMEN</td>
                     <td class="param-value">: {{ $PartnerName }}</td>
-                </tr>     
+                </tr>      --}}
                 <tr>
-                    <td class="param-key">TANGGAL TRANSAKSI</td>
-                    <td class="param-value">: {{ date('d M Y',strtotime($fields['start_date'])) . ' - ' .date('d M Y',strtotime($fields['end_date'])) }}</td>
+                    <td class="param-key">PERIODE</td>
+                    <td class="param-value">: {{ $fields['Period'] }}</td>
                 </tr>  
             </table>
         </div>
@@ -60,52 +60,50 @@
             $out_qty = 0;
             $eb_qty = 0;
         @endphp
-        @if($records)
         @foreach ($records as $row)
 
             @php
                 $row_number += 1;
-                $group_a1 = $row->ValasSKU;           
+                $group_a1 = $row->CurrencyName;           
                 
-                $bb_qty += $row->Quantity;
-                $in_qty += $row->ForeignAmount;
-                $out_qty += $row->ExchangeRate;
-                $eb_qty += $row->BaseAmount;
+                $bb_qty += $row->OpeningQty;
+                $in_qty += $row->InQty;
+                $out_qty += $row->OutQty;
+                $eb_qty += $row->ClosingQty;
             @endphp 
 
             @if($group_a1 <> $group_a2)
 
                 @if($row_number > 1)
-                    <tr>
-                        <td class="text-right" colspan="9"><strong>TOTAL</strong></td>
+                    {{-- <tr>
+                        <td class="text-right" colspan="8"><strong>TOTAL</strong></td>
                         
                         <td class="text-right"><strong>{{ number_format($group_bb_qty,2,'.',',') }}</strong></td>
                         <td class="text-right"><strong>{{ number_format($group_in_qty,2,'.',',') }}</strong></td>
                         
                         <td class="text-right"><strong>{{ number_format($group_out_qty,2,'.',',') }}</strong></td>
                         <td class="text-right"><strong>{{ number_format($group_eb_qty,2,'.',',') }}</strong></td>
-                    </tr>
+                    </tr> --}}
                 @endif              
                  
                 <thead>
                     <tr class="bg-info">   
-                        <th class="text-start" colspan="13">{{ strtoupper($group_a1) }}</th>
+                        <th class="text-start" colspan="15">{{ strtoupper($group_a1) }}</th>
                     </tr> 
                     <tr>
-                        <th>#</th>            
-                        <th>KONSUMEN</th>
+                        <th>#</th>   
                         <th>CURRENCY</th>
                         <th>SKU</th>
                         <th>NAMA BARANG</th>
-                        <th>KETERANGAN</th>
-                        <th>NO NOTA</th>
-                        <th>NO SYSTEM</th>
-                        <th>TANGGAL</th>
-                        {{-- <th class="text-center">AWAL</th> --}}
-                        <th class="text-center">QTY</th>
-                        <th class="text-center">NILAI VALAS</th>
-                        <th class="text-center">RATE</th>
-                        <th class="text-center">NILAI RUPIAH</th>              
+                        <th class="text-center">QTY AWAL</th>
+                        <th class="text-center">QTY BELI</th>
+                        <th class="text-center">NILAI PEROLEHAN</th>
+                        <th class="text-center">QTY JUAL</th>
+                        <th class="text-center">HARGA JUAL</th>   
+                        <th class="text-center">QTY AKHIR</th>  
+                        <th class="text-center">AVERAGE</th> 
+                        <th class="text-center">COGS</th> 
+                        <th class="text-center">INVENTORY</th>        
                     </tr>
                 </thead>
                 <tbody>            
@@ -125,47 +123,41 @@
             @php 
                 $group_number += 1;
 
-                $group_bb_qty += $row->Quantity;
-                $group_in_qty += $row->ForeignAmount;
-                $group_out_qty += $row->ExchangeRate;
-                $group_eb_qty += $row->BaseAmount;
+                $group_bb_qty += $row->OpeningQty;
+                $group_in_qty += $row->InQty;
+                $group_out_qty += $row->OutQty;
+                $group_eb_qty += $row->ClosingQty;
             @endphp
 
             <tr>
                 <td>{{ $group_number }}</td>
-                <td class="text-center">{{ $row->PartnerName }}</td>
                 <td>{{ $row->CurrencyName }}</td>
                 <td>{{ $row->ValasSKU }}</td>
                 <td>{{ $row->ValasName }}</td>
-                <td>{{ $row->TransactionTypeName }}</td>
-                <td>{{ $row->ReferenceNo }}</td>
-                <td>
-                    @if($row->IDX_M_TransactionType == 3) <!-- Purchase Order Valas -->
-                        <a href="{{ url('mc-purchase-order/update') . '/' . $row->IDX_Transaction }}" target="_blank">{{ $row->TransactionNo }}</a>
-                    @else
-                        <a href="{{ url('mc-sales-order/update') . '/' . $row->IDX_Transaction }}" target="_blank">{{ $row->TransactionNo }}</a>
-                    @endif 
-                </td>
-                <td>{{ date('d M Y',strtotime($row->TransactionDate)) }}</td>
                 
-                <td class="text-right">{{ number_format($row->Quantity,2,'.',',') }}</td>
-                <td class="text-right">{{ $row->CurrencyID . ' ' . number_format($row->ForeignAmount,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->OpeningQty,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->InQty,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->InValue,2,'.',',') }}</td>
                 
-                <td class="text-right">{{ number_format($row->ExchangeRate,2,'.',',') }}</td>
-                <td class="text-right">{{ number_format($row->BaseAmount,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->OutQty,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->OutValue,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->ClosingQty,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->AverageValue,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->COGSValue,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->InventoryValue,2,'.',',') }}</td>
+                
             </tr>           
 
         @endforeach
-        @endif
-        <tr>
-            <td class="text-right" colspan="9"><strong>TOTAL</strong></td>
+        {{-- <tr>
+            <td class="text-right" colspan="8"><strong>TOTAL</strong></td>
             
             <td class="text-right"><strong>{{ number_format($group_bb_qty,2,'.',',') }}</strong></td>
-            <td class="text-right"><strong>{{ $row->CurrencyID ?? '' . ' ' .  number_format($group_in_qty,2,'.',',') }}</strong></td>
+            <td class="text-right"><strong>{{ number_format($group_in_qty,2,'.',',') }}</strong></td>
             
             <td class="text-right"><strong>{{ number_format($group_out_qty,2,'.',',') }}</strong></td>
             <td class="text-right"><strong>{{ number_format($group_eb_qty,2,'.',',') }}</strong></td>
-        </tr>
+        </tr> --}}
 
         {{-- <tr>
             <td class="text-right" colspan="5"><strong>TOTAL</strong></td> --}}

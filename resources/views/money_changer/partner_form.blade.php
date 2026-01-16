@@ -1,5 +1,11 @@
 @extends('layouts.master-form-transaction')
 
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');    
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-input-customer').addClass('mm-active');
+@endsection
+
 @section('form-remark')
     Business partner adalah customer atau supplier yang melakukan transaksi jual beli. 
     {{-- <br> 

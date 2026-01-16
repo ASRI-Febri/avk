@@ -19,6 +19,12 @@
                 <span class="input-group-text" id="inputGroup-sizing-default">Nama CoA 2</span> 
                 <input id="COADesc2" type="text" class="form-control" />
             </div>
+        </div> 
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Group CoA</span> 
+                <input id="COAGroup1Name1" type="text" class="form-control" />
+            </div>
         </div>  
     </div>
 @endsection
@@ -29,7 +35,9 @@
         { data: "IDX_M_COA", visible: false },          
         { data: "COAID" },
         { data: "COADesc" },
-        { data: "COADesc2", visible: false },               
+        { data: "COADesc2", visible: false }, 
+        { data: "COAGroup1ID", visible: false }, 
+        { data: "COAGroup1Name1", visible: true },               
 
         { data: "RecordStatus", visible: false, render: 
             function( data, type, row )

@@ -57,11 +57,13 @@ class COAController extends MyController
         array_push($this->data['breads'],'List');       
 
         // TABLE HEADER & FOOTER
-        $this->data['table_header'] = array('No','IDX_M_COA','COA ID','COA Desc','COA Desc2','RecordStatus','Status','Action');         
+        $this->data['table_header'] = array('No','IDX_M_COA','COA ID','COA Desc','COA Desc2',
+            'COAGroup1ID','Group 1','RecordStatus','Status','Action');         
 
-        $this->data['table_footer'] = array('','','COAID','COADesc','COADesc2','','','Action');
+        $this->data['table_footer'] = array('','','COAID','COADesc','COADesc2',
+            '','COAGroup1Name1','','','Action');
 
-        $this->data['array_filter'] = array('COAID','COADesc','COADesc2');
+        $this->data['array_filter'] = array('COAID','COADesc','COADesc2','COAGroup1Name1');
 
         // VIEW
         $this->data['view'] = 'accounting/coa_list';  
@@ -74,13 +76,15 @@ class COAController extends MyController
         $array_filter['COAID'] = $request->input('COAID');
         $array_filter['COADesc'] = $request->input('COADesc');  
         $array_filter['COADesc2'] = $request->input('COADesc2'); 
+        $array_filter['COAGroup1Name1'] = $request->input('COAGroup1Name1'); 
                 
         // SET STORED PROCEDURE
         $this->sp_getinquiry = 'dbo.[USP_GL_COA_List]';
 
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
-        $this->array_column = array('RowNumber','IDX_M_COA','COAID','COADesc','COADesc2','RecordStatus','StatusDesc');
+        $this->array_column = array('RowNumber','IDX_M_COA','COAID','COADesc','COADesc2',
+            'COAGroup1ID','COAGroup1Name1','RecordStatus','StatusDesc');
 
         return $this->get_datatables($request); 
     }

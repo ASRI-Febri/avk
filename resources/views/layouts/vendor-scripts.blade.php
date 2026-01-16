@@ -43,11 +43,14 @@
     }
 
     $(document).ready(function(){
+
         $('input.auto').autoNumeric();
 
         $("input:text").focus(function(){ 
             $(this).select();
         });
+
+        @yield('active_link')
 
         var t = "rtl" === $("html").attr("dir") ? "right" : "left";
         $(".datepicker2").datepicker({

@@ -1,5 +1,11 @@
 @extends('layouts.master-form-transaction')
 
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-input-transaction').addClass('mm-active');
+@endsection
+
 @section('form-remark')
     Transaki untuk melakukan penjualan atau pembelian valuta asing dari customer. 
     <br> 
@@ -64,7 +70,7 @@
                     <div class="d-grid gap-3">
                         {{-- <x-select-horizontal label="Perusahaan" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
                         <x-select-horizontal label="Cabang" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/> --}}
-                        <x-textbox-horizontal label="No Referensi" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="(No Quotation atau Penawaran)" class="" />
+                        <x-textbox-horizontal label="No Nota" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="(No Nota)" class="" />
                         <x-textbox-horizontal label="Sumber Dana" id="FundSource" :value="$fields->FundSource" placeholder="(Pribadi/Perusahaan)" class="" />
                         <x-textbox-horizontal label="Tujuan Transaksi" id="TransactionPurpose" :value="$fields->TransactionPurpose" placeholder="(Traveling/Medical/Education/Lain2)" class="" />        
                     </div>
@@ -79,7 +85,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-3">
-                        <x-textbox-horizontal label="No Transaksi" id="SONumber" :value="$fields->SONumber" placeholder="(Auto)" class="readonly" />
+                        <x-textbox-horizontal label="No System" id="SONumber" :value="$fields->SONumber" placeholder="(Auto)" class="readonly" />
                         <x-textbox-horizontal label="Tanggal Transaksi" id="SODate" :value="$fields->SODate" placeholder="" class="required datepicker2" />
                         <x-lookup-horizontal label="Konsumen" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
                         <x-textbox-horizontal label="Keterangan" id="SONotes" :value="$fields->SONotes" placeholder="" class="required" />

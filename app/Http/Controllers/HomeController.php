@@ -83,6 +83,7 @@ class HomeController extends MyController
         // // RECORDS
         $param['AsOfDate'] = date('Y-m-d');   
         $this->data['records_stock'] = $this->exec_sp('USP_MC_R_Dashboard_Stock',$param,'list','sqlsrv');
+        $this->data['records_average'] = $this->exec_sp('USP_MC_R_Dashboard_Average',$param,'list','sqlsrv');
         //$this->data['records_sales_by_valas'] = $this->exec_sp('USP_MC_R_Dashboard_SalesValas',$param,'list','sqlsrv');
         //$this->data['records_sales_by_partner'] = $this->exec_sp('USP_MC_R_Dashboard_SalesPartner',$param,'list','sqlsrv');
 

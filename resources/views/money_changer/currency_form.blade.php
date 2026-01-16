@@ -1,5 +1,12 @@
 @extends('layouts.master-form-with-log')
 
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    {{-- $('#nav-link-sbp-ul').css("display","block"); --}}
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-currency').addClass('mm-active');
+@endsection
+
 @section('form-remark')
     Data mata uang dengan asal negara dan symbolnya. 
     <br> 

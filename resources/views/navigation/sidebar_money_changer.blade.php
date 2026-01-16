@@ -39,11 +39,11 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-sop">
                         <i class="fas fa-list"></i>
                         <span>SOP</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-sop">
                         <li><a href="{{ url('show-files/so-tupoksi.pdf') }}" target="_blank">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Struktur Organisasi
                             </a>
@@ -68,35 +68,32 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-transaction">
                         <i class="fas fa-file-invoice-dollar"></i>
                         <span>Transaksi Jual Beli</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('mc-partner/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Customer
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-transaction">
+                        <li id="nav-li-input-customer">
+                            <a href="{{ url('mc-partner/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Customer
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-partner') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Customer
+                        <li id="nav-li-view-customer"><a href="{{ url('mc-partner') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Customer
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-open-close') }}">
+                        <li id="nav-li-opening-closing"><a href="{{ url('mc-open-close') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Opening & Closing
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-sales-order/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Transaksi
+                        <li id="nav-li-input-transaction"><a href="{{ url('mc-sales-order/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Transaksi
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-sales-order') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Transaksi
+                        <li id="nav-li-view-transaction"><a href="{{ url('mc-sales-order') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Transaksi
                             </a>
                         </li>
-                        {{-- <li><a href="{{ url('mc-valas-rate') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Nilai Tukar
-                            </a>
-                        </li> --}}
                     </ul>
                 </li>
 
@@ -122,60 +119,64 @@
                 </li> --}}
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-report">
                         <i class="fas fa-list-ul"></i>
                         <span>Laporan</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('mc-rpt-daily-calculation') }}">
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-report">
+                        <li id="nav-li-rpt-daily-closing"><a href="{{ url('mc-rpt-daily-calculation') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Closing Harian
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-rpt-transaction') }}">
+                        <li id="nav-li-rpt-transaction"><a href="{{ url('mc-rpt-transaction') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Jual Beli Harian
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-rpt-inventory') }}">
+                        <li id="nav-li-rpt-stock"><a href="{{ url('mc-rpt-inventory') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Stok Valas
                             </a>
-                        </li>                        
+                        </li>   
+                        <li id="nav-li-rpt-inventory-calculation"><a href="{{ url('mc-rpt-inventory-calculation') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Persediaan
+                            </a>
+                        </li>                      
                     </ul>
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-setting">
                         <i class="fa fa-cogs"></i>
                         <span>Setting</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">   
-                        <li><a href="{{ url('mc-currency') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Currency
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-setting">   
+                        <li id="nav-li-setting-currency"><a href="{{ url('mc-currency') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Currency
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-valas') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Valas
+                        <li id="nav-li-input-setting-valas"><a href="{{ url('mc-valas') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Valas
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-valas/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Valas
+                        <li id="nav-li-input-setting-input-valas"><a href="{{ url('mc-valas/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Valas
                             </a>
                         </li>                    
-                        <li><a href="{{ url('mc-valas-change') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Pecahan Valas
+                        <li id="nav-li-input-setting-valas-uom"><a href="{{ url('mc-valas-change') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Pecahan Valas
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-valas-change/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Pecahan Valas
+                        <li id="nav-li-input-setting-input-valas-uom"><a href="{{ url('mc-valas-change/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Pecahan Valas
                             </a>
                         </li>
-                        <li><a href="{{ url('mc-valas-deduction') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Potongan Harga
+                        {{-- <li><a href="{{ url('mc-valas-deduction') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Potongan Harga
                             </a>
                         </li>
                         <li><a href="{{ url('mc-valas-deduction/create') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Potongan Harga
                             </a>
-                        </li> 
+                        </li>  --}}
                     </ul>
                 </li>
 
