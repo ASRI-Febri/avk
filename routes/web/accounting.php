@@ -81,5 +81,8 @@ Route::get('/ac-rpt-tb', 'Accounting\RptTBController@period');
 Route::post('/ac-rpt-tb', 'Accounting\RptTBController@period_report');
 Route::post('/ac-rpt-tb/get-detail', 'Accounting\RptTBController@get_detail_from_gl');
 
+Route::get('/ac-rpt-bs', 'Accounting\RptBSController@balance_sheet');
+Route::post('/ac-rpt-bs', 'Accounting\RptBSController@balance_sheet_report');
+
 Route::get('/ac-rpt-pl', 'Accounting\RptPLController@period');
 Route::post('/ac-rpt-pl', 'Accounting\RptPLController@period_report');

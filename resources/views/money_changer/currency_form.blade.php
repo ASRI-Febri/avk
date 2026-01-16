@@ -17,6 +17,8 @@
    
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_M_Currency" name="IDX_M_Currency" value="{{ $fields->IDX_M_Currency }}"/>
+    <input type="hidden" id="SalesAccount" name="SalesAccount" value="{{ $fields->SalesAccount }}"/>  
+    <input type="hidden" id="PurchaseAccount" name="PurchaseAccount" value="{{ $fields->PurchaseAccount }}"/>
 
     <x-select-horizontal label="Negara" id="IDX_M_Country" :value="$fields->IDX_M_Country" class="required" :array="$dd_country"/>
 
@@ -29,6 +31,10 @@
     <x-textbox-horizontal label="Rate Beli" id="BuyRate" :value="$fields->BuyRate" placeholder="" class="required auto" />
     <x-textbox-horizontal label="Rate Jual" id="SellRate" :value="$fields->SellRate" placeholder="" class="required auto" />
 
+    <x-lookup-horizontal label="Sales Account" id="SalesAccountDesc" :value="$fields->SalesAccountDesc" class="required" button="btn-find-coa-ar"/>
+    
+    <x-lookup-horizontal label="Purchase Account" id="PurchaseAccountDesc" :value="$fields->PurchaseAccountDesc" class="required" button="btn-find-coa-ap"/>
+
     <x-select-horizontal label="Status" id="RecordStatus" :value="$fields->RecordStatus" class="required" :array="$dd_record_status"/>
 
     <div class="row"> 
@@ -36,5 +42,39 @@
             @include('form_helper.btn_save_header')
         </div>
     </div>       
+
+@endsection 
+
+@section('script')
+
+    <script>
+
+        $(document).ready(function(){
+
+            $('#btn-find-coa-ar').click(function(){
+                
+                var data = {
+                    _token: $("#_token").val(),  
+                    target_index: 'SalesAccount',
+                    target_name: 'SalesAccountDesc'                  
+                }                
+
+                callAjaxModalView('{{ url('/ac-select-coa') }}',data);                
+            });
+
+            $('#btn-find-coa-ap').click(function(){
+                
+                var data = {
+                    _token: $("#_token").val(),  
+                    target_index: 'PurchaseAccount',
+                    target_name: 'PurchaseAccountDesc'                  
+                }                
+
+                callAjaxModalView('{{ url('/ac-select-coa') }}',data);                
+            }); 
+
+        });
+
+    </script>
 
 @endsection 

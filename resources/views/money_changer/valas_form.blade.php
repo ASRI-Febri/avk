@@ -1,5 +1,11 @@
 @extends('layouts.master-form-with-log')
 
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-input-valas').addClass('mm-active');
+@endsection
+
 @section('form-remark')
     SKU (Stock Keeping Unit) dibuat otomatis untuk keperluan perhitungan persediaan. 
     <br> 

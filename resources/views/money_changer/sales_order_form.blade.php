@@ -110,9 +110,13 @@
                 <div class="nav nav-lines card-header-lines mb-0" id="card-tab-1" role="tablist">
                     <a class="nav-item nav-link active" id="card-detail-tab" data-bs-toggle="tab" href="#card-detail" aria-selected="false" role="tab" tabindex="-1">
                         <i class="fas fa-align-justify"></i> Detail Transaksi
-                    </a>    
+                    </a>   
+                    <a class="nav-item nav-link" id="card-payment-tab" data-bs-toggle="tab" href="#card-payment" aria-selected="true" role="tab">
+                        <i class="fas fa-coins"></i> Pembayaran
+                    </a> 
                     <a class="nav-item nav-link" id="card-log-tab" data-bs-toggle="tab" href="#card-log" aria-selected="true" role="tab">
-                            <i class="fas fa-coins"></i> Log</a>        
+                        <i class="fas fa-list"></i> Log
+                    </a>        
                 </div>
             </div>
             <div class="card-body">
@@ -125,6 +129,9 @@
                         <div id="table-order-detail" class="table-responsive">
                             @include('money_changer.sales_order_detail_list')            
                         </div>
+                    </div>
+                    <div class="tab-pane fade" id="card-payment" role="tabpanel" aria-labelledby="#card-payment-tab">
+
                     </div>
                     <div class="tab-pane fade" id="card-log" role="tabpanel" aria-labelledby="#card-log-tab">
 

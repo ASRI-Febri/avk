@@ -1,5 +1,11 @@
 @extends('layouts.master-datatable')
 
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-coa-group1').addClass('mm-active');
+@endsection
+
 @section('datatables_array')
     columns: [
         { data: 'RowNumber', name: 'DT_RowIndex' },

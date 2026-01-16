@@ -1,5 +1,11 @@
 @extends('layouts.master-datatable')
 
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-valas').addClass('mm-active');
+@endsection
+
 @section('advance-search')
     <div class="row mb-3">
         <div class="col-4">

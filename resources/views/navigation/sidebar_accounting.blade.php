@@ -50,7 +50,7 @@
                         <i class="fas fa-list-ul"></i>
                         <span>Report</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false" nav="nav-ul-report">
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-report">
                         <li id="nav-li-rpt-gl">
                             <a href="{{ url('ac-rpt-gl') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> General Ledger
@@ -62,7 +62,7 @@
                             </a>
                         </li>
                         <li id="nav-li-rpt-bs">
-                            <a href="{{ url('ac-rpt-pl') }}">
+                            <a href="{{ url('ac-rpt-bs') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Neraca (Balance Sheet)
                             </a>
                         </li>
@@ -84,7 +84,7 @@
                         <i class="fa fa-cogs"></i>
                         <span>Setting</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false" nav="nav-ul-setting">
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-setting">
                         <li id="nav-li-setting-coa">
                             <a href="{{ url('ac-coa') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Chart of Account

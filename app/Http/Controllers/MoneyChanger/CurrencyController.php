@@ -268,6 +268,8 @@ class CurrencyController extends MyController
             $param['SellRate'] = (double)str_replace(',','',$data['SellRate']);
             $param['IconFlag'] = $data['IconFlag'];
             $param['SortPriority'] = (double)str_replace(',','',$data['SortPriority']);
+            $param['SalesAccount'] = $data['SalesAccount'];
+            $param['PurchaseAccount'] = $data['PurchaseAccount'];
             
             $param['UserID'] = 'XXX'.$this->data['user_id'];
             $param['RecordStatus'] = $data['RecordStatus'];            

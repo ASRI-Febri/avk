@@ -1,5 +1,11 @@
 @extends('layouts.master-form-with-log')
 
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-coa-group1').addClass('mm-active');
+@endsection
+
 @section('right_header')    
     {{-- @include('form_helper.btn_save_header') --}}
     

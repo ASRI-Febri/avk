@@ -153,19 +153,19 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Currency
                             </a>
                         </li>
-                        <li id="nav-li-input-setting-valas"><a href="{{ url('mc-valas') }}">
+                        <li id="nav-li-setting-valas"><a href="{{ url('mc-valas') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Valas
                             </a>
                         </li>
-                        <li id="nav-li-input-setting-input-valas"><a href="{{ url('mc-valas/create') }}">
+                        <li id="nav-li-setting-input-valas"><a href="{{ url('mc-valas/create') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Valas
                             </a>
                         </li>                    
-                        <li id="nav-li-input-setting-valas-uom"><a href="{{ url('mc-valas-change') }}">
+                        <li id="nav-li-setting-valas-uom"><a href="{{ url('mc-valas-change') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Pecahan Valas
                             </a>
                         </li>
-                        <li id="nav-li-input-setting-input-valas-uom"><a href="{{ url('mc-valas-change/create') }}">
+                        <li id="nav-li-setting-input-valas-uom"><a href="{{ url('mc-valas-change/create') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Pecahan Valas
                             </a>
                         </li>
