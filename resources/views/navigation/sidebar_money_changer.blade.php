@@ -86,12 +86,20 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Opening & Closing
                             </a>
                         </li>
-                        <li id="nav-li-input-transaction"><a href="{{ url('mc-sales-order/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Transaksi
+                        <li id="nav-li-input-so"><a href="{{ url('mc-sales-order/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Transaksi Jual
                             </a>
                         </li>
-                        <li id="nav-li-view-transaction"><a href="{{ url('mc-sales-order') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Transaksi
+                        <li id="nav-li-view-so"><a href="{{ url('mc-sales-order') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Transaksi Jual
+                            </a>
+                        </li>
+                         <li id="nav-li-input-po"><a href="{{ url('mc-purchase-order/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Transaksi Beli
+                            </a>
+                        </li>
+                        <li id="nav-li-view-po"><a href="{{ url('mc-purchase-order') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Transaksi Beli
                             </a>
                         </li>
                     </ul>
@@ -128,8 +136,14 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Closing Harian
                             </a>
                         </li>
-                        <li id="nav-li-rpt-transaction"><a href="{{ url('mc-rpt-transaction') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Jual Beli Harian
+                        <li id="nav-li-rpt-so">
+                            <a href="{{ url('mc-rpt-so') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Penjualan Harian
+                            </a>
+                        </li>
+                        <li id="nav-li-rpt-po">
+                            <a href="{{ url('mc-rpt-po') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Pembelian Harian
                             </a>
                         </li>
                         <li id="nav-li-rpt-stock"><a href="{{ url('mc-rpt-inventory') }}">

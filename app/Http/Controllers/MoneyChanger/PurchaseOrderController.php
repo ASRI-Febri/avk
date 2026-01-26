@@ -27,14 +27,14 @@ class PurchaseOrderController extends MyController
         
         // FORM TITLE
         $this->data['module_name'] = 'Money Changer';
-        $this->data['form_title'] = 'Purchase Order';
+        $this->data['form_title'] = 'Pembelian Valuta Asing';
 
         // NAVIGATION
         $this->data['navbar'] = 'navigation.navbar_money_changer';     
         $this->data['sidebar'] = 'navigation.sidebar_money_changer'; 
 
         // BREADCRUMB
-        $this->data['breads'] = array('Pembelian','Purchase Order'); 
+        $this->data['breads'] = array('Pembelian','Pembelian Valuta Asing'); 
 
         // URL
         $this->data['url_create'] = url('mc-purchase-order/create');
@@ -63,8 +63,8 @@ class PurchaseOrderController extends MyController
         
         // $access = TRUE;
         
-        $this->data['form_sub_title'] = 'Daftar Purchase Order';
-        $this->data['form_remark'] = 'Daftar PO pembelian valuta asing untuk persediaan dan untuk dijual kembali';        
+        $this->data['form_sub_title'] = 'Daftar Pembelian Valas';
+        $this->data['form_remark'] = 'Daftar pembelian valuta asing untuk persediaan dan untuk dijual kembali';        
         
         // BREADCRUMB
         array_push($this->data['breads'],'List');       
@@ -72,7 +72,7 @@ class PurchaseOrderController extends MyController
         if ($access == TRUE)
         {       
             // TABLE HEADER & FOOTER
-            $this->data['table_header'] = array('No','IDX_T_PurchaseOrder','Perusahaan','Cabang','Nomor PO',
+            $this->data['table_header'] = array('No','IDX_T_PurchaseOrder','Perusahaan','Cabang','Nomor Systen',
             'Tanggal PO','Business Partner', 'Catatan PO','POStatus','Status','Action');         
 
             $this->data['table_footer'] = array('','IDX_T_PurchaseOrder','CompanyName','BranchName','PONumber',
@@ -120,9 +120,9 @@ class PurchaseOrderController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
 
-        $this->data['form_title'] = 'Purchase Order';
-        $this->data['form_sub_title'] = 'Input Purchase Order';
-        $this->data['form_desc'] = 'Input Purchase Order';       
+        $this->data['form_title'] = 'Pembelian Valuta Asing';
+        $this->data['form_sub_title'] = 'Input Pembelian Valuta Asing';
+        $this->data['form_desc'] = 'Input Pembelian Valuta Asing';       
         $this->data['state'] = 'create';
 
         // BREADCRUMB
@@ -138,6 +138,7 @@ class PurchaseOrderController extends MyController
             $this->data['fields']->IDX_M_Partner = 0;  
             $this->data['fields']->POStatus = 'D';   
             $this->data['fields']->IDX_M_Company = 1; 
+            $this->data['fields']->IDX_M_Branch = 1; 
             $this->data['fields']->PartnerDesc = '';
             $this->data['fields']->RecordStatus = 'A';
 
@@ -157,9 +158,9 @@ class PurchaseOrderController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
 
-        $this->data['form_title'] = 'Purchase Order';
-        $this->data['form_sub_title'] = 'Update Purchase Order';
-        $this->data['form_desc'] = 'Update Purchase Order';              
+        $this->data['form_title'] = 'Pembelian Valuta Asing';
+        $this->data['form_sub_title'] = 'Update Pembelian Valuta Asing';
+        $this->data['form_desc'] = 'Update Pembelian Valuta Asing';              
         $this->data['state'] = 'update';
 
         // BREADCRUMB
@@ -367,9 +368,9 @@ class PurchaseOrderController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
        
-        $this->data['form_title'] = 'Approval Purchase Order';
+        $this->data['form_title'] = 'Approval Pembelian Valuta Asing';
         $this->data['form_sub_title'] = 'Approval';        
-        $this->data['form_desc'] = 'Approval Purchase Order';
+        $this->data['form_desc'] = 'Approval Pembelian Valuta Asing';
         
         $this->data['state'] = 'approve';
 
@@ -437,9 +438,9 @@ class PurchaseOrderController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
        
-        $this->data['form_title'] = 'Reverse Purchase Order';
+        $this->data['form_title'] = 'Reverse Pembelian Valuta Asing';
         $this->data['form_sub_title'] = 'Reverse';        
-        $this->data['form_desc'] = 'Reverse Purchase Order';
+        $this->data['form_desc'] = 'Reverse Pembelian Valuta Asing';
         
         $this->data['state'] = 'approve';
 
@@ -527,7 +528,7 @@ class PurchaseOrderController extends MyController
 
         if ($return_type == 'stream')
         {
-            return $pdf->stream();
+            return $pdf->stream($data['fields']->PONumber.'.pdf');
         }
 
         if ($return_type == 'download')

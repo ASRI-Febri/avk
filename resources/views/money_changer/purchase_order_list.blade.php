@@ -1,5 +1,11 @@
 @extends('layouts.master-datatable')
 
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-view-po').addClass('mm-active');
+@endsection
+
 @section('advance-search')
     <div class="row mb-3">
         <div class="col-4">
@@ -43,7 +49,7 @@
 
         { data: "IDX_T_PurchaseOrder", visible: false }, 
         { data: "CompanyName", visible: false }, 
-        { data: "BranchName", visible: true },
+        { data: "BranchName", visible: false },
         { data: "PONumber", visible: true,  "bSortable": false },
         { data: "PODate", visible: true },
         { data: "PartnerName", visible: true },

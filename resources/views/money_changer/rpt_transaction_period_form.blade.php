@@ -12,14 +12,17 @@
     
     <input type="hidden" id="IDX_M_Branch" name="IDX_M_Branch" value="{{ $IDX_M_Branch }}"/>
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $IDX_M_Partner }}"/>
+    <input type="hidden" id="IDX_M_TransactionType" name="IDX_M_TransactionType" value="{{ $IDX_M_TransactionType }}"/>
 
     <input type="hidden" id="CurrencyName" name="CurrencyName" value=""/>
     <input type="hidden" id="ValasName" name="ValasName" value=""/>
 
     <div class="d-grid gap-3">
         {{-- <x-select-horizontal label="Cabang" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch" flag="required" /> --}}
-        <x-select-horizontal label="Jenis Transaksi (Opsional)" id="IDX_M_TransactionType" :value="$IDX_M_TransactionType" class="" :array="$dd_transaction_type" flag="" />
-            {{-- <x-lookup-horizontal label="Vendor" id="PartnerDesc" :value="$fields->PartnerDesc" class="" button="btn-find-vendor"/>  --}}
+        
+        {{-- <x-select-horizontal label="Jenis Transaksi (Opsional)" id="IDX_M_TransactionType" :value="$IDX_M_TransactionType" class="" :array="$dd_transaction_type" flag="" /> --}}
+        
+        {{-- <x-lookup-horizontal label="Vendor" id="PartnerDesc" :value="$fields->PartnerDesc" class="" button="btn-find-vendor"/>  --}}
 
         <x-select-horizontal label="Mata Uang (Opsional)" id="IDX_M_Currency" :value="$IDX_M_Currency" class="required" :array="$dd_currency"/>
 

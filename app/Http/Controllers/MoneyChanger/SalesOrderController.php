@@ -56,8 +56,8 @@ class SalesOrderController extends MyController
         
         // $access = TRUE;
         
-        $this->data['form_sub_title'] = 'Daftar Transaksi Valas';
-        $this->data['form_remark'] = 'Daftar transaksi jual beli valuta asing antara customer dengan money changer';        
+        $this->data['form_sub_title'] = 'Daftar Transaksi Jual';
+        $this->data['form_remark'] = 'Daftar transaksi penjualan valuta asing antara customer dengan money changer';        
         
         // BREADCRUMB
         array_push($this->data['breads'],'List');       
@@ -65,7 +65,7 @@ class SalesOrderController extends MyController
         if ($access == TRUE)
         {       
             // TABLE HEADER & FOOTER
-            $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','Nomor Transaksi',
+            $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','Nomor System',
             'Tanggal Transaksi','Konsumen', 'Keterangan','POStatus','Status','Action');         
 
             $this->data['table_footer'] = array('','IDX_T_SalesOrder','CompanyName','BranchName','SONumber',
@@ -113,9 +113,9 @@ class SalesOrderController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
 
-        $this->data['form_title'] = 'Transaksi Valas';
-        $this->data['form_sub_title'] = 'Input Transaksi Valas';
-        $this->data['form_desc'] = 'Input Transaksi Valas';       
+        $this->data['form_title'] = 'Penjualan Valuta Asing';
+        $this->data['form_sub_title'] = 'Input Penjualan Valuta Asing';
+        $this->data['form_desc'] = 'Input Penjualan Valuta Asing';       
         $this->data['state'] = 'create';
 
         // BREADCRUMB
@@ -152,9 +152,9 @@ class SalesOrderController extends MyController
 
         $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
 
-        $this->data['form_title'] = 'Update Transaksi Valas';
-        $this->data['form_sub_title'] = 'Update Transaksi Valas';
-        $this->data['form_desc'] = 'Update Transaksi Valas';              
+        $this->data['form_title'] = 'Update Penjualan Valuta Asing';
+        $this->data['form_sub_title'] = 'Update Penjualan Valuta Asing';
+        $this->data['form_desc'] = 'Update Penjualan Valuta Asing';              
         $this->data['state'] = 'update';
 
         // BREADCRUMB
@@ -539,7 +539,7 @@ class SalesOrderController extends MyController
 
         if ($return_type == 'stream')
         {
-            return $pdf->stream();
+            return $pdf->stream($data['fields']->SONumber.'.pdf');
         }
 
         if ($return_type == 'download')

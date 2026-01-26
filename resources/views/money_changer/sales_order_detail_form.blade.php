@@ -9,6 +9,7 @@
     <input type="hidden" id="IDX_T_SalesOrderDetail" name="IDX_T_SalesOrderDetail" value="{{ $fields->IDX_T_SalesOrderDetail }}"/>
     <input type="hidden" id="IDX_T_SalesOrder" name="IDX_T_SalesOrder" value="{{ $fields->IDX_T_SalesOrder }}"/>
     <input type="hidden" id="IDX_M_Valas" name="IDX_M_Valas" value="{{ $fields->IDX_M_Valas }}"/>
+    <input type="hidden" id="IDX_M_TransactionType" name="IDX_M_TransactionType" value="{{ $fields->IDX_M_TransactionType }}"/>
     <input type="hidden" id="ForeignAmount" name="ForeignAmount" value="{{ $fields->ForeignAmount }}"/>
 
     <div class="alert alert-label-info">
@@ -21,7 +22,6 @@
 
     <div class="d-grid gap-3">
 
-        <x-select-horizontal label="Jenis Transaksi" id="IDX_M_TransactionType" :value="$fields->IDX_M_TransactionType" class="required" :array="$dd_transaction_type"/>
         <x-select-horizontal label="Valas" id="IDX_M_Valas" :value="$fields->IDX_M_Valas" class="required" :array="$dd_valas"/>
 
         <x-textbox-horizontal label="Qty (Lembar atau Koin)" id="Quantity" :value="$fields->Quantity" placeholder="" class="required auto" />

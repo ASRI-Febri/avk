@@ -143,8 +143,11 @@ Route::get('/mc-sop-penetapan-kurs', 'MoneyChanger\SOPController@sop_penetapan_k
 Route::get('/mc-sop-perlindungan-konsumen', 'MoneyChanger\SOPController@sop_perlindungan_konsumen');
 
 // REPORT
-Route::get('/mc-rpt-transaction', 'MoneyChanger\RptTransactionController@period');
-Route::post('/mc-rpt-transaction', 'MoneyChanger\RptTransactionController@period_report');
+Route::get('/mc-rpt-so', 'MoneyChanger\RptTransactionController@period_sales');
+Route::post('/mc-rpt-so', 'MoneyChanger\RptTransactionController@period_sales_report');
+
+Route::get('/mc-rpt-po', 'MoneyChanger\RptTransactionController@period_purchase');
+Route::post('/mc-rpt-po', 'MoneyChanger\RptTransactionController@period_purchase_report');
 
 Route::get('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period');
 Route::post('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period_report');

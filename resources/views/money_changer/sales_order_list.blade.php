@@ -3,7 +3,7 @@
 @section('active_link')
 	$('#nav-transaction').addClass('mm-active');
     $('#nav-ul-transaction').addClass('mm-show');
-    $('#nav-li-view-transaction').addClass('mm-active');
+    $('#nav-li-view-so').addClass('mm-active');
 @endsection
 
 @section('advance-search')

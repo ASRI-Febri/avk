@@ -3,17 +3,17 @@
 @section('active_link')
 	$('#nav-transaction').addClass('mm-active');
     $('#nav-ul-transaction').addClass('mm-show');
-    $('#nav-li-input-transaction').addClass('mm-active');
+    $('#nav-li-input-so').addClass('mm-active');
 @endsection
 
 @section('form-remark')
-    Transaki untuk melakukan penjualan atau pembelian valuta asing dari customer. 
+    Input atau edit transaki penjualan valuta asing ke konsumen (sales order). 
     <br> 
     Contoh nomor SO <code>SO-100-2506-001</code>.
 @endsection
 
 @section('action')
-
+    @if($state <> 'create')
     <x-btn-action>
         
         @if($fields->SOStatus == 'D')
@@ -44,6 +44,7 @@
             <span class="dropdown-content">Print Nota</span>            
         </a>        
     </x-btn-action>
+    @endif
 
 @endsection
 

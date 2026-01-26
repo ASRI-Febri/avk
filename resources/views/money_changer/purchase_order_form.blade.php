@@ -1,13 +1,20 @@
 @extends('layouts.master-form-transaction')
 
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-input-po').addClass('mm-active');
+@endsection
+
 @section('form-remark')
-    Purchase order untuk melakukan pembelian valuta asing dari supplier. 
+    Input / edit pembelian valuta asing dari konsumen atau supplier (purchase order). 
     <br> 
     Contoh nomor PO <code>PO-100-2506-001</code> untuk kode cabang 100, bulan 05 tahun 2025.
 @endsection
 
 @section('action')
 
+    @if($state <> 'create')
     <x-btn-action>
         
         @if($fields->POStatus == 'D')
@@ -38,6 +45,7 @@
             <span class="dropdown-content">Print PO</span>            
         </a>        
     </x-btn-action>
+    @endif
 
 @endsection
 
@@ -47,6 +55,8 @@
     <input type="hidden" id="IDX_T_PurchaseOrder" name="IDX_T_PurchaseOrder" value="{{ $fields->IDX_T_PurchaseOrder }}"/>
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>
     <input type="hidden" id="POStatus" name="POStatus" value="{{ $fields->POStatus }}"/>
+    <input type="hidden" id="IDX_M_Company" name="IDX_M_Company" value="{{ $fields->IDX_M_Company }}"/>
+    <input type="hidden" id="IDX_M_Branch" name="IDX_M_Branch" value="{{ $fields->IDX_M_Branch }}"/>
 
     @if($state <> 'create')
         <h5 class="text-secondary">{{ $fields->PONumber . ' - ' . $fields->StatusDesc }}</h5>
@@ -60,9 +70,9 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-3">
-                        <x-select-horizontal label="Perusahaan" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
-                        <x-select-horizontal label="Cabang" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/>
-                        <x-textbox-horizontal label="No Referensi" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="(No Quotation atau Penawaran)" class="" />
+                        {{-- <x-select-horizontal label="Perusahaan" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
+                        <x-select-horizontal label="Cabang" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/> --}}
+                        <x-textbox-horizontal label="No Nota" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="(No nota)" class="" />
                     </div>
                 </div>
             </div>            
@@ -75,7 +85,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-3">
-                        <x-textbox-horizontal label="No PO" id="PONumber" :value="$fields->PONumber" placeholder="(Auto)" class="readonly" />
+                        <x-textbox-horizontal label="No System" id="PONumber" :value="$fields->PONumber" placeholder="(Auto)" class="readonly" />
                         <x-textbox-horizontal label="Tanggal PO" id="PODate" :value="$fields->PODate" placeholder="" class="required datepicker2" />
                         <x-lookup-horizontal label="Supplier" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
                         <x-textbox-horizontal label="Keterangan PO" id="PONotes" :value="$fields->PONotes" placeholder="" class="required" />
