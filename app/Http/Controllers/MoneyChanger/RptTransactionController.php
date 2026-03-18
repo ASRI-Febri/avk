@@ -203,7 +203,7 @@ class RptTransactionController extends MyController
             $this->data['end_date'] = date('Y-m-d');
 
             // URL SAVE
-            $this->data['url_show_repoprt'] = url('mc-rpt-transaction');
+            $this->data['url_show_repoprt'] = url('mc-rpt-po');
 
             return view('money_changer/rpt_transaction_period_form', $this->data);
         }

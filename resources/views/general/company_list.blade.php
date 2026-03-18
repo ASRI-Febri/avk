@@ -1,4 +1,28 @@
-@extends('layouts.datatables')
+@extends('layouts.master-datatable')
+
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    {{-- $('#nav-link-sbp-ul').css("display","block"); --}}
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-company').addClass('mm-active');
+@endsection
+
+@section('advance-search')
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Partner</span> 
+                <input id="PartnerName" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">No KTP</span> 
+                <input id="SingleIdentityNumber" type="text" class="form-control" />
+            </div>
+        </div>        
+    </div>
+@endsection
 
 @section('datatables_array')
     columns: [
@@ -28,11 +52,11 @@
             {	
                 if(row['RecordStatus'] == 'I')
                 {
-                    return '<span class="badge outline-badge-danger">In-Active</span>';
+                    return '<x-badge-danger label="In-Active" />';
                 }
                 else if(row['RecordStatus'] == 'A')
                 {
-                    return '<span class="badge outline-badge-info">Active</span>';
+                    return '<x-badge-info label="Active" />';
                 }                
             }
             , class: "text-center"

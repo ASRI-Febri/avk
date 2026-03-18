@@ -28,7 +28,7 @@
     </div>
 
     <div style="float:left;width:40%">
-        <h2>Nota Transaksi Valas</h2>
+        <h2>Nota Pembelian Valas</h2>
         <table class="noborder nopadding">
             <tr class="noborder nopadding">
                 <td class="td-20 bold noborder nopadding param-key">No Nota</td>
@@ -76,7 +76,7 @@
     </div> --}}
 
     <div style="float:left;width:25%">
-        <span class="bold" style="display:block;">Customer</span>
+        <span class="bold" style="display:block;">Beli Dari</span>
         <span style="display:block;">{{ $fields->PartnerName }}</span>
         
     </div>

@@ -24,24 +24,28 @@
                     </a>
                 </li>
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-transaction">
                         <i class="fas fa-file-invoice-dollar"></i>
-                        <span>Transaction</span>
+                        <span>Transaksi</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('fm-purchase-invoice') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Invoice Pembelian
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-transaction">
+                        <li id="nav-li-view-pi">
+                            <a href="{{ url('fm-purchase-invoice') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Nota Pembelian
                             </a>
                         </li>
-                        <li><a href="{{ url('fm-financial-payment') }}">
+                        <li id="nav-li-view-fp">
+                            <a href="{{ url('fm-financial-payment') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Pengeluaran Uang
                             </a>
                         </li>
-                        <li><a href="{{ url('fm-sales-invoice') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Invoice Penjualan
+                        <li id="nav-li-view-si">
+                            <a href="{{ url('fm-sales-invoice') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Nota Penjualan
                             </a>
                         </li>
-                        <li><a href="{{ url('fm-financial-receive') }}">
+                        <li id="nav-li-view-fr">
+                            <a href="{{ url('fm-financial-receive') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Penerimaan Uang
                             </a>
                         </li>
@@ -49,24 +53,28 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-report">
                         <i class="fas fa-list-ul"></i>
-                        <span>Report</span>
+                        <span>Laporan</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('fm-rpt-purchase-invoice') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Laporan Invoice Pembelian
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-report">
+                        <li id="nav-li-rpt-pi">
+                            <a href="{{ url('fm-rpt-purchase-invoice') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Laporan Nota Pembelian
                             </a>
                         </li>
-                        <li><a href="{{ url('fm-rpt-financial-receive') }}">
+                        <li id="nav-li-rpt-fr">
+                            <a href="{{ url('fm-rpt-financial-receive') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Laporan Penerimaan Uang
                             </a>
                         </li>
-                        <li><a href="{{ url('fm-rpt-sales-invoice') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Laporan Invoice Penjualan
+                        <li id="nav-li-rpt-si">
+                            <a href="{{ url('fm-rpt-sales-invoice') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Laporan Nota Penjualan
                             </a>
                         </li>
-                        <li><a href="{{ url('fm-rpt-financial-payment') }}">
+                        <li id="nav-li-rpt-fp">
+                            <a href="{{ url('fm-rpt-financial-payment') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Laporan Pengeluaran Uang
                             </a>
                         </li>
@@ -74,20 +82,23 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-setting">
                         <i class="fa fa-cogs"></i>
                         <span>Setting</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('fm-financial-account') }}">
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-setting">
+                        <li id="nav-li-setting-fa">
+                            <a href="{{ url('fm-financial-account') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Financial Account
                             </a>
                         </li> 
-                        <li><a href="{{ url('fm-bank') }}">
+                        <li id="nav-li-setting-bank">
+                            <a href="{{ url('fm-bank') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Bank
                             </a>
                         </li>
-                        <li><a href="{{ url('fm-currency') }}">
+                        <li id="nav-li-setting-currency">
+                            <a href="{{ url('fm-currency') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Currency
                             </a>
                         </li>                 

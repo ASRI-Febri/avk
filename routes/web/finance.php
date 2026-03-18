@@ -99,8 +99,8 @@ Route::post('/fm-purchase-invoice/save-duplicate', 'Finance\PurchaseInvoiceContr
 //LOOKUP
 Route::post('/fm-partner-list-pi', 'Finance\PurchaseInvoiceController@inquiry_data_partner');
 Route::post('/fm-select-partner-pi', 'Finance\PurchaseInvoiceController@show_lookup_partner');
-Route::post('/fm-coa-list', 'Finance\PurchaseInvoiceController@inquiry_data_coa');
-Route::post('/fm-select-coa', 'Finance\PurchaseInvoiceController@show_lookup_coa');
+// Route::post('/fm-coa-list', 'Finance\PurchaseInvoiceController@inquiry_data_coa');
+// Route::post('/fm-select-coa', 'Finance\PurchaseInvoiceController@show_lookup_coa');
 
 //SEARCH
 Route::post('/fm-purchase-order/search', 'Finance\PurchaseInvoiceController@search_po_no');
@@ -163,8 +163,8 @@ Route::post('/fm-sales-invoice/save-auditnotes', 'Finance\SalesInvoiceController
 //LOOKUP
 Route::post('/fm-partner-list-si', 'Finance\SalesInvoiceController@inquiry_data_partner');
 Route::post('/fm-select-partner-si', 'Finance\SalesInvoiceController@show_lookup_partner');
-Route::post('/fm-coa-list', 'Finance\SalesInvoiceController@inquiry_data_coa');
-Route::post('/fm-select-coa', 'Finance\SalesInvoiceController@show_lookup_coa');
+// Route::post('/fm-coa-list', 'Finance\SalesInvoiceController@inquiry_data_coa');
+// Route::post('/fm-select-coa', 'Finance\SalesInvoiceController@show_lookup_coa');
 // Route::post('/fm-tax-list', 'Finance\SalesInvoiceController@inquiry_data_tax');
 // Route::post('/fm-select-tax', 'Finance\SalesInvoiceController@show_lookup_tax');
 

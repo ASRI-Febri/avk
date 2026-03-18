@@ -65,10 +65,10 @@ class SalesOrderController extends MyController
         if ($access == TRUE)
         {       
             // TABLE HEADER & FOOTER
-            $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','Nomor System',
-            'Tanggal Transaksi','Konsumen', 'Keterangan','POStatus','Status','Action');         
+            $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','No Nota','Nomor System',
+            'Tanggal Transaksi','Konsumen', 'Keterangan','SOStatus','Status','Action');         
 
-            $this->data['table_footer'] = array('','IDX_T_SalesOrder','CompanyName','BranchName','SONumber',
+            $this->data['table_footer'] = array('','IDX_T_SalesOrder','CompanyName','BranchName','ReferenceNo','SONumber',
             '','PartnerName','SONotes','','','Action');
 
             $this->data['array_filter'] = array('CompanyName','BranchName','SONumber','SONotes','PartnerName');
@@ -98,7 +98,7 @@ class SalesOrderController extends MyController
 
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
-        $this->array_column = array('RowNumber','IDX_T_SalesOrder','CompanyName','BranchName','SONumber',
+        $this->array_column = array('RowNumber','IDX_T_SalesOrder','CompanyName','BranchName','ReferenceNo','SONumber',
             'SODate','PartnerName', 'SONotes','SOStatus','StatusDesc');
 
         return $this->get_datatables($request); 
@@ -203,6 +203,7 @@ class SalesOrderController extends MyController
             // RECORDS
             $param['IDX_T_SalesOrder'] = $id;   
             $this->data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetail_List',$param,'list','sqlsrv');
+            $this->data['records_payment'] = $this->exec_sp('USP_MC_SalesOrderPayment_List',$param,'list','sqlsrv');
         }
 
         return view($this->data['view'], $this->data);
@@ -624,4 +625,129 @@ class SalesOrderController extends MyController
         }   
     }
 
+    // =========================================================================================
+    // UPLOAD FILE
+    // =========================================================================================    
+    public function upload(Request $request)
+    {
+        // $this->validate($request, [
+        //     'UploadFile' => 'required',            	
+        // ]);
+
+        $validator = Validator::make($request->all(), [
+            'UploadFile' => 'required',
+        ],[
+            'IDX_T_SalesOrder.required' => 'Invalid index',
+        ]);
+        
+        if($validator->fails())
+        {
+            echo 'error';
+            return $this->validation_fails($validator->errors(),$request->input('UploadFile'));            	
+
+        } else {
+
+            $data = $request->all();
+
+            //$path = 'upload-doc/upload-agent';
+            $path = storage_path("app/public/upload-so" . "/" . $request->IDX_T_SalesOrder);
+
+            //echo $path;
+
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
+
+            //echo $path;
+
+            if (!empty($_FILES['UploadFile']['name']))
+			{
+                $UploadFile = $request->file('UploadFile');
+
+                // Get filename with the extension
+                $filenameWithExt = $UploadFile->getClientOriginalName();
+
+                //Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+
+                $extension = $UploadFile->getClientOriginalExtension();
+
+                // Filename to store
+                $fileNameToStore = $filename.'.'.$extension;
+
+                // UPLOAD TO PATH
+                $UploadFile->move($path, $fileNameToStore);
+
+                $param_upload['IDX_T_SalesOrder'] = $request->IDX_T_SalesOrder;
+                $param_upload['UploadCategory'] = $request->UploadCategory;
+                $param_upload['FilePath'] = $path;
+                $param_upload['FileName'] = $fileNameToStore;
+                $param_upload['FileDescription'] = 'Penjualan Valas - '.$request->PONumber;
+                $param_upload['UserID'] = 'XXX'.$this->data['user_id'];
+
+                $this->data['records_upload'] = $this->exec_sp('USP_MC_SalesOrderUpload_Save',$param_upload,'list','sqlsrv');
+            }           
+
+            $this->data['dir_network'] = $path;    
+            return view('money_changer.sales_order_upload_list', $this->data);
+        }
+
+    }
+
+    public function download(Request $request)
+    {
+        $data = $request->all();
+
+        $filepath = $request->query('filepath');
+
+        //echo 'file path '.$filepath;
+
+        //$dir_network = storage_path('app/public/upload-pinjaman' . '/' . $request->cont_contract_no .'\'');
+
+        //echo '<br/>';
+        //echo 'dir network '.$dir_network;
+        
+        //foreach (glob($dir_network.$filepath."*") as $filename) {
+        foreach (glob($filepath."*") as $filename) {
+
+            //echo "foreach";
+            
+            $mimeType = $this->getMimeType($filename);            
+
+            $headers = array(
+                //'Content-Disposition' => 'attachment',
+                //'Content-Type' => File::mimeType($filename),
+                'Content-Type' => $mimeType,
+            );
+
+            return response()->download($filename, null, $headers); 
+        }
+    }
+
+    public function delete_file(Request $request)
+    {
+        $filepath = $request->query('filepath');
+
+        if (Storage::exists($filePath)) {
+            Storage::delete($filePath);
+            echo "File deleted successfully.";
+        } else {
+            echo "File does not exist.";
+        }
+    }
+
+    protected function getMimeType($extension)
+    {
+        $mimeTypes = [
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'pdf' => 'application/pdf',
+            'PDF' => 'application/pdf',
+            // Add other MIME types as needed
+        ];
+
+        return $mimeTypes[$extension] ?? 'application/octet-stream'; // Default MIME type
+    }
 }

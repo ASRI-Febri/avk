@@ -1,4 +1,41 @@
-@extends('layouts.datatables')
+@extends('layouts.master-datatable')
+
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-view-fr').addClass('mm-active');
+@endsection
+
+@section('advance-search')
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Kode FA</span> 
+                <input id="FinancialAccountID" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama FA</span> 
+                <input id="FinancialAccountDesc" type="text" class="form-control" />
+            </div>
+        </div> 
+    </div>
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">No Rekening</span> 
+                <input id="AccountNo" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama di Rekening</span> 
+                <input id="AccountName" type="text" class="form-control" />
+            </div>
+        </div>  
+    </div>
+@endsection
 
 @section('datatables_array')
     columns: [

@@ -266,12 +266,13 @@ class COAController extends MyController
             $param['IDX_M_CashflowOut'] = '0';
             $param['AllowJournalEntry'] = $data['AllowJournalEntry'];
             $param['IsReconcile'] = $data['IsReconcile'];
+            $param['DefaultBalance'] = $data['DefaultBalance'];
             $param['COAStatus'] = $data['COAStatus'];
             $param['COAGroup1'] = $data['COAGroup1'];
             $param['COAGroup2'] = $data['COAGroup2'];
             $param['COAGroup3'] = $data['COAGroup3'];            
             
-            $param['UserID'] = $this->data['user_id'];
+            $param['UserID'] = 'XXX'.$this->data['user_id'];
             $param['RecordStatus'] = 'A';            
 
             return $this->store($state, $param);
@@ -291,9 +292,9 @@ class COAController extends MyController
         $this->data['url_search'] = url('/ac-coa-list');        
 
         // TABLE HEADER & FOOTER
-        $this->data['table_header'] = array('No','IDX_M_COA','COA ID','COA Desc','COA Desc2','RecordStatus','Status','Action');         
+        $this->data['table_header'] = array('No','IDX_M_COA','COA ID','COA Desc','COA Desc2','','Group 1','RecordStatus','Status','Action');         
 
-        $this->data['table_footer'] = array('','','COAID','COADesc','COADesc2','','','Action');
+        $this->data['table_footer'] = array('','','COAID','COADesc','COADesc2','','COAGroup1Name1','','','Action');
 
         $this->data['array_filter'] = array('COAID','COADesc','COADesc2');
 
@@ -312,8 +313,8 @@ class COAController extends MyController
         $this->data['url_update'] = url('/ac-coa/update');
 
         // TABLE HEADER & FOOTER
-        $this->data['table_header'] = array('No','ID','CoA ID','CoA Name','CoA Name 2','Action'); 
-        $this->data['table_footer'] = array('','','COAID','COADesc','COADesc2','Action');
+        $this->data['table_header'] = array('No','ID','CoA ID','CoA Name','CoA Name 2','COAGroup1ID','Group 1','Action'); 
+        $this->data['table_footer'] = array('','','COAID','COADesc','COADesc2','','COAGroup1Name1','Action');
         $this->data['array_filter'] = array('COAID','COADesc','COADesc2');
 
         $this->data['target_index'] = $request->target_index;

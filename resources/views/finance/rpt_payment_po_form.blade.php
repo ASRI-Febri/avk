@@ -8,7 +8,7 @@
     
 @endsection
 
-@section('content_form')
+@section('content-form')
 
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner"/>
 

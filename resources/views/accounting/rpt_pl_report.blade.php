@@ -53,6 +53,9 @@
             $total_debetsingle = 0;
             $total_creditsingle = 0;
             $total_balancesingle = 0;
+
+            $total_income = 0;
+            $total_expense = 0;
         @endphp
         @foreach ($records as $row)
 
@@ -66,10 +69,28 @@
                 $total_credit += $row->BCreditAmount;
                 $total_balance += $row->BEBalanceAmount;
 
-                $total_beginsingle += $row->BBBalanceAmount;
-                $total_debetsingle += $row->BDebetAmount;
-                $total_creditsingle += $row->BCreditAmount;
-                $total_balancesingle += $row->BEBalanceAmount;
+                // $total_beginsingle += $row->BBBalanceAmount;
+                // $total_debetsingle += $row->BDebetAmount;
+                // $total_creditsingle += $row->BCreditAmount;
+                // $total_balancesingle += $row->BEBalanceAmount;
+
+                // if($row->AccountType == 'IC')
+                // {
+                //     $total_income += $row->BEBalanceAmount;
+                //     $total_begin += $row->BBBalanceAmount;
+                //     $total_debet += $row->BDebetAmount;
+                //     $total_credit += $row->BCreditAmount;
+                //     $total_balance += $row->BEBalanceAmount;
+                // }
+
+                // if($row->AccountType == 'EX')
+                // {
+                //     $total_income += $row->BEBalanceAmount;
+                //     $total_begin -= $row->BBBalanceAmount;
+                //     $total_debet -= $row->BDebetAmount;
+                //     $total_credit -= $row->BCreditAmount;
+                //     $total_balance -= $row->BEBalanceAmount;
+                // }
             @endphp 
 
             @if($group_a1 <> $group_a2)

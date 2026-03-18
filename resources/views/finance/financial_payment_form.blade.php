@@ -1,4 +1,4 @@
-@extends('layouts.form')
+@extends('layouts.master-form-transaction')
 
 @section('left_header')    
     
@@ -52,7 +52,7 @@
     </div>
 @endsection
 
-@section('content_form')    
+@section('content-form')    
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_T_FinancialPaymentHeader" name="IDX_T_FinancialPaymentHeader" value="{{ $fields->IDX_T_FinancialPaymentHeader }}"/>

@@ -98,6 +98,80 @@
 
             <div class="card">
                 <div class="card-header card-header-bordered">
+                    <h3 class="card-title">Average Price by Currency</h3>
+
+                    <div class="card-addon">
+                        
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive-md">
+                        <table class="table text-nowrap mb-0">
+                            @php 
+                                $row_number = 0;
+                                $group_number = 0;
+
+                                $group_a1 = '';    
+                                $group_a2 = '';
+
+                                $group_valas_amount = 0;
+                                $total_valas_amount = 0;
+
+                                $prev_currency_id = '';
+                            @endphp
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Currency</th>                                    
+                                    <th class="text-end">Average Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($records_average)   
+                                    
+                                    @foreach($records_average as $row)
+                                    @php
+                                        $row_number += 1;
+                                        $group_a1 = $row->CurrencyID;           
+                
+                                        //$total_valas_amount += ($row->EB_Quantity * $row->ValasChangeNumber);
+                                    @endphp 
+
+                                    @if($group_a1 <> $group_a2)                                       
+
+                                        @php
+                                            $group_number = 0;
+                                            $group_valas_amount = 0;
+
+                                            $group_a2 = $group_a1;
+                                        @endphp 
+                                    @endif 
+
+                                    @php 
+                                        $group_number += 1;
+                                        
+                                        $prev_currency_id = $row->CurrencyID;
+                                    @endphp
+
+                                    <tr>
+                                        <td>{{ $row_number }}</td>
+                                        <td>{{ $row->CurrencyID . ' - ' . $row->CurrencyName }}</td>
+                                        <td class="text-end">{{ number_format($row->AverageValue,2,'.',',') }}</td>                                        
+                                    </tr>
+                                    @endforeach
+                                    
+                                @endif 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-xl-6 col-md-6 col-sm-12">
+
+            <div class="card">
+                <div class="card-header card-header-bordered">
                     <h3 class="card-title">Top 10 Sales by Valas</h3>
 
                     <div class="card-addon">

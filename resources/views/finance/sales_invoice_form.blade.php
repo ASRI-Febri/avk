@@ -1,4 +1,4 @@
-@extends('layouts.form')
+@extends('layouts.master-form-transaction')
 
 @section('left_header')    
     
@@ -55,7 +55,7 @@
     </div>
 @endsection
 
-@section('content_form')    
+@section('content-form')    
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_T_SalesInvoiceHeader" name="IDX_T_SalesInvoiceHeader" value="{{ $fields->IDX_T_SalesInvoiceHeader }}"/>

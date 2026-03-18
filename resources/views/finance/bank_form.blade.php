@@ -6,7 +6,7 @@
     @endif 
 @endsection
 
-@section('content_form')  
+@section('content-form')  
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_M_Bank" name="IDX_M_Bank" value="{{ $fields->IDX_M_Bank }}"/>    

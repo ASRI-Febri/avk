@@ -12,7 +12,7 @@
     @include('form_helper.btn_save_header')
 @endsection
 
-@section('content_form')
+@section('content-form')
 
     <form id="form-entry" name="form-entry" autocomplete="off" enctype="multipart/form-data" action="{{ $url_save_header ?? '#' }}" role="form" method="post">        
 

@@ -8,6 +8,9 @@
         { data: "COAID" },
         { data: "COADesc" },
         { data: "COADesc2", visible: false }, 
+        { data: "COAGroup1ID", visible: false }, 
+        { data: "COAGroup1Name1", visible: true },
+        
         { "render": 	function ( data, type, row ){						  
                     var select = '<input type="checkbox" class="ids" id="chk_box[]" name="chk_box[]" value="'+row['IDX_M_COA']+','+row['COAID']+','+row['COADesc']+'">';									
                     return select;

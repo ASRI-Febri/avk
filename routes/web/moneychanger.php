@@ -67,6 +67,10 @@ Route::get('/mc-purchase-order/download-pdf/{id}', 'MoneyChanger\PurchaseOrderCo
 Route::post('/mc-purchase-order/duplicate', 'MoneyChanger\PurchaseOrderController@duplicate');
 Route::post('/mc-purchase-order/save-duplicate', 'MoneyChanger\PurchaseOrderController@save_duplicate');
 
+Route::post('/mc-purchase-order-upload', 'MoneyChanger\PurchaseOrderController@upload');
+Route::get('/mc-purchase-order-download', 'MoneyChanger\PurchaseOrderController@download');
+Route::get('/mc-purchase-order-delete-file', 'MoneyChanger\PurchaseOrderController@delete_file');
+
 // PURCHASE ORDER - DETAIL
 Route::get('/mc-purchase-order-detail', 'MoneyChanger\PurchaseOrderDetailController@inquiry');
 Route::post('/mc-purchase-order-detail-list', 'MoneyChanger\PurchaseOrderDetailController@inquiry_data');
@@ -76,6 +80,12 @@ Route::post('/mc-purchase-order-detail/save', 'MoneyChanger\PurchaseOrderDetailC
 Route::get('/mc-purchase-order-detail/reload/{id}', 'MoneyChanger\PurchaseOrderDetailController@reload'); // RELOAD TABLE AFTER SAVE
 Route::post('mc-purchase-order-detail/delete/{id?}', 'MoneyChanger\PurchaseOrderDetailController@delete');
 Route::post('/mc-purchase-order-detail/save-delete', 'MoneyChanger\PurchaseOrderDetailController@save_delete');
+
+// PURCHASE ORDER PAYMENT
+Route::post('mc-purchase-order-payment/create', 'MoneyChanger\PurchaseOrderPaymentController@create');
+Route::post('mc-purchase-order-payment/update', 'MoneyChanger\PurchaseOrderPaymentController@update');
+Route::post('/mc-purchase-order-payment/save', 'MoneyChanger\PurchaseOrderPaymentController@save');
+Route::get('/mc-purchase-order-payment/reload/{id}', 'MoneyChanger\PurchaseOrderPaymentController@reload');
 
 // SALES ORDER
 Route::get('/mc-sales-order', 'MoneyChanger\SalesOrderController@inquiry');
@@ -91,6 +101,10 @@ Route::get('/mc-sales-order/download-pdf/{id}', 'MoneyChanger\SalesOrderControll
 Route::post('/mc-sales-order/duplicate', 'MoneyChanger\SalesOrderController@duplicate');
 Route::post('/mc-sales-order/save-duplicate', 'MoneyChanger\SalesOrderController@save_duplicate');
 
+Route::post('/mc-sales-order-upload', 'MoneyChanger\SalesOrderController@upload');
+Route::get('/mc-sales-order-download', 'MoneyChanger\SalesOrderController@download');
+Route::get('/mc-sales-order-delete-file', 'MoneyChanger\SalesOrderController@delete_file');
+
 // SALES ORDER - DETAIL
 Route::get('/mc-sales-order-detail', 'MoneyChanger\SalesOrderDetailController@inquiry');
 Route::post('/mc-sales-order-detail-list', 'MoneyChanger\SalesOrderDetailController@inquiry_data');
@@ -100,6 +114,12 @@ Route::post('/mc-sales-order-detail/save', 'MoneyChanger\SalesOrderDetailControl
 Route::get('/mc-sales-order-detail/reload/{id}', 'MoneyChanger\SalesOrderDetailController@reload'); // RELOAD TABLE AFTER SAVE
 Route::post('mc-sales-order-detail/delete', 'MoneyChanger\SalesOrderDetailController@delete');
 Route::post('/mc-sales-order-detail/save-delete', 'MoneyChanger\SalesOrderDetailController@save_delete');
+
+// SALES ORDER PAYMENT
+Route::post('mc-sales-order-payment/create', 'MoneyChanger\SalesOrderPaymentController@create');
+Route::post('mc-sales-order-payment/update', 'MoneyChanger\SalesOrderPaymentController@update');
+Route::post('/mc-sales-order-payment/save', 'MoneyChanger\SalesOrderPaymentController@save');
+Route::get('/mc-sales-order-payment/reload/{id}', 'MoneyChanger\SalesOrderPaymentController@reload');
 
 // STOCK CARD SUMMARY
 Route::get('/mc-stock-card', 'MoneyChanger\StockCardController@inquiry');

@@ -8,7 +8,7 @@
     
 @endsection
 
-@section('content_form')
+@section('content-form')
 
     <div class="row">
         <div class="col-md-6 col-sm-12">

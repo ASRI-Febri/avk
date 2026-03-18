@@ -75,11 +75,11 @@
                     <ul class="sub-menu" aria-expanded="false" id="nav-ul-transaction">
                         <li id="nav-li-input-customer">
                             <a href="{{ url('mc-partner/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Customer
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Konsumen
                             </a>
                         </li>
                         <li id="nav-li-view-customer"><a href="{{ url('mc-partner') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Customer
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Konsumen
                             </a>
                         </li>
                         <li id="nav-li-opening-closing"><a href="{{ url('mc-open-close') }}">
@@ -87,19 +87,25 @@
                             </a>
                         </li>
                         <li id="nav-li-input-so"><a href="{{ url('mc-sales-order/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Transaksi Jual
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Penjualan
                             </a>
                         </li>
                         <li id="nav-li-view-so"><a href="{{ url('mc-sales-order') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Transaksi Jual
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Penjualan
                             </a>
                         </li>
                          <li id="nav-li-input-po"><a href="{{ url('mc-purchase-order/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Transaksi Beli
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Pembelian
                             </a>
                         </li>
-                        <li id="nav-li-view-po"><a href="{{ url('mc-purchase-order') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Transaksi Beli
+                        <li id="nav-li-view-po">
+                            <a href="{{ url('mc-purchase-order') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Pembelian
+                            </a>
+                        </li>
+                        <li id="nav-li-inventory-calculation">
+                            <a href="{{ url('mc-inventory-calculation') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Persediaan
                             </a>
                         </li>
                     </ul>
@@ -150,7 +156,8 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Stok Valas
                             </a>
                         </li>   
-                        <li id="nav-li-rpt-inventory-calculation"><a href="{{ url('mc-rpt-inventory-calculation') }}">
+                        <li id="nav-li-rpt-inventory-calculation">
+                            <a href="{{ url('mc-rpt-inventory-calculation') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Persediaan
                             </a>
                         </li>                      

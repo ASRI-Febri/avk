@@ -50,6 +50,7 @@
         { data: "IDX_T_SalesOrder", visible: false }, 
         { data: "CompanyName", visible: false }, 
         { data: "BranchName", visible: false },
+        { data: "ReferenceNo", visible: true },
         { data: "SONumber", visible: true,  "bSortable": false },
         { data: "SODate", visible: true },
         { data: "PartnerName", visible: true },

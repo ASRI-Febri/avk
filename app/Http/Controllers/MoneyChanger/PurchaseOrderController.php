@@ -12,8 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Validator;
 use PDF;
-use App\File;
+// use App\File;
 use Image;
+use File;
 
 class PurchaseOrderController extends MyController
 {   
@@ -72,10 +73,10 @@ class PurchaseOrderController extends MyController
         if ($access == TRUE)
         {       
             // TABLE HEADER & FOOTER
-            $this->data['table_header'] = array('No','IDX_T_PurchaseOrder','Perusahaan','Cabang','Nomor Systen',
-            'Tanggal PO','Business Partner', 'Catatan PO','POStatus','Status','Action');         
+            $this->data['table_header'] = array('No','IDX_T_PurchaseOrder','Perusahaan','Cabang','No Nota','Nomor System',
+            'Tanggal','Beli Dari', 'Keterangan','POStatus','Status','Action');         
 
-            $this->data['table_footer'] = array('','IDX_T_PurchaseOrder','CompanyName','BranchName','PONumber',
+            $this->data['table_footer'] = array('','IDX_T_PurchaseOrder','CompanyName','BranchName','ReferenceNo','PONumber',
             '','PartnerName','PONotes','','','Action');
 
             $this->data['array_filter'] = array('CompanyName','BranchName','PONumber','PONotes','PartnerName');
@@ -105,7 +106,7 @@ class PurchaseOrderController extends MyController
 
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
-        $this->array_column = array('RowNumber','IDX_T_PurchaseOrder','CompanyName','BranchName','PONumber',
+        $this->array_column = array('RowNumber','IDX_T_PurchaseOrder','CompanyName','BranchName','ReferenceNo','PONumber',
             'PODate','PartnerName', 'PONotes','POStatus','StatusDesc');
 
         return $this->get_datatables($request); 
@@ -140,6 +141,7 @@ class PurchaseOrderController extends MyController
             $this->data['fields']->IDX_M_Company = 1; 
             $this->data['fields']->IDX_M_Branch = 1; 
             $this->data['fields']->PartnerDesc = '';
+            $this->data['fields']->PODate = date('Y-m-d');
             $this->data['fields']->RecordStatus = 'A';
 
             return $this->show_form(0, 'create');
@@ -190,6 +192,7 @@ class PurchaseOrderController extends MyController
         $this->data['dd_branch'] = (array) $dd->branch($this->data['user_id']);
         $this->data['dd_currency'] = (array) $dd->currency();
         $this->data['dd_company'] = (array) $dd->company($this->data['user_id']);
+        $this->data['dd_upload_category'] = (array) $dd->upload_category();
 
         // URL
         $this->data['url_save_header'] = url('/mc-purchase-order/save');
@@ -209,6 +212,8 @@ class PurchaseOrderController extends MyController
             // RECORDS
             $param['IDX_T_PurchaseOrder'] = $id;   
             $this->data['records_detail'] = $this->exec_sp('USP_MC_PurchaseOrderDetail_List',$param,'list','sqlsrv');
+            $this->data['records_payment'] = $this->exec_sp('USP_MC_PurchaseOrderPayment_List',$param,'list','sqlsrv');
+            $this->data['records_upload'] = $this->exec_sp('USP_MC_PurchaseOrderUpload_List',$param,'list','sqlsrv');            
         }
 
         return view($this->data['view'], $this->data);
@@ -329,8 +334,8 @@ class PurchaseOrderController extends MyController
             'IDX_M_Branch.required' => 'Cabang belum diisi!',
             'IDX_M_Partner.required' => 'Supplier belum diisi',
             'ReferenceNo.required' => 'Nomor referensi belum diisi!',
-            'PODate.required' => 'Tgl PO belum diisi!',
-            'PONotes.required' => 'Keterangan PO belum diisi!',
+            'PODate.required' => 'Tgl belum diisi!',
+            'PONotes.required' => 'Keterangan belum diisi!',
         ]);
 
         if ($validator->fails()) {
@@ -452,7 +457,7 @@ class PurchaseOrderController extends MyController
 
             // DEFAULT VALUE                                  
             $this->data['fields']->ApprovalRemark = '';           
-            $this->data['fields']->ApprovalDate = date('Y-m-d',strtotime($this->data['fields']->InvoiceDate));
+            $this->data['fields']->ApprovalDate = date('Y-m-d',strtotime($this->data['fields']->PODate));
             $this->data['fields']->ApprovalBy = $this->data['user_id'];
 
             // URL
@@ -612,4 +617,129 @@ class PurchaseOrderController extends MyController
         }   
     }
 
+    // =========================================================================================
+    // UPLOAD FILE
+    // =========================================================================================    
+    public function upload(Request $request)
+    {
+        // $this->validate($request, [
+        //     'UploadFile' => 'required',            	
+        // ]);
+
+        $validator = Validator::make($request->all(), [
+            'UploadFile' => 'required',
+        ],[
+            'IDX_T_PurchaseOrder.required' => 'Invalid index',
+        ]);
+        
+        if($validator->fails())
+        {
+            echo 'error';
+            return $this->validation_fails($validator->errors(),$request->input('UploadFile'));            	
+
+        } else {
+
+            $data = $request->all();
+
+            //$path = 'upload-doc/upload-agent';
+            $path = storage_path("app/public/upload-po" . "/" . $request->IDX_T_PurchaseOrder);
+
+            //echo $path;
+
+            if(!File::isDirectory($path)){
+                File::makeDirectory($path, 0777, true, true);
+            }
+
+            //echo $path;
+
+            if (!empty($_FILES['UploadFile']['name']))
+			{
+                $UploadFile = $request->file('UploadFile');
+
+                // Get filename with the extension
+                $filenameWithExt = $UploadFile->getClientOriginalName();
+
+                //Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+
+                $extension = $UploadFile->getClientOriginalExtension();
+
+                // Filename to store
+                $fileNameToStore = $filename.'.'.$extension;
+
+                // UPLOAD TO PATH
+                $UploadFile->move($path, $fileNameToStore);
+
+                $param_upload['IDX_T_PurchaseOrder'] = $request->IDX_T_PurchaseOrder;
+                $param_upload['UploadCategory'] = $request->UploadCategory;
+                $param_upload['FilePath'] = $path;
+                $param_upload['FileName'] = $fileNameToStore;
+                $param_upload['FileDescription'] = 'Pembelian Valas - '.$request->PONumber;
+                $param_upload['UserID'] = 'XXX'.$this->data['user_id'];
+
+                $this->data['records_upload'] = $this->exec_sp('USP_MC_PurchaseOrderUpload_Save',$param_upload,'list','sqlsrv');
+            }           
+
+            $this->data['dir_network'] = $path;    
+            return view('money_changer.purchase_order_upload_list', $this->data);
+        }
+
+    }
+
+    public function download(Request $request)
+    {
+        $data = $request->all();
+
+        $filepath = $request->query('filepath');
+
+        //echo 'file path '.$filepath;
+
+        //$dir_network = storage_path('app/public/upload-pinjaman' . '/' . $request->cont_contract_no .'\'');
+
+        //echo '<br/>';
+        //echo 'dir network '.$dir_network;
+        
+        //foreach (glob($dir_network.$filepath."*") as $filename) {
+        foreach (glob($filepath."*") as $filename) {
+
+            //echo "foreach";
+            
+            $mimeType = $this->getMimeType($filename);            
+
+            $headers = array(
+                //'Content-Disposition' => 'attachment',
+                //'Content-Type' => File::mimeType($filename),
+                'Content-Type' => $mimeType,
+            );
+
+            return response()->download($filename, null, $headers); 
+        }
+    }
+
+    public function delete_file(Request $request)
+    {
+        $filepath = $request->query('filepath');
+
+        if (Storage::exists($filePath)) {
+            Storage::delete($filePath);
+            echo "File deleted successfully.";
+        } else {
+            echo "File does not exist.";
+        }
+    }
+
+    protected function getMimeType($extension)
+    {
+        $mimeTypes = [
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'pdf' => 'application/pdf',
+            'PDF' => 'application/pdf',
+            // Add other MIME types as needed
+        ];
+
+        return $mimeTypes[$extension] ?? 'application/octet-stream'; // Default MIME type
+    }
 }

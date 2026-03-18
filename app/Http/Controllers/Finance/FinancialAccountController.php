@@ -198,13 +198,14 @@ class FinancialAccountController extends MyController
         $array_filter['COAID'] = $request->input('COAID');
         $array_filter['COADesc'] = $request->input('COADesc');
         $array_filter['COADesc2'] = $request->input('COADesc2');
+        $array_filter['COAGroup1Name1'] = $request->input('COAGroup1Name1');
                 
         // SET STORED PROCEDURE
         $this->sp_getinquiry = 'dbo.[USP_GL_COA_List]';
 
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
-        $this->array_column = array('RowNumber', 'IDX_M_COA', 'COAID', 'COADesc', 'COADesc2', 'StatusDesc');
+        $this->array_column = array('RowNumber', 'IDX_M_COA', 'COAID', 'COADesc', 'COADesc2','COAGroup1ID','COAGroup1Name1', 'StatusDesc');
 
         return $this->get_datatables($request);
     }
@@ -219,12 +220,11 @@ class FinancialAccountController extends MyController
         $this->data['url_search'] = url('/fm-coa-list');
 
         // TABLE HEADER & FOOTER
-        $this->data['table_header'] = array('No', 'IDX_M_COA', 'COA ID', 'COA Description', 'COA Description 2', 'Action');         
+        $this->data['table_header'] = array('No', 'IDX_M_COA', 'COA ID', 'COA Description', 'COA Description 2','','Group 1', 'Action');         
 
-        $this->data['table_footer'] = array('', '',
-            'COAID', 'COADesc', 'COADesc2', 'Action');
+        $this->data['table_footer'] = array('', '','COAID', 'COADesc', 'COADesc2','COAGroup1ID','COAGroup1Name1', 'Action');
 
-        $this->data['array_filter'] = array('COAID','COADesc','COADesc2');
+        $this->data['array_filter'] = array('COAID','COADesc','COADesc2','COAGroup1Name1');
 
         $this->data['target_index'] = $request->target_index;
         $this->data['target_name'] = $request->target_name;
@@ -246,8 +246,7 @@ class FinancialAccountController extends MyController
 
         $validator = Validator::make($request->all(), [
             'IDX_M_FinancialAccount' => 'required',
-            'IDX_M_Branch' => 'required',
-            'IDX_M_Bank' => 'required',
+            'IDX_M_Branch' => 'required',            
             'IDX_M_Currency' => 'required',
             'IDX_M_COA' => 'required',
             'FinancialAccountID' => 'required',

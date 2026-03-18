@@ -30,7 +30,9 @@
         { data: "IDX_M_COA", visible: false },          
         { data: "COAID" },
         { data: "COADesc" },
-        { data: "COADesc2", visible: false },               
+        { data: "COADesc2", visible: false },    
+        { data: "COAGroup1ID", visible: false }, 
+        { data: "COAGroup1Name1", visible: true },           
 
         { data: "RecordStatus", visible: false, render: 
             function( data, type, row )

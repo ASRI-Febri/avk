@@ -1031,4 +1031,14 @@ class DropdownController extends Controller
     }
     // END::ACCOUNTING 
 
+    function upload_category()
+    {
+        $value[''] = '--SELECT--';
+        $value['Transaksi'] = 'Nota Transaksi'; 
+        $value['Lainnya'] = 'Dokumen Lainnya'; 
+        $value['KTP'] = 'KTP & Dokumen Identitas'; 
+
+        return $value;
+    }
+
 }

@@ -167,13 +167,13 @@
             <td class="text-right"><strong>{{ number_format($group_eb_qty,2,'.',',') }}</strong></td>
         </tr>
 
-        {{-- <tr>
-            <td class="text-right" colspan="5"><strong>TOTAL</strong></td> --}}
+        <tr>
+            <td class="text-right" colspan="12"><strong>TOTAL</strong></td> 
             {{-- <td class="text-right"><strong>{{ number_format($bb_qty,2,'.',',') }}</strong></td> --}}
             {{-- <td class="text-right"><strong>{{ number_format($in_qty,2,'.',',') }}</strong></td>
-            <td class="text-right"><strong>{{ number_format($out_qty,2,'.',',') }}</strong></td>
+            <td class="text-right"><strong>{{ number_format($out_qty,2,'.',',') }}</strong></td> --}}
             <td class="text-right"><strong>{{ number_format($eb_qty,2,'.',',') }}</strong></td>
-        </tr> --}}
+        </tr>
         </tbody>
     </table>
     <!-- END REPORT DATA -->   

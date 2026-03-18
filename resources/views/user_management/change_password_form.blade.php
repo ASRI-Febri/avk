@@ -1,10 +1,10 @@
-@extends('layouts.form')
+@extends('layouts.master-form-transaction')
 
 @section('right_header') 
     
 @endsection
 
-@section('content_form')
+@section('content-form')
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_M_User" name="IDX_M_User" value="{{ $fields->IDX_M_User }}"/>

@@ -15,7 +15,7 @@
     <input type="hidden" id="ValasName" name="ValasName" value=""/> --}}
 
     <div class="d-grid gap-3">
-        <x-textbox-horizontal label="Periode (YYYYMM)" id="Period" :value="$Period" placeholder="YYYMM" class="readonly required" flag="required" />
+        <x-textbox-horizontal label="Periode (YYYYMM)" id="Period" :value="$Period" placeholder="YYYMM" class="required" flag="required" />
     </div>
    
 @endsection

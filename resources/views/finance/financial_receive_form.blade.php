@@ -1,10 +1,18 @@
-@extends('layouts.form')
+@extends('layouts.master-form-transaction')
 
-@section('left_header')    
-    
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-input-so').addClass('mm-active');
 @endsection
 
-@section('right_header')    
+@section('form-remark')
+    Transaksi penerimaan uang cash atau transfer bank
+    <br> 
+    Contoh nomor FR <code>FR-100-2506-001</code>.
+@endsection
+
+@section('action')
     {{-- @include('form_helper.btn_save_header') --}}
     
     @if($state !== 'create')
@@ -47,11 +55,77 @@
     </div>
 @endsection
 
-@section('content_form')    
+@section('content-form')    
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_T_FinancialReceiveHeader" name="IDX_T_FinancialReceiveHeader" value="{{ $fields->IDX_T_FinancialReceiveHeader }}"/>
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>
+    <input type="hidden" id="IDX_M_Currency" name="IDX_M_Currency" value="{{ $fields->IDX_M_Currency }}"/>
+    <input type="hidden" id="IDX_M_PaymentType" name="IDX_M_PaymentType" value="{{ $fields->IDX_M_PaymentType }}"/>
+
+    <div class="nav nav-lines card-header-lines mb-0" id="card-tab-1" role="tablist">
+        <a class="nav-item nav-link active" id="card-general-tab" data-bs-toggle="tab" href="#card-general" aria-selected="false" role="tab" tabindex="-1">
+            <i class="fas fa-align-justify"></i> General
+        </a>
+        @if($state <> 'create')
+        <a class="nav-item nav-link" id="card-detail-tab" data-bs-toggle="tab" href="#card-detail" aria-selected="false" role="tab" tabindex="-1">
+            <i class="fas fa-list"></i> Detail
+        </a>
+        <a class="nav-item nav-link" id="card-receive-tab" data-bs-toggle="tab" href="#card-receive" aria-selected="false" role="tab" tabindex="-1">
+            <i class="fas fa-list"></i> Journal Receive
+        </a>
+        <a class="nav-item nav-link" id="card-allocation-tab" data-bs-toggle="tab" href="#card-allocation" aria-selected="false" role="tab" tabindex="-1">
+            <i class="fas fa-list"></i> Journal Allocation
+        </a>
+        @endif
+    </div>
+    <div class="tab-content">
+        
+        <div class="tab-pane fade active show" id="card-general" role="tabpanel" aria-labelledby="#card-general-tab">
+            <div class="d-grid gap-3">
+                <x-select-horizontal label="Company" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
+                <x-select-horizontal label="Profit Center" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/>
+                <x-select-horizontal label="Document Type" id="IDX_M_DocumentType" :value="$fields->IDX_M_DocumentType" class="required" :array="$dd_document_type"/>
+                <x-select-horizontal label="Financial Account" id="IDX_M_FinancialAccount" :value="$fields->IDX_M_FinancialAccount" class="required" :array="$dd_financial_account"/>
+                <x-textbox-horizontal label="Receive ID (Auto)" id="ReceiveID" :value="$fields->ReceiveID" placeholder="(Auto)" class="" />
+                <x-textbox-horizontal label="Voucher No Manual" id="VoucherNoManual" :value="$fields->VoucherNoManual" placeholder="Voucher No Manual" class="required" />
+                <x-textbox-horizontal label="Tgl Penerimaan" id="ReceiveDate" :value="$fields->ReceiveDate" placeholder="Receive Date" class="required datepicker2" />
+                <x-textbox-horizontal label="Jumlah Penerimaan" id="ReceiveAmount" :value="$fields->ReceiveAmount" placeholder="Receive Amount" class="required auto" />
+                <x-textbox-horizontal label="Notes" id="RemarkHeader" :value="$fields->RemarkHeader" placeholder="Notes" class="required" />
+                    
+                
+                <x-lookup-horizontal label="Diterima Dari" id="PartnerDesc" :value="$fields->PartnerName" class="required" button="btn-find-partner"/>
+
+                
+                {{-- <x-select-horizontal label="Currency" id="IDX_M_Currency" :value="$fields->IDX_M_Currency" class="required" :array="$dd_currency"/>
+                <x-select-horizontal label="Payment Method" id="IDX_M_PaymentType" :value="$fields->IDX_M_PaymentType" class="required" :array="$dd_payment_method"/> --}}
+                
+            </div>
+        </div>
+        @if($state <> 'create')
+        <div class="tab-pane fade" id="card-detail" role="tabpanel" aria-labelledby="#card-detail-tab">
+            @if($fields->ReceiveStatus == 'D')
+                <x-btn-add-detail id="btn-add-detail" label="Add New" />
+                <br><br>
+            @endif 
+
+            <div id="table-receive-detail" class="table-responsive">
+                @include('finance.financial_receive_detail_list')         
+            </div>  
+        </div>
+        <div class="tab-pane fade" id="card-receive" role="tabpanel" aria-labelledby="#card-receive-tab">
+            <div id="table-financialreceive-payment" class="table-responsive">
+                @include('finance.financial_receive_payment_list')            
+            </div>
+        </div>
+        <div class="tab-pane fade" id="card-allocation" role="tabpanel" aria-labelledby="#card-allocation-tab">
+            <div id="table-salesinvoice-journal" class="table-responsive">
+                @include('finance.financial_receive_journal_list')            
+            </div>
+        </div>
+        @endif
+    </div>
+
 
     <ul class="nav nav-tabs pb-3" role="tablist">    
         <li class="nav-item">
@@ -78,23 +152,7 @@
                 <div class="card-body">
 
                     <legend><h6 class="text-muted font-weight-bold">General Info</h6></legend>
-                    <x-select-horizontal label="Company" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
-                    <x-select-horizontal label="Branch" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/>
-                    <x-select-horizontal label="Document Type" id="IDX_M_DocumentType" :value="$fields->IDX_M_DocumentType" class="required" :array="$dd_document_type"/>
-                    <x-textbox-horizontal label="Receive ID (Auto)" id="ReceiveID" :value="$fields->ReceiveID" placeholder="(Auto)" class="" />
-                    <x-textbox-horizontal label="Voucher No Manual" id="VoucherNoManual" :value="$fields->VoucherNoManual" placeholder="Voucher No Manual" class="required" />
-                    <x-textbox-horizontal label="Receive Date" id="ReceiveDate" :value="$fields->ReceiveDate" placeholder="Receive Date" class="required datepicker2" />
-                    <x-textbox-horizontal label="Receive Amount" id="ReceiveAmount" :value="$fields->ReceiveAmount" placeholder="Receive Amount" class="required auto" />
-                    <x-textbox-horizontal label="Notes" id="RemarkHeader" :value="$fields->RemarkHeader" placeholder="Notes" class="required" />
-                        
-                    <legend><h6 class="text-muted font-weight-bold">Business Partner</h6></legend>
-                    <x-lookup-horizontal label="Receive From" id="PartnerDesc" :value="$fields->PartnerName" class="required" button="btn-find-partner"/>
-
-                    <legend><h6 class="text-muted font-weight-bold">Accounting Info</h6></legend>
-                    <x-select-horizontal label="Currency" id="IDX_M_Currency" :value="$fields->IDX_M_Currency" class="required" :array="$dd_currency"/>
-                    <x-select-horizontal label="Payment Method" id="IDX_M_PaymentType" :value="$fields->IDX_M_PaymentType" class="required" :array="$dd_payment_method"/>
-                    <x-select-horizontal label="Financial Account" id="IDX_M_FinancialAccount" :value="$fields->IDX_M_FinancialAccount" class="required" :array="$dd_financial_account"/>
-
+                    
                 </div>
                 
                 <hr>

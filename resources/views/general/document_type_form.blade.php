@@ -1,4 +1,4 @@
-@extends('layouts.form')
+@extends('layouts.master-form-transaction')
 
 @section('right_header')    
     @if($state !== 'create')        
@@ -6,7 +6,7 @@
     @endif 
 @endsection
 
-@section('content_form')  
+@section('content-form')  
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_M_Branch" name="IDX_M_Branch" value="{{ $fields->IDX_M_Branch }}"/>

@@ -33,7 +33,7 @@ class FinancialReceiveController extends MyController
         $this->data['sidebar'] = 'navigation.sidebar_finance'; 
 
         // BREADCRUMB
-        $this->data['breads'] = array('ASBS','Finance','Transaction','Financial Receive'); 
+        $this->data['breads'] = array('Finance','Transaction','Financial Receive'); 
 
         // URL
         $this->data['url_create'] = url('fm-financial-receive/create');

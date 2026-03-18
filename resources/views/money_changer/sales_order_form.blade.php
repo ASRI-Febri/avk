@@ -98,6 +98,7 @@
     </div>
 
     @if($fields->SOStatus == 'D')
+    <hr>
     <div class="row"> 
         <div class="col-12 mb-2">           
             @include('form_helper.btn_save_header')
@@ -110,7 +111,7 @@
             <div class="card-header">      
                 <div class="nav nav-lines card-header-lines mb-0" id="card-tab-1" role="tablist">
                     <a class="nav-item nav-link active" id="card-detail-tab" data-bs-toggle="tab" href="#card-detail" aria-selected="false" role="tab" tabindex="-1">
-                        <i class="fas fa-align-justify"></i> Detail Transaksi
+                        <i class="fas fa-align-justify"></i> Detail Penjualan
                     </a>   
                     <a class="nav-item nav-link" id="card-payment-tab" data-bs-toggle="tab" href="#card-payment" aria-selected="true" role="tab">
                         <i class="fas fa-coins"></i> Pembayaran
@@ -124,7 +125,7 @@
                 <div class="tab-content">
                     <div class="tab-pane fade active show" id="card-detail" role="tabpanel" aria-labelledby="#card-detail-tab">                        
                         @if($fields->SOStatus == 'D')                
-                            <x-btn-add-detail id="btn-add-detail" label="Input Transaksi" />                        
+                            <x-btn-add-detail id="btn-add-detail" label="Input Valas" />                        
                         @endif
             
                         <div id="table-order-detail" class="table-responsive">
@@ -133,6 +134,13 @@
                     </div>
                     <div class="tab-pane fade" id="card-payment" role="tabpanel" aria-labelledby="#card-payment-tab">
 
+                        @if($fields->POStatus == 'A')
+                        <x-btn-add-detail id="btn-add-payment" label="Input Pembayaran" />
+                        @endif
+
+                        <div id="table-order-payment" class="table-responsive">
+                            @include('money_changer.sales_order_payment_list')  
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="card-log" role="tabpanel" aria-labelledby="#card-log-tab">
 

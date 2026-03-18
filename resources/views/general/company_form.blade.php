@@ -1,4 +1,11 @@
-@extends('layouts.form')
+@extends('layouts.master-form-transaction')
+
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    {{-- $('#nav-link-sbp-ul').css("display","block"); --}}
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-branch').addClass('mm-active');
+@endsection
 
 @section('right_header')    
     @if($state !== 'create')        
@@ -6,7 +13,7 @@
     @endif 
 @endsection
 
-@section('content_form')  
+@section('content-form')  
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_M_Company" name="IDX_M_Company" value="{{ $fields->IDX_M_Company }}"/>
@@ -20,7 +27,7 @@
     <x-textbox-horizontal label="NPWP" id="NPWP" :value="$fields->NPWP" placeholder="" class="required" />
     <x-textbox-horizontal label="SIUP" id="SIUP" :value="$fields->SIUP" placeholder="" class="required" />
 
-    <fieldset>
+    
         <legend><h6 class="text-muted font-weight-bold">Address & Contact</h6></legend>
 
         <x-textbox-horizontal label="Legal Address" id="LegalAddress" :value="$fields->LegalAddress" placeholder="" class="required" />
@@ -32,7 +39,7 @@
 
         <x-textbox-horizontal label="Email" id="Email" :value="$fields->Email" placeholder="" class="" />
         <x-textbox-horizontal label="Phone" id="Phone" :value="$fields->CompanyAlias" placeholder="" class="" />
-    </fieldset>
+    
 
     <x-textbox-horizontal label="Website" id="Website" :value="$fields->Website" placeholder="" class="" />
     <x-textbox-horizontal label="Remarks" id="Remarks" :value="$fields->Remarks" placeholder="" class="" />

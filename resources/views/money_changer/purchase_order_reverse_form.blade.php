@@ -6,11 +6,11 @@
 
 @section('modal-content')
 
-    <input type="hidden" id="IDX_T_SalesOrder" name="IDX_T_SalesOrder" value="{{ $fields->IDX_T_SalesOrder }}"/>
+    <input type="hidden" id="IDX_T_PurchaseOrder" name="IDX_T_PurchaseOrder" value="{{ $fields->IDX_T_PurchaseOrder }}"/>
 
     <div class="d-grid gap-3">
         <x-textbox-horizontal label="Reverse Date" id="ApprovalDate" :value="$fields->ApprovalDate" placeholder="Approval Date" class="required datepicker2" />          
-        <x-textbox-horizontal label="Reverse Notes" id="ApprovalRemark" :value="$fields->ApprovalRemark" placeholder="Alasan" class="required" />
+        <x-textbox-horizontal label="Reverse Reason" id="ApprovalRemark" :value="$fields->ApprovalRemark" placeholder="Alasan" class="required" />
     </div>
 
 @endsection 
