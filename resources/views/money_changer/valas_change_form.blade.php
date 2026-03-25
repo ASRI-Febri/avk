@@ -1,5 +1,11 @@
 @extends('layouts.master-form-with-log')
 
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-valas-uom').addClass('mm-active');
+@endsection
+
 @section('form-remark')
     Kode pecahan menggunakan kode P ditambah 4 angka sesuai nominal pecahan. 
     <br> 

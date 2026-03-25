@@ -1041,4 +1041,14 @@ class DropdownController extends Controller
         return $value;
     }
 
+    function group_report()
+    {
+        $value[''] = '--SELECT--';
+        $value['VALAS'] = 'Valuta Asing'; 
+        $value['NOTA'] = 'Nota Transaksi'; 
+        $value['PARTNER'] = 'Konsumen / Supplier'; 
+
+        return $value;
+    }
+
 }

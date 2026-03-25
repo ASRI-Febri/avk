@@ -7,6 +7,15 @@
 .env
 .env.backup
 .phpunit.result.cache
+.DS_Store
+/app/.DS_Store
+/app/Http/Controllers/.DS_Store
+/public/.DS_Store
+/public/assets/.DS_Store
+/resources/.DS_Store
+/resources/views/.DS_Store
+/routes/.DS_Store
+/storage/.DS_Store
 Homestead.json
 Homestead.yaml
 npm-debug.log

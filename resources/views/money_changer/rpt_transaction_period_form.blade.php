@@ -33,6 +33,8 @@
         <x-textbox-horizontal label="Tanggal Awal" id="start_date" :value="$start_date" placeholder="YYYY-MM-DD" class="readonly datepicker2 required" flag="required" />
 
         <x-textbox-horizontal label="Tanggal Akhir" id="end_date" :value="$end_date" placeholder="YYYY-MM-DD" class="readonly datepicker2 required" flag="required" />
+
+        <x-select-horizontal label="Diurutkan Berdasarkan" id="GroupReport" :value="$GroupReport" class="required" :array="$dd_group_report"/>
     </div>
    
 @endsection

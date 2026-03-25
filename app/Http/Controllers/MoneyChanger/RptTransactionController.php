@@ -72,7 +72,7 @@ class RptTransactionController extends MyController
             // DROPDOWN
             $dd = new DropdownController;  
             $this->data['dd_branch'] = (array) $dd->branch(''); 
-            
+            $this->data['dd_group_report'] = (array) $dd->group_report();
 
             $ddf = new DropdownFinanceController; 
             $this->data['dd_valas'] = (array) $ddf->valas();
@@ -85,6 +85,7 @@ class RptTransactionController extends MyController
             $this->data['IDX_M_Branch'] = 1;
             $this->data['IDX_M_Partner'] = 0;
             $this->data['PartnerDesc'] = '';
+            $this->data['GroupReport'] = 'VALAS';
             $this->data['IDX_M_TransactionType'] = 2;
             $this->data['start_date'] = date('Y-m-01');
             $this->data['end_date'] = date('Y-m-d');
@@ -118,9 +119,9 @@ class RptTransactionController extends MyController
             $this->data['fields'] = $request->all();
 
             // REPORT INFORMATION
-            $this->data['page_title'] = 'Laporan Penjualan Valas';   
-            $this->data['title'] = 'Laporan Penjualan Valas';            
-            $this->data['form_title'] = 'Laporan Penjualan Valas';    
+            $this->data['page_title'] = 'LAPORAN PENJUALAN VALAS';   
+            $this->data['title'] = 'LAPORAN PENJUALAN VALAS';            
+            $this->data['form_title'] = 'LAPORAN PENJUALAN VALAS';    
             
             if($request->PartnerDesc == ''){
                 $this->data['PartnerName'] = 'Semua Konsumen';
@@ -147,7 +148,8 @@ class RptTransactionController extends MyController
             $param['end_date'] = $this->data['fields']['end_date'];	
             $param['IDX_M_Valas'] = $this->data['fields']['IDX_M_Valas'];	   
             $param['IDX_M_Currency'] = $this->data['fields']['IDX_M_Currency'];	 
-            $param['IDX_M_Partner'] = $this->data['fields']['IDX_M_Partner'];	                  
+            $param['IDX_M_Partner'] = $this->data['fields']['IDX_M_Partner'];	
+            $param['GroupReport'] = $this->data['fields']['GroupReport'];                    
 
             // RECORDS
             $this->data['records'] = $this->exec_sp('USP_MC_R_Transaction',$param,'list','sqlsrv');
@@ -185,7 +187,7 @@ class RptTransactionController extends MyController
             // DROPDOWN
             $dd = new DropdownController;  
             $this->data['dd_branch'] = (array) $dd->branch(''); 
-            
+            $this->data['dd_group_report'] = (array) $dd->group_report();
 
             $ddf = new DropdownFinanceController; 
             $this->data['dd_valas'] = (array) $ddf->valas();
@@ -198,6 +200,7 @@ class RptTransactionController extends MyController
             $this->data['IDX_M_Branch'] = 1;
             $this->data['IDX_M_Partner'] = 0;
             $this->data['PartnerDesc'] = '';
+            $this->data['GroupReport'] = 'VALAS';
             $this->data['IDX_M_TransactionType'] = 1;
             $this->data['start_date'] = date('Y-m-01');
             $this->data['end_date'] = date('Y-m-d');
@@ -231,7 +234,7 @@ class RptTransactionController extends MyController
             $this->data['fields'] = $request->all();
 
             // REPORT INFORMATION
-            $this->data['page_title'] = 'Laporan Pembelian Valas';   
+            $this->data['page_title'] = 'LAPORAN PEMBELIAN VALAS';   
             $this->data['title'] = 'Laporan Pembelian Valas';            
             $this->data['form_title'] = 'Laporan Pembelian Valas';    
             
@@ -260,13 +263,14 @@ class RptTransactionController extends MyController
             $param['end_date'] = $this->data['fields']['end_date'];	
             $param['IDX_M_Valas'] = $this->data['fields']['IDX_M_Valas'];	   
             $param['IDX_M_Currency'] = $this->data['fields']['IDX_M_Currency'];	 
-            $param['IDX_M_Partner'] = $this->data['fields']['IDX_M_Partner'];	                  
+            $param['IDX_M_Partner'] = $this->data['fields']['IDX_M_Partner'];	
+            $param['GroupReport'] = $this->data['fields']['GroupReport'];                  
 
             // RECORDS
             $this->data['records'] = $this->exec_sp('USP_MC_R_Transaction',$param,'list','sqlsrv');
 
             // VIEW
-            $this->data['view'] = 'money_changer/rpt_transaction_period_report';                                 
+            $this->data['view'] = 'money_changer/rpt_purchase_period_report';                                 
             return view($this->data['view'], $this->data);
         }
     }

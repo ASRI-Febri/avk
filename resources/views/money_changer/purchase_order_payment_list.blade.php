@@ -2,7 +2,9 @@
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Metode Pembayaran</th>                     
+            <th scope="col">Metode Pembayaran</th>   
+            <th scope="col">Kode Pembayaran</th>  
+            <th scope="col">Keterangan</th>                
             <th scope="col" class="text-end">Jumlah Pembayaran</th>
 
             @if(!isset($show_action) || $show_action == TRUE)
@@ -26,13 +28,15 @@
                 $seq += 1;
                 //$url_delete = url('mc-purchase-order-detail/delete/'.$row->IDX_T_SalesOrderDetail); 
                                                
-                $total_payment_amount += ($row->ReceiveAmount);
+                $total_payment_amount += ($row->PaymentAmount);
                 
             @endphp
 
             <tr>
                 <td>{{ $seq }}</td>
                 <td>{{ $row->FinancialAccountDesc }}</td>
+                <td>{{ $row->PaymentID }}</td>
+                <td>{{ $row->RemarkDetail }}</td>
                 <td class="text-end">{{ number_format($row->PaymentAmount, 2, '.', ',') }}</td>
                
                 @if(!isset($show_action) || $show_action == TRUE)
@@ -58,7 +62,7 @@
             <td></td>
         </tr> --}}        
         <tr class="font-weight-bold">
-            <td colspan="5" class="text-end"><strong>Total </strong></td>
+            <td colspan="4" class="text-end"><strong>Total </strong></td>
             <td class="text-end"><strong>{{  number_format($total_payment_amount, 2, '.', ',') }}</strong></td>
             <td></td>
         </tr>

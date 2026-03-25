@@ -1,10 +1,46 @@
 @extends('layouts.master-datatable')
 
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-view-journal').addClass('mm-active');
+@endsection
+
+@section('advance-search')
+    <div class="row mb-3 gap-3">
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">No Voucher</span> 
+                <input id="VoucherNo" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">No Referensi</span> 
+                <input id="ReferenceNo" type="text" class="form-control" />
+            </div>
+        </div>      
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Keterangan Journal</span> 
+                <input id="RemarkHeader" type="text" class="form-control" />
+            </div>
+        </div> 
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Business Partner</span> 
+                <input id="PartnerDesc" type="text" class="form-control" />
+            </div>
+        </div>  
+    </div>
+@endsection
+
+
 @section('datatables_array')
     columns: [
         { data: 'RowNumber', name: 'DT_RowIndex' },
         { data: "IDX_M_Company", visible: false },
-        { data: "CompanyName", visible: true },
+        { data: "CompanyName", visible: false },
         { data: "IDX_M_Branch", visible: false }, 
         { data: "BranchName", visible: false },
         { data: "IDX_T_JournalHeader", visible: false },

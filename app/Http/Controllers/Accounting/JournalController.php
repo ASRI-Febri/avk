@@ -58,7 +58,7 @@ class JournalController extends MyController
 
         // TABLE HEADER & FOOTER
         $this->data['table_header'] = array('No','IDX_M_Company','Company','IDX_M_Branch','Branch','IDX_T_JournalHeader',
-            'IDX_M_Partner','Partner','Reference No','Voucher No','Journal Date','Remark','PostingStatus','Status','Action');         
+            'IDX_M_Partner','Business Partner','Reference No','Voucher No','Journal Date','Remark','PostingStatus','Status','Action');         
 
         $this->data['table_footer'] = array('','IDX_M_Company','CompanyName','IDX_M_Branch','BranchName','',
             '','PartnerDesc','ReferenceNo','VoucherNo','JournalDate','RemarkHeader','','PostingStatusDesc','Action');
@@ -103,7 +103,7 @@ class JournalController extends MyController
         $access = TRUE;
 
         $this->data['form_title'] = 'Journal';
-        $this->data['form_sub_title'] = 'Create';
+        $this->data['form_sub_title'] = 'Create Journal';
         $this->data['form_desc'] = 'Create Journal';       
         $this->data['state'] = 'create';
 
@@ -141,7 +141,7 @@ class JournalController extends MyController
         $access = TRUE;
 
         $this->data['form_title'] = 'Journal';
-        $this->data['form_sub_title'] = 'Update';
+        $this->data['form_sub_title'] = 'Update Journal';
         $this->data['form_desc'] = 'Update Journal';              
         $this->data['state'] = 'update';
 
@@ -194,8 +194,17 @@ class JournalController extends MyController
             $this->data['records_detail'] = $this->exec_sp('dbo.USP_GL_JournalDetail_List',$param,'list','sqlsrv');            
         }
        
-        // VIEW                      
-        $this->data['view'] = 'accounting/journal_form';
+        // VIEW       
+        if($this->data['fields']->PostingStatus == 'U')
+        {
+            $this->data['view'] = 'accounting/journal_form';
+        } 
+        else 
+        {
+            $this->data['show_action'] = FALSE;
+            $this->data['view'] = 'accounting/journal_form_readonly';
+        }              
+        
         return view($this->data['view'], $this->data);
     }
 

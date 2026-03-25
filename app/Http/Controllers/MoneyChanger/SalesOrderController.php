@@ -12,8 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Validator;
 use PDF;
-use App\File;
+// use App\File;
 use Image;
+use File;
 
 class SalesOrderController extends MyController
 {   
@@ -184,6 +185,7 @@ class SalesOrderController extends MyController
         $this->data['dd_branch'] = (array) $dd->branch($this->data['user_id']);
         $this->data['dd_currency'] = (array) $dd->currency();
         $this->data['dd_company'] = (array) $dd->company($this->data['user_id']);
+        $this->data['dd_upload_category'] = (array) $dd->upload_category();
 
         // URL
         $this->data['url_save_header'] = url('/mc-sales-order/save');
@@ -204,6 +206,7 @@ class SalesOrderController extends MyController
             $param['IDX_T_SalesOrder'] = $id;   
             $this->data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetail_List',$param,'list','sqlsrv');
             $this->data['records_payment'] = $this->exec_sp('USP_MC_SalesOrderPayment_List',$param,'list','sqlsrv');
+            $this->data['records_upload'] = $this->exec_sp('USP_MC_SalesOrderUpload_List',$param,'list','sqlsrv'); 
         }
 
         return view($this->data['view'], $this->data);

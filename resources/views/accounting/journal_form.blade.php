@@ -1,7 +1,13 @@
 @extends('layouts.master-form-transaction')
 
+@section('active_link')
+	$('#nav-transaction').addClass('mm-active');
+    $('#nav-ul-transaction').addClass('mm-show');
+    $('#nav-li-input-journal').addClass('mm-active');
+@endsection
+
 @section('form-remark')
-   Journal 
+   Journal Form
 @endsection
 
 @section('action')
@@ -104,7 +110,10 @@
     <input type="hidden" id="JournalSource" name="JournalSource" value="{{ $fields->JournalSource }}"/>   
     
     @if($state <> 'create')
-        <h6 class="text-secondary">{{ $fields->VoucherNo }}</h6>
+        <h6 class="text-secondary">
+            {{ $fields->VoucherNo }}
+            <span class="badge badge-primary">{{ $fields->StatusDesc }}</span>
+        </h6>
     @endif
 
     <div class="row">

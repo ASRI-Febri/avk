@@ -116,6 +116,9 @@
                     <a class="nav-item nav-link" id="card-payment-tab" data-bs-toggle="tab" href="#card-payment" aria-selected="true" role="tab">
                         <i class="fas fa-coins"></i> Pembayaran
                     </a> 
+                    <a class="nav-item nav-link" id="card-upload-tab" data-bs-toggle="tab" href="#card-upload" aria-selected="true" role="tab">
+                        <i class="fas fa-file"></i> Upload Dokumen
+                    </a>
                     <a class="nav-item nav-link" id="card-log-tab" data-bs-toggle="tab" href="#card-log" aria-selected="true" role="tab">
                         <i class="fas fa-list"></i> Log
                     </a>        
@@ -134,7 +137,7 @@
                     </div>
                     <div class="tab-pane fade" id="card-payment" role="tabpanel" aria-labelledby="#card-payment-tab">
 
-                        @if($fields->POStatus == 'A')
+                        @if($fields->SOStatus == 'A')
                         <x-btn-add-detail id="btn-add-payment" label="Input Pembayaran" />
                         @endif
 
@@ -142,6 +145,47 @@
                             @include('money_changer.sales_order_payment_list')  
                         </div>
                     </div>
+
+                    <div class="tab-pane fade" id="card-upload" role="tabpanel" aria-labelledby="#card-upload-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row form-group">
+                                    <div class="col-sm-6">
+                                        <x-select-horizontal label="Kategori Dokumen" id="UploadCategory" value="" class="required" :array="$dd_upload_category"/>                                        
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="d-grid gap-3">
+                                            
+                                            <input id="UploadFile" name="UploadFile" type="file" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <button type="button" class="btn btn-outline-dark" id="btn-upload">
+                                            <i class="fas fa-upload fs-4 me-2"></i> Upload File
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <hr>
+                                        <span><b>Daftar file yang sudah diupload</b></span>
+                                        
+
+                                        <div id="div-upload" class="table-responsive">
+                                            @include('money_changer.sales_order_upload_list')  
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="tab-pane fade" id="card-log" role="tabpanel" aria-labelledby="#card-log-tab">
 
                     </div>
@@ -300,7 +344,85 @@
                 callAjaxModalView('{{ url('mc-sales-order/duplicate') }}',data);            
             });
 
+             $("#btn-upload").click(function()
+            {       
+                //alert('upload'); 
+                //$("#form-upload").submit(); // Submit the form
+
+                if($('#UploadCategory').val() == ''){
+                    //alert('Upload Category Belum Diisi!');
+
+                    Swal.fire({
+						title: "Error!",
+						html: "<p>Upload category belum diisi!</p>",
+						icon: "error",
+						confirmButtonText: "<i class='fas fa-times-circle'></i> Close",
+						confirmButtonClass: "btn btn-danger",
+					});
+
+                    return false;
+                }
+
+                url = "{{ url('mc-sales-order-upload') }}";
+
+                //alert(url);
+
+                // Get form
+                //var form = $('#form-entry')[0];
+
+                // Create an FormData object 
+                //var data = new FormData(form);
+
+                var myFormData = new FormData();
+
+                myFormData.append('_token', $("#_token").val());
+                myFormData.append('IDX_T_SalesOrder', $("#IDX_T_SalesOrder").val());
+                myFormData.append('SONumber', $("#SONumber").val());
+                myFormData.append('UploadCategory', $("#UploadCategory").val());
+                myFormData.append('UploadFile', $('#UploadFile')[0].files[0]);
+
+                // var data = {                
+                //     _token:$("#_token").val(),
+                //     flatrate: $("#cont_flat_rate").val(),
+                //     tenor: $("#cont_tenor").val(),
+                //     tenor_type: $("#cont_tenor_type").val(),
+                //     principal: $("#cont_collateral_amount").val(),
+                //     commence_date: $("#cont_commence_date").val()
+                // };
+
+                $.ajax({
+                    type: "POST",
+                    enctype: 'multipart/form-data',     
+                    processData: false,  // Important!
+                    contentType: false,
+                    cache: false,			               
+                    url: url,
+                    data: myFormData,
+                    // data: {
+                    //     _token:$("#_token").val(),                        
+                    //     IDX_T_Contract: $("#IDX_T_Contract").val(),
+                    //     cont_contract_no: $("#cont_contract_no").val(),
+                    //     UploadCategory: $("#UploadCategory").val(),
+                    //     UploadFile: $('#UploadFile')[0].files[0],                        
+                    // }, 
+                    success: function(data)
+                    {
+                        //alert(data); // show response from the php script.
+
+                        //callAjaxView(data);
+
+                        $("#div-upload").html(data);
+                    }
+                });
+
+            });
+
         });
+
+        function deleteFile(filePath)
+        {
+            alert(filePath);
+        }
 
     </script>
 

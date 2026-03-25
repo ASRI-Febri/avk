@@ -6,6 +6,52 @@
 
 @section('content')
 
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">
+                <i class="fas fa-cart-plus fs-14 text-muted"></i>
+            </div>
+            <h4 class="card-title mb-0">Overall Sales</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="d-flex justify-content-between align-content-end shadow-lg p-3">
+                        <div>
+                            <p class="text-muted text-truncate mb-2">Penjualan Bulan Ini</p>
+                            <h5 class="mb-0">$12,253</h5>
+                        </div>
+                        <div class="text-success float-end">
+                            <i class="mdi mdi-menu-up"> </i>2.2%
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="d-flex justify-content-between align-content-end shadow-lg p-3">
+                        <div>
+                            <p class="text-muted text-truncate mb-2">Penjualan Tahun Ini</p>
+                            <h5 class="mb-0">$34,254</h5>
+                        </div>
+                        <div class="text-success float-end">
+                            <i class="mdi mdi-menu-up"> </i>2.1%
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="d-flex justify-content-between align-content-end shadow-lg p-3">
+                        <div>
+                            <p class="text-muted text-truncate mb-2">Last sales</p>
+                            <h5 class="mb-0">$32,695</h5>
+                        </div>
+                        <div class="text-success float-end">
+                            <i class="mdi mdi-menu-up"> </i>1.8%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+
     <div class="row g-3">
         <div class="col-xl-6 col-md-6 col-sm-12">
 

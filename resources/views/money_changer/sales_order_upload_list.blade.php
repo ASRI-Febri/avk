@@ -34,7 +34,7 @@
 
                 @if(!isset($show_action) || $show_action == TRUE)
                 <td class="text-center">      
-                    <a href="{{ url('/mc-purchase-order-download?filepath='.$row->FilePath.'/'.$row->FileName) }}" target="_blank">																
+                    <a href="{{ url('/mc-sales-order-download?filepath='.$row->FilePath.'/'.$row->FileName) }}" target="_blank">																
                         <span class="text-info"><strong>Download :</strong> @php echo basename($row->FileName); @endphp</span>	
                     </a>
                     {{-- <br>    

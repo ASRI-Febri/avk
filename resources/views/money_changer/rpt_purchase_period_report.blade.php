@@ -107,9 +107,7 @@
                         @endif
 
                         <td class="text-right"></td>
-                        <td class="text-right"><strong>{{ number_format($group_base_amount,2,'.',',') }}</strong></td>
-                        <td class="text-right"></td>
-                        <td class="text-right"><strong>{{ number_format($group_nett_amount,2,'.',',') }}</strong></td>
+                        <td class="text-right"><strong>{{ number_format($group_base_amount,2,'.',',') }}</strong></td>                        
                     </tr>
                 @endif              
                  
@@ -126,14 +124,11 @@
                         <th>KETERANGAN</th>
                         <th>NO NOTA</th>
                         <th>NO SYSTEM</th>
-                        <th>TANGGAL</th>
-                        {{-- <th class="text-center">AWAL</th> --}}
+                        <th>TANGGAL</th>                        
                         <th class="text-center">QTY</th>
                         <th class="text-center">NILAI VALAS</th>
                         <th class="text-center">RATE</th>
-                        <th class="text-center">NILAI RUPIAH</th>  
-                        <th class="text-center">HPP (AVERAGE)</th>   
-                        <th class="text-center">NILAI NET</th>         
+                        <th class="text-center">NILAI RUPIAH</th> 
                     </tr>
                 </thead>
                 <tbody>            
@@ -182,9 +177,7 @@
                 <td class="text-right">{{ $row->CurrencyID . ' ' . number_format($row->ForeignAmount,2,'.',',') }}</td>
                 
                 <td class="text-right">{{ number_format($row->ExchangeRate,2,'.',',') }}</td>
-                <td class="text-right">{{ number_format($row->BaseAmount,2,'.',',') }}</td>
-                <td class="text-right">{{ number_format($row->AverageAmount,2,'.',',') }}</td>
-                <td class="text-right">{{ number_format($row->BaseAmount - $row->AverageAmount,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->BaseAmount,2,'.',',') }}</td>               
             </tr>           
 
         @endforeach
@@ -202,19 +195,12 @@
             @endif            
             
             <td class="text-right"><strong></strong></td>
-            <td class="text-right"><strong>{{ number_format($group_base_amount,2,'.',',') }}</strong></td>
-            <td class="text-right"></td>
-            <td class="text-right"><strong>{{ number_format($group_nett_amount,2,'.',',') }}</strong></td>
+            <td class="text-right"><strong>{{ number_format($group_base_amount,2,'.',',') }}</strong></td>            
         </tr>
 
         <tr>
-            <td class="text-right" colspan="12"><strong>TOTAL</strong></td> 
-            {{-- <td class="text-right"><strong>{{ number_format($qty,2,'.',',') }}</strong></td> --}}
-            {{-- <td class="text-right"><strong>{{ number_format($foreign_amount,2,'.',',') }}</strong></td>
-            <td class="text-right"><strong>{{ number_format($exchange_rate,2,'.',',') }}</strong></td> --}}
-            <td class="text-right"><strong>{{ number_format($base_amount,2,'.',',') }}</strong></td>
-            <td class="text-right"></td>
-            <td class="text-right"><strong>{{ number_format($nett_amount,2,'.',',') }}</strong></td>
+            <td class="text-right" colspan="12"><strong>TOTAL</strong></td>             
+            <td class="text-right"><strong>{{ number_format($base_amount,2,'.',',') }}</strong></td>            
         </tr>
         </tbody>
     </table>

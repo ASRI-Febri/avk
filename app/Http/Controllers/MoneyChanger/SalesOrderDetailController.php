@@ -131,6 +131,7 @@ class SalesOrderDetailController extends MyController
             // SET DEFAULT VALUE
             $this->data['fields']->IDX_T_SalesOrderDetail = '0';
             $this->data['fields']->IDX_T_SalesOrder = $request->IDX_T_SalesOrder;  
+            $this->data['fields']->IDX_M_TransactionType = '2';
             $this->data['fields']->ForeignAmount = '0.00';
             $this->data['fields']->Quantity = '0.00';            
             $this->data['fields']->RecordStatus = 'A';

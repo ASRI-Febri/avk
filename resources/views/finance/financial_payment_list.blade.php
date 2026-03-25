@@ -1,4 +1,4 @@
-@extends('layouts.datatables')
+@extends('layouts.master-datatable')
 
 @section('datatables_array')
     columns: [
