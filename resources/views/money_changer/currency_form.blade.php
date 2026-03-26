@@ -28,8 +28,8 @@
     <x-textbox-horizontal label="Icon Flag" id="IconFlag" :value="$fields->IconFlag" placeholder="" class="required" />
     <x-textbox-horizontal label="Sort Priority" id="SortPriority" :value="$fields->SortPriority" placeholder="" class="auto required" />
     
-    <x-textbox-horizontal label="Rate Beli" id="BuyRate" :value="$fields->BuyRate" placeholder="" class="required auto" />
-    <x-textbox-horizontal label="Rate Jual" id="SellRate" :value="$fields->SellRate" placeholder="" class="required auto" />
+    <x-textbox-horizontal label="Rate Beli" id="BuyRate" :value="$fields->BuyRate" placeholder="" class="required auto4" />
+    <x-textbox-horizontal label="Rate Jual" id="SellRate" :value="$fields->SellRate" placeholder="" class="required auto4" />
 
     <x-lookup-horizontal label="Sales Account" id="SalesAccountDesc" :value="$fields->SalesAccountDesc" class="required" button="btn-find-coa-ar"/>
     

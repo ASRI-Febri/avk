@@ -250,7 +250,7 @@
             */
 
             
-            val = parseFloat(val).toLocaleString('en')
+            val = parseFloat(val).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
             return val;
             
         }

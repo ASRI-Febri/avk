@@ -22,7 +22,7 @@
         </div>
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">No PO</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">No System</span> 
                 <input id="PONumber" type="text" class="form-control" />
             </div>
         </div>
@@ -30,13 +30,13 @@
     <div class="row mb-3">
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Catatan PO</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Keterangan</span> 
                 <input id="PONotes" type="text" class="form-control" />
             </div>
         </div>
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Business Partner</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Beli Dari</span> 
                 <input id="PartnerName" type="text" class="form-control" />
             </div>
         </div>

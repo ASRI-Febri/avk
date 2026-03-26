@@ -87,6 +87,9 @@ class HomeController extends MyController
         //$this->data['records_sales_by_valas'] = $this->exec_sp('USP_MC_R_Dashboard_SalesValas',$param,'list','sqlsrv');
         //$this->data['records_sales_by_partner'] = $this->exec_sp('USP_MC_R_Dashboard_SalesPartner',$param,'list','sqlsrv');
 
+        $param2['AsOfDate'] = date('Y-m-d');     
+        $this->data['records'] = $this->exec_sp('USP_MC_R_DashboardSales',$param2,'record')[0];
+
         // URL
         $this->data['url_save_header'] = '#';       
         

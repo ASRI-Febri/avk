@@ -18,11 +18,22 @@
                 <div class="col-sm-4">
                     <div class="d-flex justify-content-between align-content-end shadow-lg p-3">
                         <div>
-                            <p class="text-muted text-truncate mb-2">Penjualan Bulan Ini</p>
-                            <h5 class="mb-0">$12,253</h5>
+                            <p class="text-muted text-truncate mb-2">Penjualan Hari Ini</p>
+                            <h5 class="mb-0">IDR {{ number_format($records->Sales_Today, 2) }}</h5>
                         </div>
                         <div class="text-success float-end">
-                            <i class="mdi mdi-menu-up"> </i>2.2%
+                            <i class="mdi mdi-menu-up"> </i>IDR
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="d-flex justify-content-between align-content-end shadow-lg p-3">
+                        <div>
+                            <p class="text-muted text-truncate mb-2">Penjualan Bulan Ini</p>
+                            <h5 class="mb-0">IDR {{ number_format($records->Sales_ThisMonth, 2) }}</h5>
+                        </div>
+                        <div class="text-success float-end">
+                            <i class="mdi mdi-menu-up"> </i>IDR
                         </div>
                     </div>
                 </div>
@@ -30,24 +41,13 @@
                     <div class="d-flex justify-content-between align-content-end shadow-lg p-3">
                         <div>
                             <p class="text-muted text-truncate mb-2">Penjualan Tahun Ini</p>
-                            <h5 class="mb-0">$34,254</h5>
+                            <h5 class="mb-0">IDR {{ number_format($records->Sales_ThisYear, 2) }}</h5>
                         </div>
                         <div class="text-success float-end">
-                            <i class="mdi mdi-menu-up"> </i>2.1%
+                            <i class="mdi mdi-menu-up"> </i>IDR
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="d-flex justify-content-between align-content-end shadow-lg p-3">
-                        <div>
-                            <p class="text-muted text-truncate mb-2">Last sales</p>
-                            <h5 class="mb-0">$32,695</h5>
-                        </div>
-                        <div class="text-success float-end">
-                            <i class="mdi mdi-menu-up"> </i>1.8%
-                        </div>
-                    </div>
-                </div>
+                </div>                
             </div>
         </div>        
     </div>

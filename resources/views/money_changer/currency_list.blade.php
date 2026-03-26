@@ -9,18 +9,24 @@
 
 @section('advance-search')
     <div class="row mb-3">
-        <div class="col-6">
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Kode Mata Uang</span> 
+                <input id="CurrencyID" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Mata Uang</span> 
+                <input id="CurrencyName" type="text" class="form-control" />
+            </div>
+        </div>  
+        <div class="col-4">
             <div class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default">Nama Negara</span> 
                 <input id="CountryName" type="text" class="form-control" />
             </div>
-        </div>
-        <div class="col-6">
-            <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Nama Currency</span> 
-                <input id="CurrencyName" type="text" class="form-control" />
-            </div>
-        </div>        
+        </div>       
     </div>
 @endsection
 
@@ -33,6 +39,9 @@
         { data: "CountryID", visible: false },
         { data: "IconFlag", visible: false },
         { data: "CountryName", visible: true },       
+
+        {{-- { data: "BuyRate", visible: true, sClass: "text-end" },
+        { data: "SellRate", visible: true, sClass: "text-end" }, --}}
 
         { "data": "BuyRate", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-end", 
           "render": function ( data, type, row ){								

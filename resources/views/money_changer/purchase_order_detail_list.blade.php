@@ -53,7 +53,7 @@
                     <span>Total : {{ $row->BaseCurrencyID . ' ' . number_format($row->ForeignAmount * $row->ExchangeRate, 2, '.', ',') }}</span>
                 </td>
                 
-                <td class="text-end">{{ $row->BaseCurrencyID . ' ' . number_format($row->ExchangeRate, 2, '.', ',') }}</td>
+                <td class="text-end">{{ $row->BaseCurrencyID . ' ' . number_format($row->ExchangeRate, 4, '.', ',') }}</td>
                 <td class="text-end">{{ $row->BaseCurrencyID . ' ' . number_format($row->ForeignAmount  * $row->ExchangeRate, 2, '.', ',') }}</td>
 
                 @if(!isset($show_action) || $show_action == TRUE)

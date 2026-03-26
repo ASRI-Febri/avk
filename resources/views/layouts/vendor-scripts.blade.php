@@ -46,6 +46,11 @@
 
         $('input.auto').autoNumeric();
 
+        $('input.auto4').autoNumeric({	
+			mDec : 4,			
+			//numRight : 4,
+		});
+
         $("input:text").focus(function(){ 
             $(this).select();
         });

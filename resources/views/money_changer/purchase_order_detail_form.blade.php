@@ -19,7 +19,7 @@
 
         {{-- <x-textbox-horizontal label="Nilai Pembelian" id="ForeignAmount" :value="$fields->ForeignAmount" placeholder="" class="required auto" /> --}}
 
-        <x-textbox-horizontal label="Nilai Tukar" id="ExchangeRate" :value="$fields->ExchangeRate" placeholder="" class="required auto" />
+        <x-textbox-horizontal label="Nilai Tukar" id="ExchangeRate" :value="$fields->ExchangeRate" placeholder="" class="required auto4" />
 
         <x-textbox-horizontal label="Catatan" id="DetailNotes" :value="$fields->DetailNotes" placeholder="Keterangan tambahan" class="" />
 

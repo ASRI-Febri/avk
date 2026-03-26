@@ -85,13 +85,13 @@ class CurrencyController extends MyController
         if ($access == TRUE)
         {
             // TABLE HEADER & FOOTER
-            $this->data['table_header'] = array('No','IDX_M_Currency','Currency ID','Currency Name','Country ID',
-                '','Country Name','Rate Beli','Rate Jual','RecordStatus','Status','Action');         
+            $this->data['table_header'] = array('No','IDX_M_Currency','Kode Mata Uang','Nama Mata Uang','Country ID',
+                '','Nama Negara','Rate Beli','Rate Jual','RecordStatus','Status','Action');         
 
             $this->data['table_footer'] = array('','','CurrencyID','CurrencyName','',
                 '','','','','','','Action');
 
-            $this->data['array_filter'] = array('CurrencyName','CurrencyID');
+            $this->data['array_filter'] = array('CurrencyName','CurrencyID','CountryName');
 
             // VIEW
             $this->data['view'] = 'money_changer/currency_list';  
@@ -109,7 +109,7 @@ class CurrencyController extends MyController
         // FILTER FOR STORED PROCEDURE
         $array_filter['CurrencyName'] = $request->input('CurrencyName');
         $array_filter['CurrencyID'] = $request->input('CurrencyID');  
-         
+        $array_filter['CountryName'] = $request->input('CountryName');
 
         // SET STORED PROCEDURE
         $this->sp_getinquiry = 'dbo.[USP_MC_Currency_List]';
@@ -181,8 +181,8 @@ class CurrencyController extends MyController
             $this->sp_getdata = '[dbo].[USP_MC_Currency_Info]';
             $this->data['fields'] = $this->get_detail_by_id($id)[0];   
             
-            $this->data['fields']->BuyRate = number_format($this->data['fields']->BuyRate, 2, '.',',');
-            $this->data['fields']->SellRate = number_format($this->data['fields']->SellRate, 2, '.',',');
+            $this->data['fields']->BuyRate = number_format($this->data['fields']->BuyRate, 4, '.',',');
+            $this->data['fields']->SellRate = number_format($this->data['fields']->SellRate, 4, '.',',');
 
             return $this->show_form($id, 'update');
         } 
