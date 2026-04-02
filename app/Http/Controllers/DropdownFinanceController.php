@@ -27,6 +27,7 @@ class DropdownFinanceController extends Controller
     {
         $sql = "SELECT IDX_M_ValasChange, ValasChangeID, ValasChangeName, ValasChangeNumber
                 FROM MC_M_ValasChange 
+                WHERE RecordStatus = 'A'
                 ORDER BY ValasChangeNumber";
 
         $result =  DB::connection($connection)->select($sql);     
@@ -48,7 +49,8 @@ class DropdownFinanceController extends Controller
                     StatusDesc = CASE MV.RecordStatus WHEN 'A' THEN 'Active' ELSE 'Inactive' END
                 FROM MC_M_Valas MV
                 LEFT JOIN MC_M_Currency C ON C.IDX_M_Currency = MV.IDX_M_Currency
-                LEFT JOIN MC_M_ValasChange MVC ON MVC.IDX_M_ValasChange = MV.IDX_M_ValasChange";
+                LEFT JOIN MC_M_ValasChange MVC ON MVC.IDX_M_ValasChange = MV.IDX_M_ValasChange
+                WHERE MV.RecordStatus = 'A'";
 
         $result =  DB::connection($connection)->select($sql);     
 

@@ -40,6 +40,12 @@
                 <input id="PartnerName" type="text" class="form-control" />
             </div>
         </div>
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">No Nota</span> 
+                <input id="ReferenceNo" type="text" class="form-control" />
+            </div>
+        </div>
     </div>
 @endsection
 

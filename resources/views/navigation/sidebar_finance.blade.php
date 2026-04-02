@@ -97,11 +97,11 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Bank
                             </a>
                         </li>
-                        <li id="nav-li-setting-currency">
+                        {{-- <li id="nav-li-setting-currency">
                             <a href="{{ url('fm-currency') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Currency
                             </a>
-                        </li>                 
+                        </li>                  --}}
                     </ul>
                 </li>
 

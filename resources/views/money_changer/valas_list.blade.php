@@ -8,19 +8,31 @@
 
 @section('advance-search')
     <div class="row mb-3">
-        <div class="col-4">
+        <div class="col-4 mb-3">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Mata Uang</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Kode Currency</span> 
+                <input id="CurrencyID" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-4 mb-3">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Currency</span> 
                 <input id="CurrencyName" type="text" class="form-control" />
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-4 mb-3">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Valas</span> 
+                <input id="ValasName" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-4 mb-3">
             <div class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default">Nama Pecahan</span> 
                 <input id="ValasChangeName" type="text" class="form-control" />
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-4 mb-3">
             <div class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default">Nilai Pecahan</span> 
                 <input id="ValasChangeNumber" type="text" class="form-control" />
@@ -37,16 +49,17 @@
         { data: "EffectiveDate", visible: true },   
         { data: "CurrencyID", visible: true },
         { data: "CurrencyName", visible: true },
-        { data: "ValasChangeName", visible: true },
+        { data: "ValasName", visible: true },
+        { data: "ValasChangeName", visible: false },
         { data: "ValasChangeNumber", visible: true },        
 
-        { "data": "BuyValue", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-end", 
+        { "data": "BuyValue", "bVisible": false, "bSearchable": true, "bSortable": true, "sClass": "text-end", 
           "render": function ( data, type, row ){								
                         return commaSeparateNumber(data); 
                     }
         }, 
 
-        { "data": "SellValue", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-end", 
+        { "data": "SellValue", "bVisible": false, "bSearchable": true, "bSortable": true, "sClass": "text-end", 
           "render": function ( data, type, row ){								
                         return commaSeparateNumber(data); 
                     }

@@ -152,6 +152,16 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Pembelian Harian
                             </a>
                         </li>
+                        <li id="nav-li-rpt-so">
+                            <a href="{{ url('mc-rpt-ar') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Piutang Penjualan
+                            </a>
+                        </li>
+                        <li id="nav-li-rpt-po">
+                            <a href="{{ url('mc-rpt-ap') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Hutang Pembelian
+                            </a>
+                        </li>
                         <li id="nav-li-rpt-stock"><a href="{{ url('mc-rpt-inventory') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Stok Valas
                             </a>
@@ -179,7 +189,7 @@
                             </a>
                         </li>
                         <li id="nav-li-setting-input-valas"><a href="{{ url('mc-valas/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Valas
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Valas
                             </a>
                         </li>                    
                         <li id="nav-li-setting-valas-uom"><a href="{{ url('mc-valas-change') }}">
@@ -187,7 +197,7 @@
                             </a>
                         </li>
                         <li id="nav-li-setting-input-valas-uom"><a href="{{ url('mc-valas-change/create') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Pecahan Valas
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Pecahan Valas
                             </a>
                         </li>
                         {{-- <li><a href="{{ url('mc-valas-deduction') }}">

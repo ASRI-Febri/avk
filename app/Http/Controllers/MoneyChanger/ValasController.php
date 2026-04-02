@@ -72,11 +72,11 @@ class ValasController extends MyController
         if ($access == TRUE)
         {
             // TABLE HEADER & FOOTER
-            $this->data['table_header'] = array('No','IDX_M_Valas','SKU','Tanggal','Kode Valas','Currency','Pecahan','Angka Pecahan','Nilai Beli','Nilai Jual','','Status','Action');         
+            $this->data['table_header'] = array('No','IDX_M_Valas','SKU','Tanggal','Kode Currency','Nama Currency','Nama Valas','Pecahan','Nilai Pecahan','Nilai Beli','Nilai Jual','','Status','Action');         
 
-            $this->data['table_footer'] = array('','','','','','CurrencyName','ValasChangeName','ValasChangeNumber','','','','','Action');
+            $this->data['table_footer'] = array('','','','','','CurrencyName','ValasName','ValasChangeName','ValasChangeNumber','','','','','Action');
 
-            $this->data['array_filter'] = array('CurrencyName','ValasChangeName','ValasChangeNumber',);
+            $this->data['array_filter'] = array('CurrencyID','CurrencyName','ValasName','ValasChangeName','ValasChangeNumber',);
 
             // VIEW
             $this->data['view'] = 'money_changer/valas_list';  
@@ -92,7 +92,9 @@ class ValasController extends MyController
     public function inquiry_data(Request $request, $status = '')
     { 
         // FILTER FOR STORED PROCEDURE
+        $array_filter['CurrencyID'] = $request->input('CurrencyID');
         $array_filter['CurrencyName'] = $request->input('CurrencyName');
+        $array_filter['ValasName'] = $request->input('ValasName');
         $array_filter['ValasChangeName'] = $request->input('ValasChangeName');  
         $array_filter['ValasChangeNumber'] = $request->input('ValasChangeNumber');   
 
@@ -101,7 +103,7 @@ class ValasController extends MyController
 
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
-        $this->array_column = array('RowNumber','IDX_M_Valas','ValasSKU','EffectiveDate','CurrencyID','CurrencyName','ValasChangeName','ValasChangeNumber','BuyValue','SellValue','RecordStatus','StatusDesc');
+        $this->array_column = array('RowNumber','IDX_M_Valas','ValasSKU','EffectiveDate','CurrencyID','CurrencyName','ValasName','ValasChangeName','ValasChangeNumber','BuyValue','SellValue','RecordStatus','StatusDesc');
 
         return $this->get_datatables($request); 
     }

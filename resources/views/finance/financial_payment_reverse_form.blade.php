@@ -8,8 +8,10 @@
 
     <input type="hidden" id="IDX_T_FinancialPaymentHeader" name="IDX_T_FinancialPaymentHeader" value="{{ $fields->IDX_T_FinancialPaymentHeader }}"/>
 
-    <x-textbox-horizontal label="Reverse By" id="ApprovalBy" :value="$fields->ApprovalBy" placeholder="" class="required readonly" />
+    <div class="d-grid gap-3">
+        <x-textbox-horizontal label="Reverse By" id="ApprovalBy" :value="$fields->ApprovalBy" placeholder="" class="required readonly" />
         <x-textbox-horizontal label="Reverse Date" id="ApprovalDate" :value="$fields->ApprovalDate" placeholder="Approval Date" class="required datepicker2" />          
         <x-textbox-horizontal label="Reverse Notes" id="ApprovalRemark" :value="$fields->ApprovalRemark" placeholder="Keterangan" class="required" />
+    </div>
 
 @endsection 

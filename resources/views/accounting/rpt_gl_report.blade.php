@@ -68,7 +68,9 @@
                 @if($row_number > 1)
                     <tr>
                         <td></td>
-                        <td></td>    
+                        <td></td>  
+                        <td></td>
+                        <td></td>  
                         <td></td>
                         <td></td>    
                         <td></td>              
@@ -82,14 +84,16 @@
                  
                 <thead>
                     <tr class="bg-info">   
-                        <th class="text-left" colspan="10">{{ strtoupper($group_a1) }}</th>
+                        <th class="text-left" colspan="12">{{ strtoupper($group_a1) }}</th>
                     </tr> 
                     <tr>
                         <th>#</th>                                    
                         <th>COA</th>
                         <th>COA DESCRIPTION</th> 
-                        <th>PROJECT</th>                      
-                        <th>VOUCHER</th>
+                        <th>BUSINESS PARTNER</th>
+                        <th>NO VOUCHER</th>
+                        <th>NO REFERENCE</th>
+                        <th>NO NOTA</th>
                         <th>JOURNAL DATE</th>
                         <th>JOURNAL DESCRIPTION</th>                        
                         <th class="text-center">DEBET</th>
@@ -127,10 +131,14 @@
                 <td>{{ $group_number }}</td>
                 <td class="text-center">{{ $row->COA }}</td>
                 <td>{{ $row->COADesc }}</td>     
-                <td>{{ $row->ProjectDesc }}</td>                     
+                <td>{{ $row->PartnerName }}</td>              
                 
                 {{-- <td>{{ $row->ReferenceNo }}</td> --}}
-                <td><a href="{{ $row->URLTransaction }}" target="_blank">{{ $row->ReferenceNo }}</a></td>
+                <td>
+                    <a href="{{ $row->URLTransaction }}" target="_blank">{{ $row->ReferenceNo }}</a>
+                </td>
+                <td>{{ $row->ReferenceNo }}</td>
+                <td>{{ $row->NotaManual }}</td>
 
                 @if((date('Y',strtotime($row->JournalDate)) == '1900') || (date('Y',strtotime($row->JournalDate)) == '1970'))
                 <td></td>
@@ -151,7 +159,9 @@
             <td></td>    
             <td></td>
             <td></td>    
-            <td></td>              
+            <td></td>        
+            <td></td>
+            <td></td>      
             <td></td>
             <td class="text-right"><span class="total">SUB TOTAL</span></td>    
             <td class="text-right"><span class="total">{{ number_format($group_debet,2,'.',',') }}</span></td>
@@ -159,7 +169,7 @@
             <td class="text-right"><span class="total">{{ number_format($group_balance,2,'.',',') }}</span></td>    
         </tr>
         <tr>
-            <td class="text-right" colspan="7"><strong>TOTAL</strong></td>            
+            <td class="text-right" colspan="9"><strong>TOTAL</strong></td>            
             <td class="text-right"><strong>{{ number_format($total_debet,2,'.',',') }}</strong></td>
             <td class="text-right"><strong>{{ number_format($total_credit,2,'.',',') }}</strong></td>
             <td class="text-right"><strong>{{ number_format($total_balance,2,'.',',') }}</strong></td>

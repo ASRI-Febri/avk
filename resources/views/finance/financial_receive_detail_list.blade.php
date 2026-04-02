@@ -38,7 +38,7 @@
                     <span>{{ $row->RemarkDetail }}</span>                                     
                 </td>
 
-                <td class="text-right">                    
+                <td class="text-end">                    
                     <span>{{ number_format($row->ReceiveAmount, 2, '.', ',') }}</span>
                 </td>
                 
@@ -81,7 +81,7 @@
                                 <span>{{ $row1->PartnerName }}</span>                                  
                             </td>
             
-                            <td class="text-right">                    
+                            <td class="text-end">                    
                                 <span>({{ number_format($row1->AllocationAmount, 2, '.', ',') }})</span>
                             </td>
                             

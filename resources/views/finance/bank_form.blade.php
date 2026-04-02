@@ -1,5 +1,11 @@
 @extends('layouts.master-form-with-log')
 
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-bank').addClass('mm-active');
+@endsection
+
 @section('right_header')    
     @if($state !== 'create')        
     <x-btn-create-new label="Create New" :url="$url_create" />

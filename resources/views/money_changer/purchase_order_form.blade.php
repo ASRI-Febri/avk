@@ -73,7 +73,14 @@
                         {{-- <x-select-horizontal label="Perusahaan" id="IDX_M_Company" :value="$fields->IDX_M_Company" class="required" :array="$dd_company"/>
                         <x-select-horizontal label="Cabang" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/> --}}
                         <x-textbox-horizontal label="No Nota" id="ReferenceNo" :value="$fields->ReferenceNo" placeholder="(No nota)" class="" />
-                    </div>
+
+                        @if($state != 'create')
+                        <h6>Informasi Pembayaran</h6>
+                        <x-textbox-horizontal label="Total Pembelian" id="TotalPurchaseAmount" :value="$fields->TotalPurchaseAmount" placeholder="(Auto)" class="readonly auto" />
+                        <x-textbox-horizontal label="Total Pembayaran" id="TotalPaymentAmount" :value="$fields->TotalPaymentAmount" placeholder="(Auto)" class="readonly auto" /> 
+                        <x-textbox-horizontal label="Status Pembayaran" id="PaymentStatusDesc" :value="$fields->PaymentStatusDesc" placeholder="(Auto)" class="readonly" />
+                        @endif
+                    </div>                       
                 </div>
             </div>            
         </div>
@@ -96,13 +103,13 @@
         </div>
     </div>
     <hr>
-    @if($fields->POStatus == 'D')
+    {{-- @if($fields->POStatus == 'D') --}}
     <div class="row"> 
         <div class="col-12 mb-2">           
             @include('form_helper.btn_save_header')
         </div>
     </div>
-    @endif
+    {{-- @endif --}}
     
     @if($state != 'create')          
         <div class="card border">

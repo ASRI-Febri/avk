@@ -4,7 +4,9 @@
             <th scope="col">#</th>
             <th scope="col">Metode Pembayaran</th>   
             <th scope="col">Kode Pembayaran</th>  
-            <th scope="col">Keterangan</th>                
+            <th scope="col">Tanggal</th>
+            <th scope="col">Keterangan</th>    
+            <th scope="col">Status</th>            
             <th scope="col" class="text-end">Jumlah Pembayaran</th>
 
             @if(!isset($show_action) || $show_action == TRUE)
@@ -35,8 +37,12 @@
             <tr>
                 <td>{{ $seq }}</td>
                 <td>{{ $row->FinancialAccountDesc }}</td>
-                <td>{{ $row->PaymentID }}</td>
+                <td>
+                    <a href="{{ url('fm-financial-payment/update') . '/' . $row->IDX_T_FinancialPaymentHeader }}" target="_blank" rel="noopener noreferrer">{{ $row->PaymentID }}</a>
+                </td>
+                <td>{{ date('d M Y', strtotime($row->PaymentDate)) }}</td>
                 <td>{{ $row->RemarkDetail }}</td>
+                <td>{{ $row->StatusDesc }}</td>
                 <td class="text-end">{{ number_format($row->PaymentAmount, 2, '.', ',') }}</td>
                
                 @if(!isset($show_action) || $show_action == TRUE)
@@ -62,7 +68,7 @@
             <td></td>
         </tr> --}}        
         <tr class="font-weight-bold">
-            <td colspan="4" class="text-end"><strong>Total </strong></td>
+            <td colspan="6" class="text-end"><strong>Total </strong></td>
             <td class="text-end"><strong>{{  number_format($total_payment_amount, 2, '.', ',') }}</strong></td>
             <td></td>
         </tr>

@@ -5,7 +5,7 @@
             <th scope="col">Project</th>
             <th scope="col">COA</th>          
             <th scope="col">Notes</th>
-            <th scope="col" class="text-right">Payment Amount</th>
+            <th scope="col" class="text-end">Payment Amount</th>
 
             @if(!isset($show_action) || $show_action == TRUE)
             <th scope="col" class="text-center">Action</th>
@@ -38,7 +38,7 @@
                     <span>{{ $row->RemarkDetail }}</span>                                     
                 </td>
 
-                <td class="text-right">                    
+                <td class="text-end">                    
                     <span>{{ number_format($row->PaymentAmount, 2, '.', ',') }}</span>
                 </td>
                 

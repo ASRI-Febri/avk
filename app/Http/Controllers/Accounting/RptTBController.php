@@ -70,8 +70,8 @@ class RptTBController extends MyController
             $this->data['dd_branch'] = (array) $dd->branch('');             
                        
             // DEFAULT PARAMETER
-            $this->data['IDX_M_Company'] = '0';
-            $this->data['IDX_M_Branch'] = '0';
+            $this->data['IDX_M_Company'] = '1';
+            $this->data['IDX_M_Branch'] = '1';
             $this->data['start_date'] = date('Y-m-d');
             $this->data['end_date'] = date('Y-m-d');
 

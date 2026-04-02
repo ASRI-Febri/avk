@@ -22,8 +22,14 @@
         </div> --}}
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">No Transaksi</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">No System</span> 
                 <input id="SONumber" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">No Nota</span> 
+                <input id="ReferenceNo" type="text" class="form-control" />
             </div>
         </div>
     </div>

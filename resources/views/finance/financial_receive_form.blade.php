@@ -7,52 +7,55 @@
 @endsection
 
 @section('form-remark')
-    Transaksi penerimaan uang cash atau transfer bank
-    <br> 
-    Contoh nomor FR <code>FR-100-2506-001</code>.
+    Transaksi penerimaan uang dengan metode pembayaran tunai atau non tunai
 @endsection
 
-@section('action')
-    {{-- @include('form_helper.btn_save_header') --}}
+@section('action')    
     
     @if($state !== 'create')
-        
-    <x-btn-create-new label="Create New" :url="$url_create" />
-
     <x-btn-action>
         
         @if($fields->ReceiveStatus == 'D')
-        <a id="btn-approval" class="dropdown-item" href="#"><i class="fa fa-check-double"></i> Approval</a>
+        <a id="btn-approval" class="dropdown-item" href="#">
+            <div class="dropdown-icon">
+                <i class="fa fa-check-double"></i>
+            </div>
+            <span class="dropdown-content">Approval</span> 
+        </a>
         @endif
 
         @if($fields->ReceiveStatus == 'A')
-        <a id="btn-reverse" class="dropdown-item text-danger" href="#"><i class="fas fa-undo"></i> Reverse to Draft</a>
-        <a id="btn-void" class="dropdown-item" href="#"><i class="fas fa-undo"></i> Void Transaction</a>
+        <a id="btn-reverse" class="dropdown-item text-danger" href="#">
+            <div class="dropdown-icon">
+                <i class="fas fa-undo"></i>
+            </div>
+            <span class="dropdown-content">Reverse to Draft</span>
+        </a>
+        <a id="btn-void" class="dropdown-item" href="#">
+            <div class="dropdown-icon">
+                <i class="fas fa-undo"></i>
+            </div>
+            <span class="dropdown-content">Void Transaction</span>
+        </a>
         @endif
 
         <div class="dropdown-divider"></div>            
         <a href="{{ url('fm-financial-receive/download-pdf').'/'.$fields->IDX_T_FinancialReceiveHeader }}" id="btn-download2-pdf" 
             target="_blank" class="dropdown-item text-info">
-            <i class="fa fa-file-pdf"></i> Print PDF
+            <div class="dropdown-icon">
+                <i class="fa fa-file-pdf"></i> 
+            </div>  
+            <span class="dropdown-content">Print PDF</span>
         </a>        
 
-        <a id="btn-duplicate-header" class="dropdown-item text-primary" href="#" title="Duplicate this data"><i class="fas fa-copy"></i> Duplicate</a>
+        <a id="btn-duplicate-header" class="dropdown-item text-primary" href="#" title="Duplicate this data">
+            <div class="dropdown-icon">
+                <i class="fas fa-copy"></i> 
+            </div>
+            <span class="dropdown-content">Duplicate</span>
+        </a>
     </x-btn-action> 
     @endif
-@endsection
-
-@section('additional_log')
-    <div class="card mb-3">
-        <div class="card-body">
-            <h6>Receive Status</h6>
-            <hr>
-            @if($fields->ReceiveStatus == 'D' || $fields->ReceiveStatus == 'V')
-            <span class="badge badge-pill outline-badge-danger p-2 mb-1">{{ $fields->StatusDesc }}</span>
-            @else 
-            <span class="badge badge-pill outline-badge-info p-2 mb-1">{{ $fields->StatusDesc }}</span>
-            @endif
-        </div>
-    </div>
 @endsection
 
 @section('content-form')    
@@ -62,6 +65,10 @@
     <input type="hidden" id="IDX_M_Partner" name="IDX_M_Partner" value="{{ $fields->IDX_M_Partner }}"/>
     <input type="hidden" id="IDX_M_Currency" name="IDX_M_Currency" value="{{ $fields->IDX_M_Currency }}"/>
     <input type="hidden" id="IDX_M_PaymentType" name="IDX_M_PaymentType" value="{{ $fields->IDX_M_PaymentType }}"/>
+
+    @if($state <> 'create')
+        <h5 class="text-secondary">{{ $fields->ReceiveID . ' - ' . $fields->StatusDesc }}</h5>
+    @endif
 
     <div class="nav nav-lines card-header-lines mb-0" id="card-tab-1" role="tablist">
         <a class="nav-item nav-link active" id="card-general-tab" data-bs-toggle="tab" href="#card-general" aria-selected="false" role="tab" tabindex="-1">
@@ -87,7 +94,7 @@
                 <x-select-horizontal label="Profit Center" id="IDX_M_Branch" :value="$fields->IDX_M_Branch" class="required" :array="$dd_branch"/>
                 <x-select-horizontal label="Document Type" id="IDX_M_DocumentType" :value="$fields->IDX_M_DocumentType" class="required" :array="$dd_document_type"/>
                 <x-select-horizontal label="Financial Account" id="IDX_M_FinancialAccount" :value="$fields->IDX_M_FinancialAccount" class="required" :array="$dd_financial_account"/>
-                <x-textbox-horizontal label="Receive ID (Auto)" id="ReceiveID" :value="$fields->ReceiveID" placeholder="(Auto)" class="" />
+                <x-textbox-horizontal label="Receive ID (Auto)" id="ReceiveID" :value="$fields->ReceiveID" placeholder="(Auto)" class="readonly" />
                 <x-textbox-horizontal label="Voucher No Manual" id="VoucherNoManual" :value="$fields->VoucherNoManual" placeholder="Voucher No Manual" class="required" />
                 <x-textbox-horizontal label="Tgl Penerimaan" id="ReceiveDate" :value="$fields->ReceiveDate" placeholder="Receive Date" class="required datepicker2" />
                 <x-textbox-horizontal label="Jumlah Penerimaan" id="ReceiveAmount" :value="$fields->ReceiveAmount" placeholder="Receive Amount" class="required auto" />
@@ -126,94 +133,13 @@
         @endif
     </div>
 
-
-    <ul class="nav nav-tabs pb-3" role="tablist">    
-        <li class="nav-item">
-        <a class="nav-link text-muted active" href="#general" role="tab" data-toggle="tab"><i class="fas fa-align-justify"></i> <strong>General</strong></a>
-        </li>
-
-        @if($fields->IDX_T_FinancialReceiveHeader <> 0)
-            <li class="nav-item">
-            <a class="nav-link text-muted" href="#detail-receive" role="tab" data-toggle="tab"><i class="fas fa-align-justify"></i> <strong>Detail Receive</strong></a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link text-muted" href="#journal-payment" role="tab" data-toggle="tab"><i class="fas fa-align-justify"></i> <strong>Journal Receive</strong></a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link text-muted" href="#journal-allocation" role="tab" data-toggle="tab"><i class="fas fa-align-justify"></i> <strong>Journal Allocation</strong></a>
-            </li>
-        @endif
-    </ul>
-
-    <!-- Tab panes -->
-    <div class="tab-content mb-3">
-        <div role="tabpanel" class="tab-pane fade in active" id="general">            
-            <div class="card">
-                <div class="card-body">
-
-                    <legend><h6 class="text-muted font-weight-bold">General Info</h6></legend>
-                    
-                </div>
-                
-                <hr>
-                
-                <div class="form-row m-2"> 
-                    <div class="col-12 mb-3">           
-                        @if($fields->ReceiveStatus == 'D' || $fields->ReceiveStatus == '')
-                            @include('form_helper.btn_save_header')
-                        @endif
-                    </div>
-                </div>
-            </div>
-
+    @if($fields->ReceiveStatus == 'D')
+    <div class="row"> 
+        <div class="col-12 mb-2">           
+            @include('form_helper.btn_save_header')
         </div>
-
-        @if($fields->IDX_T_FinancialReceiveHeader <> 0)
-
-            <div role="tabpanel" class="tab-pane fade in" id="detail-receive">            
-                <div class="card">
-                    <div class="card-body">
-
-                        @if($fields->ReceiveStatus == 'D')
-                            <x-btn-add-detail id="btn-add-detail" label="Add Detail COA" />
-                            <br><br>
-                        @endif
-                    
-                        <div id="table-financialreceive-detail" class="table-responsive">
-                            @include('finance.financial_receive_detail_list')            
-                        </div>
-
-                    </div>            
-                </div>
-            </div>
-
-            <div role="tabpanel" class="tab-pane fade in" id="journal-payment">            
-                <div class="card">
-                    <div class="card-body">
-                    
-                        <div id="table-financialreceive-payment" class="table-responsive">
-                            @include('finance.financial_receive_payment_list')            
-                        </div>
-
-                    </div>            
-                </div>
-            </div>
-
-            <div role="tabpanel" class="tab-pane fade in" id="journal-allocation">            
-                <div class="card">
-                    <div class="card-body">
-                    
-                        <div id="table-salesinvoice-journal" class="table-responsive">
-                            @include('finance.financial_receive_journal_list')            
-                        </div>
-
-                    </div>            
-                </div>
-            </div>
-
-        @endif
-        
-    </div>    
+    </div>
+    @endif
 
 @endsection
 

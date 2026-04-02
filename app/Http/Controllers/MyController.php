@@ -64,7 +64,7 @@ class MyController extends Controller
 
                 $this->get_avatar();      
                 $this->data['user_index'] = session('user_index');
-                $this->data['user_id'] = 'it_febry'; //session('user_id');
+                $this->data['user_id'] = session('user_id');
                 $this->data['user_name'] = session('user_name');
 
                 // $next_url = $request->input('goto');

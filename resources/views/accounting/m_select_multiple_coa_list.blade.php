@@ -1,5 +1,34 @@
 @extends('layouts.master-datatable-modal')
 
+@section('advance-search')
+    <div class="row mb-3 gap-3">
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Kode CoA</span> 
+                <input id="COAID" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama CoA</span> 
+                <input id="COADesc" type="text" class="form-control" />
+            </div>
+        </div>      
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama CoA 2</span> 
+                <input id="COADesc2" type="text" class="form-control" />
+            </div>
+        </div> 
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Group CoA</span> 
+                <input id="COAGroup1Name1" type="text" class="form-control" />
+            </div>
+        </div>  
+    </div>
+@endsection
+
 @section('datatables_array')
 
     columns: [

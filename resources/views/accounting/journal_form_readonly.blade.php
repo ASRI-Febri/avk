@@ -110,3 +110,36 @@
     </div> 
 
 @endsection
+
+@section('script')
+
+    <script>
+
+        $(document).ready(function(){
+
+            $('#btn-duplicate-header').click(function()
+            {           
+                var data = {
+                    _token: $("#_token").val(),
+                    IDX_T_JournalHeader: $("#IDX_T_JournalHeader").val(),
+                }                
+
+                callAjaxModalView('{{ url('ac-journal/duplicate') }}',data);            
+            });
+
+            $('#btn-unposting').click(function()
+            {           
+                var data = {
+                    _token: $("#_token").val(),
+                    IDX_T_JournalHeader: $("#IDX_T_JournalHeader").val(),
+                }                
+
+                callAjaxModalView('{{ url('ac-journal/unposting') }}',data);
+
+            });
+
+        });
+
+    </script>
+
+@endsection 

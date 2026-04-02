@@ -72,7 +72,7 @@ class SalesOrderController extends MyController
             $this->data['table_footer'] = array('','IDX_T_SalesOrder','CompanyName','BranchName','ReferenceNo','SONumber',
             '','PartnerName','SONotes','','','Action');
 
-            $this->data['array_filter'] = array('CompanyName','BranchName','SONumber','SONotes','PartnerName');
+            $this->data['array_filter'] = array('CompanyName','BranchName','ReferenceNo','SONumber','SONotes','PartnerName');
 
             // VIEW
             $this->data['view'] = 'money_changer/sales_order_list';  
@@ -93,6 +93,7 @@ class SalesOrderController extends MyController
         $array_filter['PONotes'] = $request->input('PONotes');
         $array_filter['PartnerName'] = $request->input('PartnerName');
         $array_filter['UserID'] = 'XXX'.$this->data['user_id']; 
+        $array_filter['ReferenceNo'] = $request->input('ReferenceNo');
 
         // SET STORED PROCEDURE
         $this->sp_getinquiry = 'dbo.[USP_MC_SalesOrder_List]';
@@ -505,6 +506,7 @@ class SalesOrderController extends MyController
             $param['IDX_T_SalesOrder'] = $data['IDX_T_SalesOrder'];
             $param['ApprovalRemark'] = $data['ApprovalRemark'];
             $param['ApprovalBy'] = 'XXX'.$this->data['user_id']; 
+            $param['UserID'] = 'XXX'.$this->data['user_id'];
 
             return $this->store($state,$param);
         }   

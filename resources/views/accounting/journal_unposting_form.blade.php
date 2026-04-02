@@ -8,8 +8,10 @@
 
     <input type="hidden" id="IDX_T_JournalHeader" name="IDX_T_JournalHeader" value="{{ $fields->IDX_T_JournalHeader }}"/>
 
-    <x-textbox-horizontal label="UnPosting By" id="PostedBy" :value="$fields->PostedBy" placeholder="" class="required readonly mb-2" />
-    <x-textbox-horizontal label="UnPosting Date" id="PostingDate" :value="$fields->PostingDate" placeholder="Posting Date" class="required datepicker2 mb-2" />          
-    <x-textbox-horizontal label="UnPosting Notes" id="PostingNotes" :value="$fields->PostingNotes" placeholder="Keterangan" class="required mb-2" />
+    <div class="d-grid gap-3">
+        <x-textbox-horizontal label="UnPosting By" id="PostedBy" :value="$fields->PostedBy" placeholder="" class="required readonly mb-2" />
+        <x-textbox-horizontal label="UnPosting Date" id="PostingDate" :value="$fields->PostingDate" placeholder="Posting Date" class="required datepicker2 mb-2" />          
+        <x-textbox-horizontal label="UnPosting Notes" id="PostingNotes" :value="$fields->PostingNotes" placeholder="Keterangan" class="required mb-2" />
+    </div>
 
 @endsection 

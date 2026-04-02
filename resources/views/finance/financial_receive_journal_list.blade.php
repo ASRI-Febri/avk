@@ -63,11 +63,11 @@
                         <span>{{ $row->RemarkDetail }}</span>
                     </td>
     
-                    <td class="text-right">                    
+                    <td class="text-end">                    
                         <span>{{ number_format($row->BDebetAmount, 2, '.', ',') }}</span>
                     </td>
     
-                    <td class="text-right">                    
+                    <td class="text-end">                    
                         <span>{{ number_format($row->BCreditAmount, 2, '.', ',') }}</span>
                     </td>
     
@@ -76,13 +76,13 @@
     
             <tr>
                     <td><td><td></td><td></td>
-                    <td class="text-right">                    
+                    <td class="text-end">                    
                             <span style="font-weight:bold">TOTAL</span>
                         </td>
-                    <td class="text-right">                    
+                    <td class="text-end">                    
                         <span style="font-weight:bold">{{ number_format($totalDebit,2,'.',',') }}</span>
                     </td>
-                    <td class="text-right">                    
+                    <td class="text-end">                    
                         <span style="font-weight:bold">{{ number_format($totalCredit,2,'.',',') }}</span>
                     </td>
                 </tr>

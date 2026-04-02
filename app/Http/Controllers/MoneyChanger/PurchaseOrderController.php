@@ -79,7 +79,7 @@ class PurchaseOrderController extends MyController
             $this->data['table_footer'] = array('','IDX_T_PurchaseOrder','CompanyName','BranchName','ReferenceNo','PONumber',
             '','PartnerName','PONotes','','','Action');
 
-            $this->data['array_filter'] = array('CompanyName','BranchName','PONumber','PONotes','PartnerName');
+            $this->data['array_filter'] = array('CompanyName','BranchName','ReferenceNo','PONumber','PONotes','PartnerName');
 
             // VIEW
             $this->data['view'] = 'money_changer/purchase_order_list';  
@@ -95,11 +95,12 @@ class PurchaseOrderController extends MyController
     { 
         // FILTER FOR STORED PROCEDURE       
         $array_filter['CompanyName'] = $request->input('CompanyName');  
-        $array_filter['BranchName'] = $request->input('BranchName'); 
-        $array_filter['PONumber'] = $request->input('PONumber');
+        $array_filter['BranchName'] = $request->input('BranchName');  
+        $array_filter['PONumber'] = $request->input('PONumber');       
         $array_filter['PONotes'] = $request->input('PONotes');
         $array_filter['PartnerName'] = $request->input('PartnerName');
         $array_filter['UserID'] = 'XXX'.$this->data['user_id']; 
+        $array_filter['ReferenceNo'] = $request->input('ReferenceNo');
 
         // SET STORED PROCEDURE
         $this->sp_getinquiry = 'dbo.[USP_MC_PurchaseOrder_List]';
@@ -486,7 +487,7 @@ class PurchaseOrderController extends MyController
         } 
         else
         {
-            $this->sp_approval = '[dbo].[USP_MC_PurchaseOrder_ReverseValidate]'; 
+            $this->sp_approval = '[dbo].[USP_MC_PurchaseOrder_Reverse]'; 
             $this->next_action = 'reload';
             $this->next_url = url("/mc-purchase-order/update");
 
@@ -495,8 +496,9 @@ class PurchaseOrderController extends MyController
             $data = $request->all();
             
             $param['IDX_T_PurchaseOrder'] = $data['IDX_T_PurchaseOrder'];
-            $param['ApprovalRemark'] = $data['ApprovalRemark'];
-            $param['ApprovalBy'] = 'XXX'.$this->data['user_id']; 
+            $param['ApprovalDate'] = $data['ApprovalDate'];
+            $param['ApprovalRemark'] = $data['ApprovalRemark']; 
+            $param['UserID'] = 'XXX'.$this->data['user_id'];
 
             return $this->store($state,$param);
         }   

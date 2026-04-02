@@ -178,6 +178,12 @@ Route::post('/mc-rpt-inventory-calculation', 'MoneyChanger\RptInventoryControlle
 Route::get('/mc-rpt-daily-calculation', 'MoneyChanger\RptTransactionController@daily_calculation');
 Route::post('/mc-rpt-daily-calculation', 'MoneyChanger\RptTransactionController@daily_calculation_report');
 
+Route::get('/mc-rpt-ar', 'MoneyChanger\RptARAPController@ar');
+Route::post('/mc-rpt-ar', 'MoneyChanger\RptARAPController@ar_report');
+
+Route::get('/mc-rpt-ap', 'MoneyChanger\RptARAPController@ap');
+Route::post('/mc-rpt-ap', 'MoneyChanger\RptARAPController@ap_report');
+
 // DAFTAR KURS VALAS
 Route::get('mc/kurs', function () {
     return view('kurs_valas');

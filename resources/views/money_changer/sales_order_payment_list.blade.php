@@ -5,7 +5,8 @@
             <th scope="col">Kode</th>
             <th scope="col">Tanggal</th>
             <th scope="col">Cara Bayar</th>
-            <th scope="col">Keterangan</th>                     
+            <th scope="col">Keterangan</th>
+            <th scope="col">Status</th> 
             <th scope="col" class="text-end">Jumlah Pembayaran</th>
 
             @if(!isset($show_action) || $show_action == TRUE)
@@ -43,6 +44,7 @@
                 <td>{{ date('d M Y', strtotime($row->ReceiveDate)) }}</td>
                 <td>{{ $row->FinancialAccountDesc }}</td>
                 <td>{{ $row->RemarkHeader }}</td>
+                <td>{{ $row->StatusDesc }}</td>
                 <td class="text-end">{{ number_format($row->ReceiveAmount, 2, '.', ',') }}</td>
                
                 @if(!isset($show_action) || $show_action == TRUE)
@@ -68,7 +70,7 @@
             <td></td>
         </tr> --}}        
         <tr class="font-weight-bold">
-            <td colspan="5" class="text-end"><strong>Total </strong></td>
+            <td colspan="6" class="text-end"><strong>Total </strong></td>
             <td class="text-end"><strong>{{  number_format($total_receive_amount, 2, '.', ',') }}</strong></td>
             <td></td>
         </tr>

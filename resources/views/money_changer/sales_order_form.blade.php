@@ -90,6 +90,13 @@
                         <x-textbox-horizontal label="Tanggal Transaksi" id="SODate" :value="$fields->SODate" placeholder="" class="required datepicker2" />
                         <x-lookup-horizontal label="Konsumen" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
                         <x-textbox-horizontal label="Keterangan" id="SONotes" :value="$fields->SONotes" placeholder="" class="required" />
+
+                        @if($state != 'create')
+                        <h6>Informasi Pembayaran</h6>
+                        <x-textbox-horizontal label="Total Penjualan" id="TotalSalesAmount" :value="$fields->TotalSalesAmount" placeholder="(Auto)" class="readonly auto" />
+                        <x-textbox-horizontal label="Total Penerimaan" id="TotalReceiveAmount" :value="$fields->TotalReceiveAmount" placeholder="(Auto)" class="readonly auto" /> 
+                        <x-textbox-horizontal label="Status Penerimaan" id="ReceiveStatusDesc" :value="$fields->ReceiveStatusDesc" placeholder="(Auto)" class="readonly" />
+                        @endif
                     </div>
                 </div>
             </div> 
@@ -97,14 +104,14 @@
         </div>
     </div>
 
-    @if($fields->SOStatus == 'D')
+    {{-- @if($fields->SOStatus == 'D') --}}
     <hr>
     <div class="row"> 
         <div class="col-12 mb-2">           
             @include('form_helper.btn_save_header')
         </div>
     </div>
-    @endif
+    {{-- @endif --}}
 
     @if($state != 'create')          
         <div class="card border">
