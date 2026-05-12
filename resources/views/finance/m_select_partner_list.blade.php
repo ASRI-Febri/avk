@@ -1,5 +1,22 @@
 @extends('layouts.master-datatable-modal')
 
+@section('advance-search')
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Kode Partner</span> 
+                <input id="PartnerID" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Partner</span> 
+                <input id="PartnerName" type="text" class="form-control" />
+            </div>
+        </div>  
+    </div>
+@endsection
+
 @section('datatables_array')
 
     columns: [

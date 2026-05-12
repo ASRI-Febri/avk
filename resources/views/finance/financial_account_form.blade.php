@@ -29,7 +29,7 @@
     <x-textbox-horizontal label="Kode FA" id="FinancialAccountID" :value="$fields->FinancialAccountID" placeholder="Financial Account ID" class="required" />
     <x-textbox-horizontal label="Nama FA" id="FinancialAccountDesc" :value="$fields->FinancialAccountDesc" placeholder="Financial Account Desc" class="required" />
     <x-select-horizontal label="Jenis Akun" id="FinancialAccountType" :value="$fields->FinancialAccountType" class="required" :array="$dd_account_type"/>
-    <x-lookup-horizontal label="Chart Of Account" id="COADesc" :value="$fields->COADesc" class="required"  button="btn-find-coa"/>
+    <x-lookup-horizontal label="Chart Of Account" id="COADescFA" :value="$fields->COAID . ' - ' . $fields->COADesc" class="required"  button="btn-find-coa"/>
 
     <legend><h6 class="text-muted font-weight-bold">Additional Info</h6></legend>
     <x-select-horizontal label="Currency" id="IDX_M_Currency" :value="$fields->IDX_M_Currency" class="required" :array="$dd_currency"/>
@@ -55,7 +55,7 @@
                 var data = {
                     _token: $("#_token").val(),  
                     target_index: 'IDX_M_COA',
-                    target_name: 'COADesc'                  
+                    target_name: 'COADescFA'                  
                 }              
 
                 callAjaxModalView('{{ url('/fm-select-coa') }}',data);                

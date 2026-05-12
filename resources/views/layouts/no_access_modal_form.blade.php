@@ -1,8 +1,11 @@
 <div class="modal-header">
-    <h5 class="modal-title text-secondary"><i class="icon-table2"></i>{{ $fields['form_desc'] }}</h5> 
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>   
+    <h5 class="modal-title"><i class="icon-table2"></i>{{ $form_desc }}</h5> 
+
+    <div class="card-addon">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>   
+    </div>
 </div>
 
 <div class="modal-body with-padding">
@@ -28,5 +31,7 @@
 </div>
 
 <div class="modal-footer">
-    <button id="btn-close-modal" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>    
+    <button id="btn-close-modal" type="button" class="btn btn-danger" data-bs-dismiss="modal">
+        <i class="fas fa-undo"></i> Close
+    </button>	
 </div>

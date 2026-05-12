@@ -90,12 +90,20 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Penjualan
                             </a>
                         </li>
+                        <li id="nav-li-input-so-quick"><a href="{{ url('mc-sales-quick/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Penjualan Cepat
+                            </a>
+                        </li>
                         <li id="nav-li-view-so"><a href="{{ url('mc-sales-order') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Penjualan
                             </a>
                         </li>
-                         <li id="nav-li-input-po"><a href="{{ url('mc-purchase-order/create') }}">
+                        <li id="nav-li-input-po"><a href="{{ url('mc-purchase-order/create') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Pembelian
+                            </a>
+                        </li>
+                        <li id="nav-li-input-po-quick"><a href="{{ url('mc-purchase-quick/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Pembelian Cepat
                             </a>
                         </li>
                         <li id="nav-li-view-po">
@@ -103,9 +111,19 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Pembelian
                             </a>
                         </li>
-                        <li id="nav-li-inventory-calculation">
+                        {{-- <li id="nav-li-inventory-calculation">
                             <a href="{{ url('mc-inventory-calculation') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Persediaan
+                            </a>
+                        </li> --}}
+                        <li id="nav-li-cogs-calculation">
+                            <a href="{{ url('mc-cogs-calculation') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan HPP
+                            </a>
+                        </li>
+                        <li id="nav-li-nota-scan">
+                            <a href="{{ url('mc-nota-scan') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Scan Nota (OCR)
                             </a>
                         </li>
                     </ul>
@@ -163,14 +181,19 @@
                             </a>
                         </li>
                         <li id="nav-li-rpt-stock"><a href="{{ url('mc-rpt-inventory') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Stok Valas
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Kartu Stok Valas
                             </a>
                         </li>   
-                        <li id="nav-li-rpt-inventory-calculation">
+                        {{-- <li id="nav-li-rpt-inventory-calculation">
                             <a href="{{ url('mc-rpt-inventory-calculation') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Persediaan
                             </a>
-                        </li>                      
+                        </li>  --}}
+                        <li id="nav-li-rpt-cogs-calculation">
+                            <a href="{{ url('mc-rpt-cogs-calculation') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan HPP
+                            </a>
+                        </li>                     
                     </ul>
                 </li>
 

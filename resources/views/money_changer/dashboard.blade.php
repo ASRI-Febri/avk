@@ -88,7 +88,7 @@
     </div>
 
     <div class="row g-3">
-        <div class="col-xl-6 col-md-6 col-sm-12">
+        <div class="col-xl-8 col-md-8 col-sm-12">
 
             <div class="card">
                 <div class="card-header card-header-bordered">
@@ -109,7 +109,9 @@
                                 $group_a2 = '';
 
                                 $group_valas_amount = 0;
+                                $group_base_amount = 0;
                                 $total_valas_amount = 0;
+                                $total_base_amount = 0;
 
                                 $prev_currency_id = '';
                             @endphp
@@ -119,7 +121,8 @@
                                     <th>VALAS</th>
                                     <th class="text-end">QTY</th>
                                     <th class="text-end">VALAS AMOUNT</th>
-                                    <th class="text-end">AVERAGE AMOUNT</th>
+                                    <th class="text-end">AVERAGE RATE</th>
+                                    <th class="text-end">IDR AMOUNT</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,6 +134,8 @@
                                         $group_a1 = $row->CurrencyID;           
                 
                                         $total_valas_amount += ($row->EB_Quantity * $row->ValasChangeNumber);
+                                        $total_base_amount += ($row->EB_Quantity * $row->ValasChangeNumber * $row->AverageValue);
+
                                     @endphp 
 
                                     @if($group_a1 <> $group_a2)
@@ -140,12 +145,14 @@
                                                 <td class="text-end" colspan="3"><strong>TOTAL</strong></td>
                                                 <td class="text-end"><strong>{{ $prev_currency_id   . ' ' . number_format($group_valas_amount,2,'.',',') }}</strong></td>
                                                 <td></td>
+                                                <td class="text-end"><strong>{{ 'IDR ' . number_format($group_base_amount,2,'.',',') }}</strong></td>
                                             </tr>
                                         @endif 
 
                                         @php
                                             $group_number = 0;
                                             $group_valas_amount = 0;
+                                            $group_base_amount = 0;
 
                                             $group_a2 = $group_a1;
                                         @endphp 
@@ -155,6 +162,7 @@
                                         $group_number += 1;
 
                                         $group_valas_amount += ($row->EB_Quantity * $row->ValasChangeNumber);
+                                        $group_base_amount += ($row->EB_Quantity * $row->ValasChangeNumber * $row->AverageValue);
                                         $prev_currency_id = $row->CurrencyID;
                                     @endphp
 
@@ -163,13 +171,21 @@
                                         <td>{{ $row->ValasName }}</td>
                                         <td class="text-end">{{ number_format($row->EB_Quantity,0,'.',',') }}</td>
                                         <td class="text-end">{{ $row->CurrencyID . ' ' . number_format($row->EB_Quantity * $row->ValasChangeNumber,0,'.',',') }}</td>
-                                        <td class="text-end">{{ $row->CurrencyID . ' ' . number_format($row->AverageValue,4,'.',',') }}</td>
+                                        <td class="text-end">{{ 'IDR ' . number_format($row->AverageValue,2,'.',',') }}</td>
+                                        <td class="text-end">{{ 'IDR ' . number_format($row->EB_Quantity * $row->ValasChangeNumber *$row->AverageValue,2,'.',',') }}</td>
                                     </tr>
                                     @endforeach
                                     <tr>
                                         <td class="text-end" colspan="3"><strong>TOTAL</strong></td>
                                         <td class="text-end"><strong>{{ $prev_currency_id   . ' ' . number_format($group_valas_amount,2,'.',',') }}</strong></td>
                                         <td></td>
+                                        <td class="text-end"><strong>{{ 'IDR ' . number_format($group_base_amount,2,'.',',') }}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-end" colspan="3"><strong>GRAND TOTAL IDR</strong></td>
+                                        <td class="text-end"></td>
+                                        <td></td>
+                                        <td class="text-end"><strong>{{ 'IDR ' . number_format($total_base_amount,2,'.',',') }}</strong></td>
                                     </tr>
                                 @endif 
                             </tbody>
@@ -179,7 +195,7 @@
             </div>
 
         </div>
-        <div class="col-xl-6 col-md-6 col-sm-12">
+        <div class="col-xl-4 col-md-4 col-sm-12">
 
             <div class="card">
                 <div class="card-header card-header-bordered">

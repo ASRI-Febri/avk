@@ -427,4 +427,79 @@ class COAController extends MyController
                                 
         return view('ajax/ddl_coa_group3', $data);
     }
+
+    // =========================================================================================
+    // DUPLICATE
+    // =========================================================================================
+    public function duplicate(Request $request)
+    {
+        $this->data['form_id'] = 'AC-COA-DUPLICATE';
+
+        $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');        
+       
+        $access = TRUE;
+
+        $this->data['form_title'] = 'Duplicate COA';
+        $this->data['form_sub_title'] = 'Duplicate';        
+        $this->data['form_desc'] = 'Duplicate COA';
+        
+        $this->data['state'] = 'approve';
+
+        if ($access == TRUE)
+        {
+            // GET DATA
+            $this->sp_getdata = '[dbo].[USP_GL_COA_Info]';
+            $this->data['fields'] = $this->get_detail_by_id($request->IDX_M_COA)[0];                      
+            
+            // URL
+            $this->data['url_save_modal'] = url('/ac-coa/save-duplicate');            
+
+            // VIEW                          
+            $this->data['view'] = 'accounting/coa_duplicate_form';
+            $this->data['submit_title'] = 'Duplicate';
+
+            return view($this->data['view'], $this->data);
+        } 
+        else 
+        {
+            return $this->show_no_access_modal($this->data);
+        }
+    }
+
+    public function save_duplicate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'IDX_M_COA' => 'required',
+            'COAID' => 'required',
+            'COADesc' => 'required',
+            'COADesc2' => 'required',
+        ],[
+            'IDX_M_COA.required' => 'ID CoA yang akan diduplikasi tidak ditemukan!',
+            'COAID.required' => 'Kode CoA baru belum diisi!',   
+            'COADesc.required' => 'Nama CoA baru belum diisi!',
+            'COADesc2.required' => 'Nama CoA baru 2 belum diisi!',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validation_fails($validator->errors(), $request->input('IDX_M_COA'));
+        } 
+        else
+        {
+            $this->sp_approval = '[dbo].[USP_GL_COA_Duplicate]'; 
+            $this->next_action = 'reload';
+            $this->next_url = url("/ac-coa/update");
+
+            $state = 'approve';
+            
+            $data = $request->all();
+            
+            $param['IDX_M_COA'] = $data['IDX_M_COA'];  // ID yang akan diduplikasi 
+            $param['COAID'] = $data['COAID'];
+            $param['COADesc'] = $data['COADesc'];
+            $param['COADesc2'] = $data['COADesc2'];   
+            $param['UserID'] = 'XXX'.$this->data['user_id']; 
+
+            return $this->store($state,$param);
+        }   
+    }
 }

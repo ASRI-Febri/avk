@@ -61,13 +61,24 @@
 
             @php
                 $row_number += 1;
-                $group_a1 = $row->AccountType;         
+                $group_a1 = $row->AccountTypeDesc;         
                 $group_project1 = $row->ProjectID;  
                 
                 $total_begin += $row->BBBalanceAmount;
                 $total_debet += $row->BDebetAmount;
                 $total_credit += $row->BCreditAmount;
-                $total_balance += $row->BEBalanceAmount;
+                //$total_balance += $row->BEBalanceAmount;
+
+                
+
+                if($row->AccountType == 'IC')
+                {
+                    $total_balance += ($row->BEBalanceAmount * -1);
+                    $total_income += ($row->BEBalanceAmount * -1);
+                } else {
+                    $total_balance += $row->BEBalanceAmount;
+                    $total_expense += $row->BEBalanceAmount;
+                }
 
                 // $total_beginsingle += $row->BBBalanceAmount;
                 // $total_debetsingle += $row->BDebetAmount;
@@ -101,9 +112,9 @@
                     <td></td>              
                     <td></td>
                     <td class="text-right"><span class="total">SUB TOTAL</span></td>    
-                    <td class="text-right"><span class="total">{{ number_format($group_begin,2,'.',',') }}</span></td>
+                    {{-- <td class="text-right"><span class="total">{{ number_format($group_begin,2,'.',',') }}</span></td>
                     <td class="text-right"><span class="total">{{ number_format($group_debet,2,'.',',') }}</span></td>
-                    <td class="text-right"><span class="total">{{ number_format($group_credit,2,'.',',') }}</span></td>   
+                    <td class="text-right"><span class="total">{{ number_format($group_credit,2,'.',',') }}</span></td>    --}}
                     <td class="text-right"><span class="total">{{ number_format($group_balance,2,'.',',') }}</span></td>    
                 </tr>
 
@@ -147,10 +158,10 @@
                         <th>PROJECT</th>
                         <th>COA</th>
                         <th>COA DESCRIPTION</th>                                               
-                        <th class="text-center">BEGIN</th>
+                        {{-- <th class="text-center">BEGIN</th>
                         <th class="text-center">DEBET</th>
-                        <th class="text-center">CREDIT</th>
-                        <th class="text-center">ENDING</th>              
+                        <th class="text-center">CREDIT</th> --}}
+                        <th class="text-center">AMOUNT</th>              
                     </tr>
                 </thead>
                 <tbody>            
@@ -171,7 +182,15 @@
                 $group_begin += $row->BBBalanceAmount;
                 $group_debet += $row->BDebetAmount;
                 $group_credit += $row->BCreditAmount;
-                $group_balance += $row->BEBalanceAmount;
+                //$group_balance += $row->BEBalanceAmount;
+
+                if($row->AccountType == 'IC')
+                {
+                    $group_balance += ($row->BEBalanceAmount * -1);
+                } else {
+                    $group_balance += $row->BEBalanceAmount;
+                }
+
                 // if($group_number == 1) {
                 //     $group_balance += $row->BBBalanceAmount;
                 // }
@@ -187,10 +206,16 @@
                 <td class="text-center">{{ $row->COA }}</td>
                 <td>{{ $row->COADesc }}</td>                
                 
-                <td class="text-right">{{ number_format($row->BBBalanceAmount,2,'.',',') }}</td>
+                {{-- <td class="text-right">{{ number_format($row->BBBalanceAmount,2,'.',',') }}</td>
                 <td class="text-right">{{ number_format($row->BDebetAmount,2,'.',',') }}</td>
-                <td class="text-right">{{ number_format($row->BCreditAmount,2,'.',',') }}</td>
-                <td class="text-right">{{ number_format($row->BEBalanceAmount,2,'.',',') }}</td>
+                <td class="text-right">{{ number_format($row->BCreditAmount,2,'.',',') }}</td> --}}
+                <td class="text-right">
+                    @if($row->AccountType == 'IC')                    
+                        {{ number_format($row->BEBalanceAmount * -1,2,'.',',') }}
+                    @else                     
+                        {{ number_format($row->BEBalanceAmount,2,'.',',') }}
+                    @endif 
+                </td>
             </tr>           
 
         @endforeach
@@ -200,9 +225,9 @@
             <td></td>              
             <td></td>
             <td class="text-right"><span class="total">SUB TOTAL</span></td>    
-            <td class="text-right"><span class="total">{{ number_format($group_begin,2,'.',',') }}</span></td>
+            {{-- <td class="text-right"><span class="total">{{ number_format($group_begin,2,'.',',') }}</span></td>
             <td class="text-right"><span class="total">{{ number_format($group_debet,2,'.',',') }}</span></td>
-            <td class="text-right"><span class="total">{{ number_format($group_credit,2,'.',',') }}</span></td>   
+            <td class="text-right"><span class="total">{{ number_format($group_credit,2,'.',',') }}</span></td>    --}}
             <td class="text-right"><span class="total">{{ number_format($group_balance,2,'.',',') }}</span></td>    
         </tr>
         {{-- @if($init == 1)
@@ -216,10 +241,10 @@
         @else --}}
             <tr>
                 <td class="text-right" colspan="5"><strong>GRAND TOTAL</strong></td>
-                <td class="text-right"><strong>{{ number_format($total_begin,2,'.',',') }}</strong></td>
+                {{-- <td class="text-right"><strong>{{ number_format($total_begin,2,'.',',') }}</strong></td>
                 <td class="text-right"><strong>{{ number_format($total_debet,2,'.',',') }}</strong></td>
-                <td class="text-right"><strong>{{ number_format($total_credit,2,'.',',') }}</strong></td>
-                <td class="text-right"><strong>{{ number_format($total_balance,2,'.',',') }}</strong></td>
+                <td class="text-right"><strong>{{ number_format($total_credit,2,'.',',') }}</strong></td> --}}
+                <td class="text-right"><strong>{{ number_format($total_income - $total_expense,2,'.',',') }}</strong></td>
             </tr>
         {{-- @endif --}}
         </tbody>

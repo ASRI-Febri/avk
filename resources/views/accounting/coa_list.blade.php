@@ -8,7 +8,7 @@
 @endsection
 
 @section('advance-search')
-    <div class="row mb-3">
+    <div class="row mb-3 gap-3">
         <div class="col-4">
             <div class="input-group">
                 <span class="input-group-text" id="inputGroup-sizing-default">Kode CoA</span> 

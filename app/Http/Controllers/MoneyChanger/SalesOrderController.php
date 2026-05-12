@@ -207,7 +207,8 @@ class SalesOrderController extends MyController
             $param['IDX_T_SalesOrder'] = $id;   
             $this->data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetail_List',$param,'list','sqlsrv');
             $this->data['records_payment'] = $this->exec_sp('USP_MC_SalesOrderPayment_List',$param,'list','sqlsrv');
-            $this->data['records_upload'] = $this->exec_sp('USP_MC_SalesOrderUpload_List',$param,'list','sqlsrv'); 
+            $this->data['records_upload'] = $this->exec_sp('USP_MC_SalesOrderUpload_List',$param,'list','sqlsrv');
+            $this->data['records_journal'] = $this->exec_sp('USP_MC_SalesOrderJournal_List',$param,'list','sqlsrv');
         }
 
         return view($this->data['view'], $this->data);

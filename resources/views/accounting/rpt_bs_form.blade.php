@@ -21,7 +21,14 @@
         <x-select-horizontal label="Profit Center" id="IDX_M_Branch" :value="$IDX_M_Branch" class="required" :array="$dd_branch"/>
     </div>
     <x-textbox-horizontal label="Start Date" id="start_date" :value="$start_date" placeholder="Start Date" class="required datepicker2 mb-2" />
-    <x-textbox-horizontal label="End Date" id="end_date" :value="$start_date" placeholder="End Date" class="required datepicker2 mb-2" />       
+    <x-textbox-horizontal label="End Date" id="end_date" :value="$end_date" placeholder="End Date" class="required datepicker2 mb-2" />
+
+    <button type="submit"
+            formaction="{{ url('ac-rpt-bs-v2') }}"
+            formtarget="_blank"
+            class="btn btn-primary mt-2">
+        Tampilkan Format Standar (V2)
+    </button>
 
 @endsection
 

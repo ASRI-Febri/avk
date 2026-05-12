@@ -8,17 +8,17 @@
 
     <div style="float:left;width:60%">
             
-        <img src="{{ $img_logo }}" width="{{ $img_logo_w }}" height="{{ $img_logo_h }}" />
-        <br>
+        {{-- <img src="{{ $img_logo }}" width="{{ $img_logo_w }}" height="{{ $img_logo_h }}" alt="AVK"/>
+        <br> --}}
         <table class="noborder">
             <tr class="noborder nopadding">                
                 <td class="td-85 bold noborder nopadding param-key">
-                    <span style="display:block;">PT {{ strtoupper($fields->CompanyName) }}</span>
+                    <span style="display:block;">{{ strtoupper($fields->CompanyName) }}</span>
                 </td>
             </tr>
             <tr class="noborder nopadding">
                 <td class="td-85 bold noborder nopadding param-value">
-                    <span style="display:block;">BRANCH - {{ strtoupper($fields->BranchName) }}</span>
+                    <span style="display:block;">{{ strtoupper($fields->BranchName) }}</span>
                 </td>
             </tr>            
         </table>  

@@ -13,6 +13,7 @@ use Validator;
 use PDF;
 use App\File;
 use Image;
+use App\Services\Accounting\ProfitLossReportBuilder;
 
 class RptPLController extends MyController
 {   
@@ -71,8 +72,8 @@ class RptPLController extends MyController
             $this->data['dd_project'] = (array) $dd->project();        
                        
             // DEFAULT PARAMETER
-            $this->data['IDX_M_Company'] = '0';
-            $this->data['IDX_M_Branch'] = '0';
+            $this->data['IDX_M_Company'] = '1';
+            $this->data['IDX_M_Branch'] = '1';
             $this->data['IDX_M_Project'] = '0';
             $this->data['Period'] = date('Ym');            
 
@@ -120,9 +121,81 @@ class RptPLController extends MyController
             $this->data['records'] = $this->exec_sp('USP_GL_R_ProfitLoss',$param,'list','sqlsrv');
 
             // VIEW
-            $this->data['view'] = 'accounting/rpt_pl_report';                                 
+            $this->data['view'] = 'accounting/rpt_pl_report';
             return view($this->data['view'], $this->data);
         }
+    }
+
+    public function period_report_standard(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'IDX_M_Company' => 'required',
+            'IDX_M_Branch' => 'required',
+            'Period' => 'required',
+        ]);
+
+        if($validator->fails())
+        {
+            return $this->validation_fails($validator->errors(),$request->input('start_date'));
+        }
+        else
+        {
+            $this->data['fields'] = $request->all();
+
+            $this->data['page_title'] = 'Laporan Profit Loss (Standar)';
+            $this->data['title'] = 'Laporan Profit Loss (Standar)';
+            $this->data['form_title'] = 'Laporan Profit Loss (Standar)';
+
+            // ** Param sequence must refer to param sequence in stored procedure **
+            $param['Period'] = $this->data['fields']['Period'];
+            $param['IDX_M_Company'] = $this->data['fields']['IDX_M_Company'];
+            $param['IDX_M_Branch'] = $this->data['fields']['IDX_M_Branch'];
+            $param['IDX_M_Project'] = $this->data['fields']['IDX_M_Project'];
+
+            $this->data['records'] = $this->exec_sp('USP_GL_R_ProfitLoss',$param,'list','sqlsrv');
+
+            $this->data['view'] = 'accounting/rpt_pl_report_standard';
+            return view($this->data['view'], $this->data);
+        }
+    }
+
+    /**
+     * V3 — clean architecture variant:
+     *   Controller is thin. All classification/aggregation lives in
+     *   App\Services\Accounting\ProfitLossReportBuilder. The view is purely
+     *   presentational and uses a recursive partial that can render any depth.
+     */
+    public function period_report_v3(Request $request, ProfitLossReportBuilder $builder)
+    {
+        $validator = Validator::make($request->all(),[
+            'IDX_M_Company' => 'required',
+            'IDX_M_Branch'  => 'required',
+            'Period'        => 'required',
+        ]);
+
+        if($validator->fails())
+        {
+            return $this->validation_fails($validator->errors(),$request->input('start_date'));
+        }
+
+        $this->data['fields']     = $request->all();
+        $this->data['page_title'] = 'Laporan Profit Loss (V3)';
+        $this->data['title']      = 'Laporan Profit Loss (V3)';
+        $this->data['form_title'] = 'Laporan Profit Loss (V3)';
+
+        // ** Param sequence must refer to param sequence in stored procedure **
+        $param['Period']        = $this->data['fields']['Period'];
+        $param['IDX_M_Company'] = $this->data['fields']['IDX_M_Company'];
+        $param['IDX_M_Branch']  = $this->data['fields']['IDX_M_Branch'];
+        $param['IDX_M_Project'] = $this->data['fields']['IDX_M_Project'];
+
+        $rawRows = $this->exec_sp('USP_GL_R_ProfitLoss', $param, 'list', 'sqlsrv');
+
+        // Single line where business logic is applied — easy to unit-test in isolation.
+        $this->data['report'] = $builder->build($rawRows, $param['Period']);
+
+        $this->data['view'] = 'accounting/rpt_pl_report_v3';
+        return view($this->data['view'], $this->data);
     }
 
 }

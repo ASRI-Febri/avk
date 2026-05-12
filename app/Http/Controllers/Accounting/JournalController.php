@@ -58,7 +58,7 @@ class JournalController extends MyController
 
         // TABLE HEADER & FOOTER
         $this->data['table_header'] = array('No','IDX_M_Company','Company','IDX_M_Branch','Branch','IDX_T_JournalHeader',
-            'IDX_M_Partner','Business Partner','Reference No','Voucher No','Journal Date','Remark','PostingStatus','Status','Action');         
+            'IDX_M_Partner','Business Partner','No Referensi','No Voucher','Tgl Journal','Keterangan Journal','PostingStatus','Status','Action');         
 
         $this->data['table_footer'] = array('','IDX_M_Company','CompanyName','IDX_M_Branch','BranchName','',
             '','PartnerDesc','ReferenceNo','VoucherNo','JournalDate','RemarkHeader','','PostingStatusDesc','Action');

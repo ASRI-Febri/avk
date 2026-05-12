@@ -28,6 +28,8 @@
                     <div class="card-addon">
                         <x-btn-create-new label="Create New" :url="$url_create" />
                         @include('form_helper.btn_back_to_list') 
+
+                        @yield('action')
                     </div>
                 </div>
                 <div class="card-body">

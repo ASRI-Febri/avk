@@ -23,6 +23,20 @@
         <x-select-horizontal label="Project (abaikan jika ingin all project)" id="IDX_M_Project" :value="$IDX_M_Project" class="" :array="$dd_project"/>
     </div>
 
-    <x-textbox-horizontal label="Period (YYYYMM)" id="Period" :value="$Period" placeholder="(YYYYMM)" class="required mb-2" />    
+    <x-textbox-horizontal label="Period (YYYYMM)" id="Period" :value="$Period" placeholder="(YYYYMM)" class="required mb-2" />
+
+    <button type="submit"
+            formaction="{{ url('ac-rpt-pl-standard') }}"
+            formtarget="_blank"
+            class="btn btn-success mt-2">
+        Tampilkan Format Standar
+    </button>
+
+    <button type="submit"
+            formaction="{{ url('ac-rpt-pl-v3') }}"
+            formtarget="_blank"
+            class="btn btn-primary mt-2">
+        Tampilkan Format Standar (V3 - Refactored)
+    </button>
 
 @endsection

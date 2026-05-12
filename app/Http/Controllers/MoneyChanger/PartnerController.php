@@ -247,7 +247,7 @@ class PartnerController extends MyController
             $param['PartnerID'] = $data['PartnerID'];
             $param['BarcodeMember'] = isset($_POST['BarcodeMember']) ? $_POST['BarcodeMember'] : '0';
             $param['Prefix'] = $data['Prefix'];
-            $param['PartnerName'] = $data['PartnerName'];
+            $param['PartnerName'] = str_replace("'", "", $data['PartnerName']);
             $param['PartnerAlias'] = $data['PartnerAlias'];
             $param['Gender'] = $data['Gender'];
             $param['SingleIdentityNumber'] = 'XXX'.$data['SingleIdentityNumber'];
@@ -259,7 +259,7 @@ class PartnerController extends MyController
             $param['Phone2'] = $data['Phone2'];
             $param['FaxNo'] = isset($_POST['FaxNo']) ? $_POST['FaxNo'] : '0';
             $param['MobilePhone'] = $data['MobilePhone'];
-            $param['Remarks'] = $data['Remarks'];
+            $param['Remarks'] = str_replace("'", "", $data['Remarks']);
 
             $param['IsSupplier'] = isset($_POST['IsSupplier']) ? 'Y' : 'N'; 
             $param['IsCustomer'] = isset($_POST['IsCustomer']) ? 'Y' : 'N'; 

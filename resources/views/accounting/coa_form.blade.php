@@ -6,11 +6,17 @@
     $('#nav-li-setting-coa').addClass('mm-active');
 @endsection
 
-@section('right_header')    
-    {{-- @include('form_helper.btn_save_header') --}}
+@section('action')   
     
-    @if($state !== 'create')        
-    <x-btn-create-new label="Create New" :url="$url_create" />
+    @if($state !== 'create')   
+        <x-btn-action>
+        <a id="btn-duplicate" class="dropdown-item text-primary" href="#" title="Duplicate this data">
+            <div class="dropdown-icon">
+                <i class="fas fa-copy"></i> 
+            </div>
+            <span class="dropdown-content">Duplicate</span>
+        </a>
+        </x-btn-action>
     @endif 
 @endsection
 
@@ -168,6 +174,16 @@
                             $('#div-coa-group3').html(msg);
                         }
                 });
+            });
+
+            $('#btn-duplicate').click(function()
+            {           
+                var data = {
+                    _token: $("#_token").val(),
+                    IDX_M_COA: $("#IDX_M_COA").val(),
+                }                
+
+                callAjaxModalView('{{ url('ac-coa/duplicate') }}',data);            
             });
         });
 

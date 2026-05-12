@@ -221,10 +221,10 @@
 
     <script>
 
-        function deleteDetail(idx,item_description)
+        function deleteDetailPO(idx,item_description)
         {
             alert('Delete ' + idx);
-            var url = "{{ url('mc-purchase-order-detail/delete') }}";
+            var url = "{{ url('mc-purchase-order-detail/delete/') }}";
             
             // GET CURRENT SCROLL TOP POSITION
             getScrollPosition();       

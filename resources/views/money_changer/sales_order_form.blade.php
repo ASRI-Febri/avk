@@ -126,6 +126,9 @@
                     <a class="nav-item nav-link" id="card-upload-tab" data-bs-toggle="tab" href="#card-upload" aria-selected="true" role="tab">
                         <i class="fas fa-file"></i> Upload Dokumen
                     </a>
+                    <a class="nav-item nav-link" id="card-journal-tab" data-bs-toggle="tab" href="#card-journal" aria-selected="true" role="tab">
+                        <i class="fas fa-book"></i> Journal
+                    </a>
                     <a class="nav-item nav-link" id="card-log-tab" data-bs-toggle="tab" href="#card-log" aria-selected="true" role="tab">
                         <i class="fas fa-list"></i> Log
                     </a>        
@@ -190,6 +193,12 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="card-journal" role="tabpanel" aria-labelledby="#card-journal-tab">
+                        <div id="table-order-journal" class="table-responsive">
+                            @include('money_changer.sales_order_journal_list')
                         </div>
                     </div>
 

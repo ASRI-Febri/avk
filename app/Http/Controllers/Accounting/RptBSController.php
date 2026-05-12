@@ -13,6 +13,7 @@ use Validator;
 use PDF;
 use App\File;
 use Image;
+use App\Services\Accounting\BalanceSheetReportBuilder;
 
 class RptBSController extends MyController
 {   
@@ -70,9 +71,9 @@ class RptBSController extends MyController
             $this->data['dd_branch'] = (array) $dd->branch('');             
                        
             // DEFAULT PARAMETER
-            $this->data['IDX_M_Company'] = '0';
-            $this->data['IDX_M_Branch'] = '0';
-            $this->data['start_date'] = date('Y-m-d');
+            $this->data['IDX_M_Company'] = '1';
+            $this->data['IDX_M_Branch'] = '1';
+            $this->data['start_date'] = date('Y-m-01');
             $this->data['end_date'] = date('Y-m-d');
 
             // URL SAVE
@@ -122,6 +123,46 @@ class RptBSController extends MyController
             $this->data['view'] = 'accounting/rpt_bs_report';                                 
             return view($this->data['view'], $this->data);
         }
+    }
+
+    /**
+     * V2 — Standard-format balance sheet using a dedicated SP + Service.
+     *   - USP_GL_R_BalanceSheet_V2 returns COA-level rows and injects
+     *     Laba Tahun Berjalan into Current Earning so totals balance.
+     *   - BalanceSheetReportBuilder groups by COAGroup1 and computes
+     *     section totals + balance check.
+     */
+    public function period_report_v2(Request $request, BalanceSheetReportBuilder $builder)
+    {
+        $validator = Validator::make($request->all(),[
+            'IDX_M_Company' => 'required',
+            'IDX_M_Branch'  => 'required',
+            'start_date'    => 'required',
+            'end_date'      => 'required',
+        ]);
+
+        if($validator->fails())
+        {
+            return $this->validation_fails($validator->errors(), $request->input('start_date'));
+        }
+
+        $this->data['fields']     = $request->all();
+        $this->data['page_title'] = 'Balance Sheet (V2)';
+        $this->data['title']      = 'Balance Sheet (V2)';
+        $this->data['form_title'] = 'Balance Sheet (V2)';
+
+        // ** Param sequence must refer to param sequence in stored procedure **
+        $param['IDX_M_Company'] = $this->data['fields']['IDX_M_Company'];
+        $param['IDX_M_Branch']  = $this->data['fields']['IDX_M_Branch'];
+        $param['StartDate']     = $this->data['fields']['start_date'];
+        $param['EndDate']       = $this->data['fields']['end_date'];
+
+        $rawRows = $this->exec_sp('USP_GL_R_BalanceSheet_V2', $param, 'list', 'sqlsrv');
+
+        $this->data['report'] = $builder->build($rawRows, $param['EndDate']);
+
+        $this->data['view'] = 'accounting/rpt_bs_report_v2';
+        return view($this->data['view'], $this->data);
     }
 
     public function get_detail_from_gl(Request $request)

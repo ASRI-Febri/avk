@@ -8,6 +8,8 @@ Route::post('/ac-coa-list', 'Accounting\COAController@inquiry_data');
 Route::get('/ac-coa/create/{id?}', 'Accounting\COAController@create');
 Route::get('/ac-coa/update/{id}', 'Accounting\COAController@update');
 Route::post('/ac-coa/save', 'Accounting\COAController@save');
+Route::post('/ac-coa/duplicate', 'Accounting\COAController@duplicate');
+Route::post('/ac-coa/save-duplicate', 'Accounting\COAController@save_duplicate');
 
 // LOOKUP COA
 Route::post('/ac-select-coa', 'Accounting\COAController@show_lookup');
@@ -83,6 +85,9 @@ Route::post('/ac-rpt-tb/get-detail', 'Accounting\RptTBController@get_detail_from
 
 Route::get('/ac-rpt-bs', 'Accounting\RptBSController@period');
 Route::post('/ac-rpt-bs', 'Accounting\RptBSController@period_report');
+Route::post('/ac-rpt-bs-v2', 'Accounting\RptBSController@period_report_v2');
 
 Route::get('/ac-rpt-pl', 'Accounting\RptPLController@period');
 Route::post('/ac-rpt-pl', 'Accounting\RptPLController@period_report');
+Route::post('/ac-rpt-pl-standard', 'Accounting\RptPLController@period_report_standard');
+Route::post('/ac-rpt-pl-v3',       'Accounting\RptPLController@period_report_v3');

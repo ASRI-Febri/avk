@@ -233,7 +233,10 @@ class CurrencyController extends MyController
             'CurrencyName' => 'required',
             'Symbol' => 'required',       
             'BuyRate' => 'required',
-            'SellRate' => 'required',     
+            'SellRate' => 'required',  
+            'SalesAccount' => 'required',       
+            'PurchaseAccount' => 'required',
+            'COGSAccount' => 'required',
         ],[
             'IDX_M_Country.required' => 'Kode negara belum diisi!',
             'CurrencyName.required' => 'Nama mata uang belum diisi!',
@@ -241,6 +244,10 @@ class CurrencyController extends MyController
             'Symbol.required' => 'Simbol mata uang belum diisi!',
             'BuyRate.required' => 'Rate beli belum diisi!',
             'SellRate.required' => 'Rate jual belum diisi!',
+            'SalesAccount.required' => 'Sales Account belum diisi!',
+            'PurchaseAccount.required' => 'Purchase Account belum diisi!',
+            'COGSAccount.required' => 'COGS Account belum diisi!',
+
         ]);
 
         if ($validator->fails())
@@ -270,7 +277,8 @@ class CurrencyController extends MyController
             $param['SortPriority'] = (double)str_replace(',','',$data['SortPriority']);
             $param['SalesAccount'] = $data['SalesAccount'];
             $param['PurchaseAccount'] = $data['PurchaseAccount'];
-            
+            $param['COGSAccount'] = $data['COGSAccount'];
+
             $param['UserID'] = 'XXX'.$this->data['user_id'];
             $param['RecordStatus'] = $data['RecordStatus'];            
 

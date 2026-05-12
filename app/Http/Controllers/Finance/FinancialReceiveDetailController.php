@@ -209,8 +209,8 @@ class FinancialReceiveDetailController extends MyController
             $param['IDX_T_FinancialReceiveHeader'] = $data['IDX_T_FinancialReceiveHeader'];
             $param['IDX_M_Project'] = $data['IDX_M_Project'];
             $param['IDX_M_DocumentType'] = 1;
-            $param['IDX_DocumentNo'] = 0;
-            $param['DocumentNo'] = "";
+            $param['IDX_DocumentNo'] = $data['IDX_DocumentNo'];;
+            $param['DocumentNo'] = $data['DocumentNo'];;
             $param['COADetail'] = $data['IDX_M_COA'];
 
             $param['ReceiveAmount'] = (double)str_replace(',','',$data['ReceiveAmount']);

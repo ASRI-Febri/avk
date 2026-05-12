@@ -78,7 +78,7 @@ Route::post('/mc-purchase-order-detail/create', 'MoneyChanger\PurchaseOrderDetai
 Route::post('/mc-purchase-order-detail/update/{id}', 'MoneyChanger\PurchaseOrderDetailController@update');
 Route::post('/mc-purchase-order-detail/save', 'MoneyChanger\PurchaseOrderDetailController@save');
 Route::get('/mc-purchase-order-detail/reload/{id}', 'MoneyChanger\PurchaseOrderDetailController@reload'); // RELOAD TABLE AFTER SAVE
-Route::post('mc-purchase-order-detail/delete/{id?}', 'MoneyChanger\PurchaseOrderDetailController@delete');
+Route::post('mc-purchase-order-detail/delete', 'MoneyChanger\PurchaseOrderDetailController@delete');
 Route::post('/mc-purchase-order-detail/save-delete', 'MoneyChanger\PurchaseOrderDetailController@save_delete');
 
 // PURCHASE ORDER PAYMENT
@@ -104,6 +104,16 @@ Route::post('/mc-sales-order/save-duplicate', 'MoneyChanger\SalesOrderController
 Route::post('/mc-sales-order-upload', 'MoneyChanger\SalesOrderController@upload');
 Route::get('/mc-sales-order-download', 'MoneyChanger\SalesOrderController@download');
 Route::get('/mc-sales-order-delete-file', 'MoneyChanger\SalesOrderController@delete_file');
+
+// SALES QUICK (input cepat header + detail dalam 1 form)
+Route::get('/mc-sales-quick/create',     'MoneyChanger\SalesQuickController@create');
+Route::get('/mc-sales-quick/update/{id}','MoneyChanger\SalesQuickController@update');
+Route::post('/mc-sales-quick/save',      'MoneyChanger\SalesQuickController@save');
+
+// PURCHASE QUICK (input cepat header + detail dalam 1 form)
+Route::get('/mc-purchase-quick/create',     'MoneyChanger\PurchaseQuickController@create');
+Route::get('/mc-purchase-quick/update/{id}','MoneyChanger\PurchaseQuickController@update');
+Route::post('/mc-purchase-quick/save',      'MoneyChanger\PurchaseQuickController@save');
 
 // SALES ORDER - DETAIL
 Route::get('/mc-sales-order-detail', 'MoneyChanger\SalesOrderDetailController@inquiry');
@@ -162,6 +172,18 @@ Route::get('/mc-sop-money-laundry', 'MoneyChanger\SOPController@sop_money_laundr
 Route::get('/mc-sop-penetapan-kurs', 'MoneyChanger\SOPController@sop_penetapan_kurs');
 Route::get('/mc-sop-perlindungan-konsumen', 'MoneyChanger\SOPController@sop_perlindungan_konsumen');
 
+// NOTA SCAN (OCR)
+Route::get('/mc-nota-scan',           'MoneyChanger\NotaScanController@inquiry');
+Route::post('/mc-nota-scan-list',     'MoneyChanger\NotaScanController@inquiry_data');
+Route::get('/mc-nota-scan/create',    'MoneyChanger\NotaScanController@create');
+Route::get('/mc-nota-scan/update/{id}','MoneyChanger\NotaScanController@update');
+Route::post('/mc-nota-scan/scan',     'MoneyChanger\NotaScanController@scan');
+Route::post('/mc-nota-scan/save',     'MoneyChanger\NotaScanController@save');
+
+// COGS CALCULATION
+Route::get('/mc-cogs-calculation/create', 'MoneyChanger\COGSCalculationController@create');
+Route::get('/mc-cogs-calculation/save', 'MoneyChanger\COGSCalculationController@save');
+
 // REPORT
 Route::get('/mc-rpt-so', 'MoneyChanger\RptTransactionController@period_sales');
 Route::post('/mc-rpt-so', 'MoneyChanger\RptTransactionController@period_sales_report');
@@ -174,6 +196,9 @@ Route::post('/mc-rpt-inventory', 'MoneyChanger\RptInventoryController@period_rep
 
 Route::get('/mc-rpt-inventory-calculation', 'MoneyChanger\RptInventoryController@inventory_calculation');
 Route::post('/mc-rpt-inventory-calculation', 'MoneyChanger\RptInventoryController@inventory_calculation_report');
+
+Route::get('/mc-rpt-cogs-calculation', 'MoneyChanger\RptCOGSController@cogs_calculation');
+Route::post('/mc-rpt-cogs-calculation', 'MoneyChanger\RptCOGSController@cogs_calculation_report');
 
 Route::get('/mc-rpt-daily-calculation', 'MoneyChanger\RptTransactionController@daily_calculation');
 Route::post('/mc-rpt-daily-calculation', 'MoneyChanger\RptTransactionController@daily_calculation_report');

@@ -19,6 +19,7 @@
     <input type="hidden" id="IDX_M_Currency" name="IDX_M_Currency" value="{{ $fields->IDX_M_Currency }}"/>
     <input type="hidden" id="SalesAccount" name="SalesAccount" value="{{ $fields->SalesAccount }}"/>  
     <input type="hidden" id="PurchaseAccount" name="PurchaseAccount" value="{{ $fields->PurchaseAccount }}"/>
+    <input type="hidden" id="COGSAccount" name="COGSAccount" value="{{ $fields->COGSAccount }}"/>
 
     <x-select-horizontal label="Negara" id="IDX_M_Country" :value="$fields->IDX_M_Country" class="required" :array="$dd_country"/>
 
@@ -34,6 +35,7 @@
     <x-lookup-horizontal label="Sales Account" id="SalesAccountDesc" :value="$fields->SalesAccountDesc" class="required" button="btn-find-coa-ar"/>
     
     <x-lookup-horizontal label="Purchase Account" id="PurchaseAccountDesc" :value="$fields->PurchaseAccountDesc" class="required" button="btn-find-coa-ap"/>
+    <x-lookup-horizontal label="COGS Account" id="COGSAccountDesc" :value="$fields->COGSAccountDesc" class="required" button="btn-find-coa-cogs"/>
 
     <x-select-horizontal label="Status" id="RecordStatus" :value="$fields->RecordStatus" class="required" :array="$dd_record_status"/>
 
@@ -68,6 +70,17 @@
                     _token: $("#_token").val(),  
                     target_index: 'PurchaseAccount',
                     target_name: 'PurchaseAccountDesc'                  
+                }                
+
+                callAjaxModalView('{{ url('/ac-select-coa') }}',data);                
+            }); 
+
+            $('#btn-find-coa-cogs').click(function(){
+                
+                var data = {
+                    _token: $("#_token").val(),  
+                    target_index: 'COGSAccount',
+                    target_name: 'COGSAccountDesc'                  
                 }                
 
                 callAjaxModalView('{{ url('/ac-select-coa') }}',data);                
