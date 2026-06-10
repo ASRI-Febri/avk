@@ -2,11 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('display-kurs', function () {
-    return view('kurs_valas');
-});
+Route::get('display-kurs', 'MoneyChanger\CurrencyController@display_kurs_valas');
 
 Route::get('/mc-display-kurs', 'MoneyChanger\CurrencyController@display_kurs');
+Route::get('/mc-display-kurs-tv', 'MoneyChanger\CurrencyController@display_kurs_tv');
+Route::get('/mc-display-kurs-tv-data', 'MoneyChanger\CurrencyController@display_kurs_tv_data');
 
 // CURRENCY LIST
 Route::get('/mc-currency', 'MoneyChanger\CurrencyController@inquiry');
@@ -15,6 +15,16 @@ Route::get('/mc-currency/create', 'MoneyChanger\CurrencyController@create');
 Route::get('/mc-currency/update/{id}', 'MoneyChanger\CurrencyController@update');
 Route::get('/mc-currency/duplicate/{id}', 'MoneyChanger\CurrencyController@duplicate');
 Route::post('/mc-currency/save', 'MoneyChanger\CurrencyController@save');
+
+// IMPORT KURS BANK PANIN (paste tabel kurs -> preview -> update Rate Beli/Jual)
+Route::get('/mc-currency-import-kurs', 'MoneyChanger\CurrencyController@import_kurs');
+Route::post('/mc-currency-import-kurs/preview', 'MoneyChanger\CurrencyController@import_kurs_preview');
+Route::post('/mc-currency-import-kurs/save', 'MoneyChanger\CurrencyController@import_kurs_save');
+
+// IMPORT KURS BANK BCA (paste tabel kurs -> preview -> update Rate Beli/Jual)
+Route::get('/mc-currency-import-kurs-bca', 'MoneyChanger\CurrencyController@import_kurs_bca');
+Route::post('/mc-currency-import-kurs-bca/preview', 'MoneyChanger\CurrencyController@import_kurs_bca_preview');
+Route::post('/mc-currency-import-kurs-bca/save', 'MoneyChanger\CurrencyController@import_kurs_bca_save');
 
 // VALAS LIST
 Route::get('/mc-valas', 'MoneyChanger\ValasController@inquiry');
@@ -180,9 +190,31 @@ Route::get('/mc-nota-scan/update/{id}','MoneyChanger\NotaScanController@update')
 Route::post('/mc-nota-scan/scan',     'MoneyChanger\NotaScanController@scan');
 Route::post('/mc-nota-scan/save',     'MoneyChanger\NotaScanController@save');
 
+// CHECK STOCK CARD (RECONCILE KARTU STOK vs TRANSAKSI)
+Route::get('/mc-check-stock-card', 'MoneyChanger\CheckStockCardController@inquiry');
+Route::post('/mc-check-stock-card-report', 'MoneyChanger\CheckStockCardController@report');
+
+// STOCK CARD CHECK (tab "Kartu Stok" di halaman update SO/PO + koreksi quantity / hapus duplikat)
+Route::get('/mc-stock-card-check/reload/{type}/{idx}', 'MoneyChanger\StockCardCheckController@reload');
+Route::post('/mc-stock-card-check/update/{id}', 'MoneyChanger\StockCardCheckController@update');
+Route::post('/mc-stock-card-check/save', 'MoneyChanger\StockCardCheckController@save');
+Route::post('/mc-stock-card-check/delete', 'MoneyChanger\StockCardCheckController@delete');
+Route::post('/mc-stock-card-check/save-delete', 'MoneyChanger\StockCardCheckController@save_delete');
+
+// ANALYTIC (CFO DASHBOARDS)
+Route::get('/mc-analytic-profitability', 'MoneyChanger\AnalyticController@profitability');
+Route::get('/mc-analytic-position',      'MoneyChanger\AnalyticController@position');
+Route::get('/mc-analytic-volume',        'MoneyChanger\AnalyticController@volume');
+Route::get('/mc-analytic-liquidity',     'MoneyChanger\AnalyticController@liquidity');
+
 // COGS CALCULATION
+Route::get('/mc-cogs-calculation', 'MoneyChanger\COGSCalculationController@inquiry');
+Route::post('/mc-cogs-calculation-list', 'MoneyChanger\COGSCalculationController@inquiry_data');
 Route::get('/mc-cogs-calculation/create', 'MoneyChanger\COGSCalculationController@create');
-Route::get('/mc-cogs-calculation/save', 'MoneyChanger\COGSCalculationController@save');
+Route::post('/mc-cogs-calculation/save', 'MoneyChanger\COGSCalculationController@save');
+Route::get('/mc-cogs-calculation/success', 'MoneyChanger\COGSCalculationController@success');
+Route::post('/mc-cogs-calculation/generate-journal', 'MoneyChanger\COGSCalculationController@generate_journal');
+Route::post('/mc-cogs-calculation/save-generate-journal', 'MoneyChanger\COGSCalculationController@save_generate_journal');
 
 // REPORT
 Route::get('/mc-rpt-so', 'MoneyChanger\RptTransactionController@period_sales');
@@ -210,6 +242,4 @@ Route::get('/mc-rpt-ap', 'MoneyChanger\RptARAPController@ap');
 Route::post('/mc-rpt-ap', 'MoneyChanger\RptARAPController@ap_report');
 
 // DAFTAR KURS VALAS
-Route::get('mc/kurs', function () {
-    return view('kurs_valas');
-});
+Route::get('mc/kurs', 'MoneyChanger\CurrencyController@display_kurs_valas');

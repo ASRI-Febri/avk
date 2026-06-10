@@ -48,10 +48,7 @@
                 @if(!isset($show_action) || $show_action == TRUE)
                 <td class="text-center">
                     @if($row->PaymentStatus == 'D')
-                    <div class="input-group-prepend text-center">
-                        <x-btn-edit-detail :id="$row->IDX_T_FinancialPaymentHeader" />
-                        <x-btn-delete-detail :id="$row->IDX_T_FinancialPaymentHeader" :label="$row->FinancialAccountDesc" function="deleteDetailValas" />                    
-                    </div>
+                    
                     @endif
                 </td>
                 @endif

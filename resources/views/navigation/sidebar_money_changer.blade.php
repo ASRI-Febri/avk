@@ -24,6 +24,35 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-analytic">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytic</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-analytic">
+                        <li id="nav-li-analytic-profitability">
+                            <a href="{{ url('mc-analytic-profitability') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Profitabilitas & Margin
+                            </a>
+                        </li>
+                        <li id="nav-li-analytic-position">
+                            <a href="{{ url('mc-analytic-position') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Posisi Valas & Eksposur FX
+                            </a>
+                        </li>
+                        <li id="nav-li-analytic-volume">
+                            <a href="{{ url('mc-analytic-volume') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Volume & Perputaran
+                            </a>
+                        </li>
+                        <li id="nav-li-analytic-liquidity">
+                            <a href="{{ url('mc-analytic-liquidity') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Likuiditas & Modal Kerja
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 {{-- <li>
                     <a href="{{ url('mc/kurs') }}" class="" target="_blank">
                         <i class="fas fa-desktop"></i>
@@ -32,9 +61,23 @@
                 </li> --}}
 
                 <li>
-                    <a href="{{ url('mc-display-kurs') }}" class="" target="_blank">
+                    <a href="{{ url('mc-display-kurs-tv') }}" class="" target="_blank">
                         <i class="fas fa-money-check-alt"></i>
                         <span>Display Kurs</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ url('mc-currency-import-kurs') }}" class="">
+                        <i class="fas fa-file-import"></i>
+                        <span>Import Kurs (Panin)</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ url('mc-currency-import-kurs-bca') }}" class="">
+                        <i class="fas fa-file-import"></i>
+                        <span>Import Kurs (BCA)</span>
                     </a>
                 </li>
 
@@ -121,11 +164,16 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan HPP
                             </a>
                         </li>
-                        <li id="nav-li-nota-scan">
+                        <li id="nav-li-check-stock-card">
+                            <a href="{{ url('mc-check-stock-card') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Cek Selisih Kartu Stok
+                            </a>
+                        </li>
+                        {{-- <li id="nav-li-nota-scan">
                             <a href="{{ url('mc-nota-scan') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Scan Nota (OCR)
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 

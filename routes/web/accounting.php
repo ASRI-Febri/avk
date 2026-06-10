@@ -91,3 +91,9 @@ Route::get('/ac-rpt-pl', 'Accounting\RptPLController@period');
 Route::post('/ac-rpt-pl', 'Accounting\RptPLController@period_report');
 Route::post('/ac-rpt-pl-standard', 'Accounting\RptPLController@period_report_standard');
 Route::post('/ac-rpt-pl-v3',       'Accounting\RptPLController@period_report_v3');
+
+Route::get('/ac-rpt-cf', 'Accounting\RptCFController@period');
+Route::post('/ac-rpt-cf', 'Accounting\RptCFController@period_report');
+
+Route::get('/ac-rpt-eq', 'Accounting\RptEQController@period');
+Route::post('/ac-rpt-eq', 'Accounting\RptEQController@period_report');

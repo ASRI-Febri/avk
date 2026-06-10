@@ -133,7 +133,7 @@
                         <th class="text-center">RATE</th>
                         <th class="text-center">NILAI RUPIAH</th>  
                         <th class="text-center">HPP (AVERAGE)</th>   
-                        <th class="text-center">NILAI NET</th>         
+                        <th class="text-center">ESTIMASI MARGIN</th>         
                     </tr>
                 </thead>
                 <tbody>            

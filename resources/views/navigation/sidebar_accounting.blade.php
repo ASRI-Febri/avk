@@ -76,6 +76,11 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Cashflow
                             </a>
                         </li>
+                        <li id="nav-li-rpt-eq">
+                            <a href="{{ url('ac-rpt-eq') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perubahan Ekuitas
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

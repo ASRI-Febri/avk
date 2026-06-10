@@ -17,7 +17,10 @@ use Image;
 
 
 class CurrencyController extends MyController
-{  
+{
+    // Acuan kurs display = Rate Beli/Jual pada MC_M_Currency, yang diperbarui
+    // lewat tool import kurs Bank Panin (lihat import_kurs / import_kurs_save).
+
     // =========================================================================================
     // CONSTRUCTOR
     // =========================================================================================
@@ -47,17 +50,272 @@ class CurrencyController extends MyController
 
     public function display_kurs(Request $request)
     {
-        $param['page'] = 1; 
-        $param['row'] = 100; 
+        $param['page'] = 1;
+        $param['row'] = 100;
         $param['sort_by'] = 'SortPriority';
         $param['sort_dir'] = 'ASC';
         $param['return_type'] = 'R';
         $param['CurrencyName'] = '';
         $param['CurrencyID'] = '';
-        $this->data['records'] = $this->exec_sp('USP_MC_Currency_List',$param,'list','sqlsrv');   
+        $this->data['records'] = $this->exec_sp('USP_MC_Currency_List',$param,'list','sqlsrv');
 
         $this->data['view'] = 'money_changer/display_kurs';
         return view($this->data['view'], $this->data);
+    }
+
+    // =========================================================================================
+    // DISPLAY KURS - VERSI TV (full screen, auto-refresh, paginasi otomatis)
+    // =========================================================================================
+    // Kurs yang ditampilkan diambil langsung dari MC_M_Currency (Rate Beli/Jual),
+    // yang diperbarui lewat tool import kurs Bank Panin.
+    private function kurs_records()
+    {
+        $param['page'] = 1;
+        $param['row'] = 100;
+        $param['sort_by'] = 'SortPriority';
+        $param['sort_dir'] = 'ASC';
+        $param['return_type'] = 'R';
+        $param['CurrencyName'] = '';
+        $param['CurrencyID'] = '';
+
+        $rows = $this->exec_sp('USP_MC_Currency_List', $param, 'list', 'sqlsrv');
+
+        // Hanya tampilkan mata uang aktif dengan kurs valid (rapi untuk layar TV).
+        $out = [];
+        foreach ($rows as $r) {
+            $buy  = (float) $r->BuyRate;
+            $sell = (float) $r->SellRate;
+
+            if ($sell <= 0 && $buy <= 0) {
+                continue;
+            }
+
+            $out[] = [
+                'CurrencyID'   => strtoupper(trim($r->CurrencyID)),
+                'CurrencyName' => trim($r->CurrencyName),
+                'CountryName'  => trim($r->CountryName),
+                'IconFlag'     => trim($r->IconFlag),
+                'SellRate'     => $sell,
+                'BuyRate'      => $buy,
+            ];
+        }
+        return $out;
+    }
+
+    public function display_kurs_tv(Request $request)
+    {
+        $this->data['records']  = $this->kurs_records();
+        $this->data['url_data'] = url('mc-display-kurs-tv-data');
+        $this->data['view'] = 'money_changer/display_kurs_tv';
+        return view($this->data['view'], $this->data);
+    }
+
+    // Board kurs sederhana (kurs_valas) - juga membaca Rate Beli/Jual dari MC_M_Currency.
+    public function display_kurs_valas(Request $request)
+    {
+        return view('kurs_valas', ['records' => $this->kurs_records()]);
+    }
+
+    public function display_kurs_tv_data(Request $request)
+    {
+        return response()->json([
+            'server_time' => date('c'),
+            'rows'        => $this->kurs_records(),
+        ]);
+    }
+
+    // =========================================================================================
+    // IMPORT KURS (paste tabel kurs bank -> update Rate Beli/Jual MC_M_Currency)
+    // =========================================================================================
+    // Situs bank diproteksi (Akamai dll.) sehingga tidak bisa di-scrape dari server.
+    // Operator menyalin tabel kurs dari situs bank lalu menempelnya di sini.
+    // Alur tiap sumber: paste -> preview (parse saja) -> konfirmasi -> simpan.
+
+    // Konfigurasi tiap sumber bank.
+    private function kurs_source($key)
+    {
+        if ($key === 'bca') {
+            return [
+                'key'         => 'bca',
+                'name'        => 'Bank BCA',
+                'url'         => 'https://www.bca.co.id/id/informasi/kurs',
+                'parser'      => \App\Services\BcaKursParser::class,
+                'options'     => ['erate' => 'e-Rate', 'tt' => 'TT Counter', 'banknotes' => 'Bank Notes'],
+                'default'     => 'erate',
+                'note'        => 'Default e-Rate (angka ke-1 & ke-2 tiap baris). Format angka: 18.000,00',
+                'placeholder' => "USD  18.000,00  18.020,00  17.850,00  18.125,00  17.785,00  18.060,00  ...",
+                'base'        => '/mc-currency-import-kurs-bca',
+            ];
+        }
+
+        return [
+            'key'         => 'panin',
+            'name'        => 'Bank Panin',
+            'url'         => 'https://www.panin.co.id/id/kurs',
+            'parser'      => \App\Services\PaninKursParser::class,
+            'options'     => ['tt' => 'TT Counter', 'special' => 'Spesial Rate'],
+            'default'     => 'tt',
+            'note'        => 'Default TT Counter (angka ke-3 & ke-4 tiap baris). Format angka: 17.990,00 / 18,030.00',
+            'placeholder' => "USD  17,990.00  18,020.00  17,980.00  18,030.00  ...",
+            'base'        => '/mc-currency-import-kurs',
+        ];
+    }
+
+    // ----- PANIN -----
+    public function import_kurs(Request $request)          { return $this->kurs_import_show($this->kurs_source('panin')); }
+    public function import_kurs_preview(Request $request)  { return $this->kurs_import_preview($this->kurs_source('panin'), $request); }
+    public function import_kurs_save(Request $request)     { return $this->kurs_import_save($this->kurs_source('panin'), $request); }
+
+    // ----- BCA -----
+    public function import_kurs_bca(Request $request)         { return $this->kurs_import_show($this->kurs_source('bca')); }
+    public function import_kurs_bca_preview(Request $request) { return $this->kurs_import_preview($this->kurs_source('bca'), $request); }
+    public function import_kurs_bca_save(Request $request)    { return $this->kurs_import_save($this->kurs_source('bca'), $request); }
+
+    // Langkah 1: form paste (state edit / hasil simpan dari redirect).
+    private function kurs_import_show($cfg)
+    {
+        $this->kurs_import_header($cfg);
+
+        $this->data['state']   = 'edit';
+        $this->data['pasted']  = '';
+        $this->data['rateset'] = session('import_rateset_' . $cfg['key'], $cfg['default']);
+        $this->data['preview'] = null;
+        $this->data['result']  = session('import_result_' . $cfg['key']);
+
+        $this->data['view'] = 'money_changer/import_kurs';
+        return view($this->data['view'], $this->data);
+    }
+
+    // Langkah 2: parse saja (TANPA tulis DB) lalu tampilkan preview untuk dikonfirmasi.
+    private function kurs_import_preview($cfg, $request)
+    {
+        $this->kurs_import_header($cfg);
+
+        $pasted  = (string) $request->input('pasted', '');
+        $rateset = $this->valid_rateset($cfg, $request->input('rateset'));
+
+        $this->data['pasted']  = $pasted;
+        $this->data['rateset'] = $rateset;
+        $this->data['result']  = null;
+        $this->data['view']    = 'money_changer/import_kurs';
+
+        if (trim($pasted) === '') {
+            $this->data['state']   = 'edit';
+            $this->data['preview'] = null;
+            $this->data['error']   = 'Teks kurs masih kosong. Tempel tabel kurs dari situs ' . $cfg['name'] . ' terlebih dahulu.';
+            return view($this->data['view'], $this->data);
+        }
+
+        $parserClass = $cfg['parser'];
+        $parser = new $parserClass();
+        $parsed = $parser->parse($pasted, $rateset, $this->currency_codes());
+
+        $this->data['state']   = 'preview';
+        $this->data['preview'] = [
+            'rateset'  => $rateset,
+            'parsed'   => $parsed,             // akan disimpan
+            'skipped'  => $parser->skipped(),  // kode tak ada di master aktif
+            'unparsed' => $parser->unparsed(), // baris gagal diurai angkanya
+        ];
+
+        return view($this->data['view'], $this->data);
+    }
+
+    // Langkah 3: simpan ke MC_M_Currency (parse ulang teks yang sudah dipratinjau).
+    private function kurs_import_save($cfg, $request)
+    {
+        $pasted  = (string) $request->input('pasted', '');
+        $rateset = $this->valid_rateset($cfg, $request->input('rateset'));
+
+        if (trim($pasted) === '') {
+            return redirect($cfg['base'])
+                ->with('import_rateset_' . $cfg['key'], $rateset)
+                ->with('import_result_' . $cfg['key'], ['error' => 'Teks kurs masih kosong. Tempel tabel kurs dari situs ' . $cfg['name'] . ' terlebih dahulu.']);
+        }
+
+        $parserClass = $cfg['parser'];
+        $parser = new $parserClass();
+        $parsed = $parser->parse($pasted, $rateset, $this->currency_codes());
+
+        $updated = [];
+        $notfound = [];
+        foreach ($parsed as $row) {
+            $param = [
+                'CurrencyID' => $row['currency'],
+                'BuyRate'    => $row['buy'],
+                'SellRate'   => $row['sell'],
+                'UserID'     => 'XXX' . $this->data['user_id'],
+            ];
+            $res = $this->exec_sp('USP_MC_Currency_UpdateRate', $param, 'list', 'sqlsrv');
+
+            $ok = !empty($res) && isset($res[0]->Result) && $res[0]->Result === 'success'
+                && (int) ($res[0]->Affected ?? 0) > 0;
+
+            if ($ok) {
+                $updated[] = $row;
+            } else {
+                $notfound[] = $row['currency'];
+            }
+        }
+
+        $result = [
+            'rateset'  => $rateset,
+            'updated'  => $updated,
+            'notfound' => array_values(array_unique(array_merge($notfound, $parser->skipped()))),
+            'unparsed' => $parser->unparsed(),
+        ];
+
+        return redirect($cfg['base'])
+            ->with('import_rateset_' . $cfg['key'], $rateset)
+            ->with('import_result_' . $cfg['key'], $result);
+    }
+
+    // Pastikan pilihan kolom kurs valid untuk sumber terkait.
+    private function valid_rateset($cfg, $value)
+    {
+        return array_key_exists((string) $value, $cfg['options']) ? (string) $value : $cfg['default'];
+    }
+
+    private function kurs_import_header($cfg)
+    {
+        $this->data['title']          = 'Import Kurs ' . $cfg['name'];
+        $this->data['form_title']     = 'Import Kurs';
+        $this->data['form_sub_title'] = 'Update Kurs dari ' . $cfg['name'];
+        $this->data['form_remark']    = 'Salin tabel kurs dari situs ' . $cfg['name'] . ' lalu tempel di sini untuk memperbarui Rate Beli/Jual mata uang.';
+
+        $this->data['source_name']      = $cfg['name'];
+        $this->data['source_url']       = $cfg['url'];
+        $this->data['rate_options']     = $cfg['options'];
+        $this->data['rateset_note']     = $cfg['note'];
+        $this->data['paste_placeholder'] = $cfg['placeholder'];
+        $this->data['url_preview']      = url($cfg['base'] . '/preview');
+        $this->data['url_save']         = url($cfg['base'] . '/save');
+        $this->data['url_cancel']       = url('mc-currency');
+
+        array_push($this->data['breads'], 'Import Kurs ' . $cfg['name']);
+    }
+
+    // Daftar kode mata uang AKTIF di master (untuk validasi parser & preview).
+    private function currency_codes()
+    {
+        $param['page'] = 1;
+        $param['row'] = 100;
+        $param['sort_by'] = 'SortPriority';
+        $param['sort_dir'] = 'ASC';
+        $param['return_type'] = 'R';
+        $param['CurrencyName'] = '';
+        $param['CurrencyID'] = '';
+
+        $rows = $this->exec_sp('USP_MC_Currency_List', $param, 'list', 'sqlsrv');
+
+        $codes = [];
+        foreach ($rows as $r) {
+            if (isset($r->RecordStatus) && strtoupper(trim($r->RecordStatus)) !== 'A') {
+                continue;
+            }
+            $codes[] = strtoupper(trim($r->CurrencyID));
+        }
+        return $codes;
     }
 
     // =========================================================================================

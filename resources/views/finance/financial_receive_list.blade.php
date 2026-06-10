@@ -10,30 +10,58 @@
     <div class="row mb-3">
         <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Kode FA</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Receive ID</span>
+                <input id="ReceiveID" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Receive Date</span>
+                <input id="ReceiveDate" type="text" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Kode FA</span>
                 <input id="FinancialAccountID" type="text" class="form-control" />
             </div>
         </div>
         <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Nama FA</span> 
-                <input id="FinancialAccountDesc" type="text" class="form-control" />
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Partner</span>
+                <input id="PartnerName" type="text" class="form-control" />
             </div>
-        </div> 
+        </div>
     </div>
     <div class="row mb-3">
         <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">No Rekening</span> 
-                <input id="AccountNo" type="text" class="form-control" />
+                <span class="input-group-text" id="inputGroup-sizing-default">Voucher No Manual</span>
+                <input id="VoucherNoManual" type="text" class="form-control" />
             </div>
         </div>
         <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Nama di Rekening</span> 
-                <input id="AccountName" type="text" class="form-control" />
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Perusahaan</span>
+                <input id="CompanyName" type="text" class="form-control" />
             </div>
-        </div>  
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Receive Amount</span>
+                <input id="ReceiveAmount" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Remark</span>
+                <input id="RemarkHeader" type="text" class="form-control" />
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -44,11 +72,16 @@
         { data: "IDX_M_Company", visible: false },
         { data: "IDX_M_Branch", visible: false }, 
 
-        { data: "CompanyName", visible: true },
-        { data: "ReceiveID", visible: true },
-        { data: "VoucherNoManual", visible: true },
+        { data: "CompanyName", visible: false },
+        { data: "ReceiveID", visible: true, "render":
+            function( data, type, row )
+            {
+                return row['ReceiveID'] + '<br><small class="text-muted">' + row['ReceiveDate'] + '</small>';
+            }
+        },
+        { data: "VoucherNoManual", visible: false },
         { data: "FinancialAccountID", visible: true },
-        { data: "ReceiveDate", visible: true },
+        { data: "ReceiveDate", visible: false },
         { data: "PartnerName", visible: true },
 
         { "data": "ReceiveAmount", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-right", 

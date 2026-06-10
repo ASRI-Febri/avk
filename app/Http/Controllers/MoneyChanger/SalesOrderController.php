@@ -67,10 +67,10 @@ class SalesOrderController extends MyController
         {       
             // TABLE HEADER & FOOTER
             $this->data['table_header'] = array('No','IDX_T_SalesOrder','Perusahaan','Cabang','No Nota','Nomor System',
-            'Tanggal Transaksi','Konsumen', 'Keterangan','SOStatus','Status','Action');         
+            'Tanggal Transaksi','Konsumen', 'Keterangan','<div class="text-right">Nilai Transaksi</div>','SOStatus','Status','Action');
 
             $this->data['table_footer'] = array('','IDX_T_SalesOrder','CompanyName','BranchName','ReferenceNo','SONumber',
-            '','PartnerName','SONotes','','','Action');
+            '','PartnerName','SONotes','','','','Action');
 
             $this->data['array_filter'] = array('CompanyName','BranchName','ReferenceNo','SONumber','SONotes','PartnerName');
 
@@ -101,7 +101,7 @@ class SalesOrderController extends MyController
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
         $this->array_column = array('RowNumber','IDX_T_SalesOrder','CompanyName','BranchName','ReferenceNo','SONumber',
-            'SODate','PartnerName', 'SONotes','SOStatus','StatusDesc');
+            'SODate','PartnerName', 'SONotes','TotalAmount','SOStatus','StatusDesc');
 
         return $this->get_datatables($request); 
     }

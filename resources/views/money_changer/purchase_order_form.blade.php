@@ -117,7 +117,10 @@
                 <div class="nav nav-lines card-header-lines mb-0" id="card-tab-1" role="tablist">
                     <a class="nav-item nav-link active" id="card-detail-tab" data-bs-toggle="tab" href="#card-detail" aria-selected="false" role="tab" tabindex="-1">
                         <i class="fas fa-align-justify"></i> Detail Pembelian
-                    </a>    
+                    </a>
+                    <a class="nav-item nav-link" id="card-stockcard-tab" data-bs-toggle="tab" href="#card-stockcard" aria-selected="true" role="tab">
+                        <i class="fas fa-id-card"></i> Kartu Stok
+                    </a>
                     <a class="nav-item nav-link" id="card-payment-tab" data-bs-toggle="tab" href="#card-payment" aria-selected="true" role="tab">
                         <i class="fas fa-coins"></i> Pembayaran
                     </a> 
@@ -137,7 +140,14 @@
                         @endif
             
                         <div id="table-order-detail" class="table-responsive">
-                            @include('money_changer.purchase_order_detail_list')            
+                            @include('money_changer.purchase_order_detail_list')
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="card-stockcard" role="tabpanel" aria-labelledby="#card-stockcard-tab">
+                        <div id="table-stock-card" class="table-responsive">
+                            <div class="text-center text-muted p-3">
+                                <i class="fa fa-spinner fa-spin"></i> Memuat kartu stok...
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="card-payment" role="tabpanel" aria-labelledby="#card-payment-tab">
@@ -220,6 +230,34 @@
 @section('script')
 
     <script>
+
+        // ===== KARTU STOK (MC_T_StockCardValas) =====
+        var stockCardReloadUrl = "{{ url('mc-stock-card-check/reload/3') }}" + '/' + {{ $fields->IDX_T_PurchaseOrder }};
+
+        function editStockCard(idx)
+        {
+            getScrollPosition();
+
+            var data = {
+                "_token": $('#_token').val(),
+                "IDX_T_StockCardValas": idx
+            }
+
+            callAjaxModalView("{{ url('mc-stock-card-check/update') }}" + '/' + idx, data);
+        }
+
+        function deleteStockCard(idx,item_description)
+        {
+            getScrollPosition();
+
+            var data = {
+                "_token": $('#_token').val(),
+                "IDX_T_StockCardValas": idx,
+                "ItemDesc": item_description
+            }
+
+            callAjaxModalView("{{ url('mc-stock-card-check/delete') }}", data);
+        }
 
         function deleteDetailPO(idx,item_description)
         {
@@ -309,15 +347,20 @@
 
         $(document).ready(function(){
 
-            $('#btn-find-partner').click(function(){
-                
-                var data = {
-                    _token: $("#_token").val(),  
-                    target_index: 'IDX_M_Partner',
-                    target_name: 'PartnerDesc'                  
-                }              
+            // Lazy-load kartu stok saat tab pertama kali dibuka
+            $('#card-stockcard-tab').one('shown.bs.tab', function(){
+                $('#table-stock-card').load(stockCardReloadUrl);
+            });
 
-                callAjaxModalView('{{ url('/gn-select-partner') }}',data);                
+            $('#btn-find-partner').click(function(){
+
+                var data = {
+                    _token: $("#_token").val(),
+                    target_index: 'IDX_M_Partner',
+                    target_name: 'PartnerDesc'
+                }
+
+                callAjaxModalView('{{ url('/gn-select-partner') }}',data);
             });
 
             $('#btn-find-coa').click(function(){

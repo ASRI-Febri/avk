@@ -1,0 +1,148 @@
+﻿1,Asset,1110-001,Kas Besar
+2,Asset,1110-002,Kas Kecil
+3,Asset,1111-001,Bank Mandiri AVK
+4,Asset,1111-002,Bank BCA AVK
+73,Asset,1111-003,Bank Panin
+76,Asset,1111-004,Bank BRI
+5,Asset,1115-001,Piutang Usaha
+74,Asset,1115-002,Piutang Karyawan
+6,Asset,1116-001,Pendapatan Yang Belum Diakui
+80,Asset,1117-000,Persediaan Valas
+79,Asset,1117-001,Persediaan USD
+81,Asset,1117-002,Persediaan SGD
+82,Asset,1117-003,Persediaan CNY
+83,Asset,1117-004,Persediaan MYR
+84,Asset,1117-005,Persediaan SAR
+85,Asset,1117-006,Persediaan KRW
+86,Asset,1117-007,Persediaan JPY
+87,Asset,1117-008,Persediaan THB
+88,Asset,1117-009,Persediaan VND
+89,Asset,1117-010,Persediaan AUD
+90,Asset,1117-011,Persediaan EUR
+103,Asset,1117-012,Persediaan AED
+121,Asset,1117-013,Persediaan HKD
+122,Asset,1117-014,Persediaan TWD
+123,Asset,1117-015,Persediaan NZD
+124,Asset,1117-016,Persediaan CHF
+129,Asset,1117-017,Persediaan TRY
+134,Asset,1117-018,Persediaan GBP
+136,Asset,1117-019,Persediaan PHP
+137,Asset,1117-020,Persediaan CAD
+10135,Asset,1117-021,Persediaan INR
+10136,Asset,1117-022,Persediaan QAR
+7,Asset,1119-001,Persediaan
+78,Asset,1119-002,Perlengkapan kantor
+8,Asset,1120-001,Uang Muka Pembelian
+9,Asset,1121-001,Biaya Dibayar Dimuka
+10,Asset,1410-001,Tanah
+11,Asset,1510-001,Akumulasi Penyusutan
+12,Liability,2110-001,Hutang Usaha
+10139,Liability,2110-002,Hutang Pembelian Sementara
+13,Liability,2114-001,Hutang Jangka Panjang
+14,Liability,2115-001,PPN Keluaran
+15,Liability,2115-002,Hutang Pajak
+16,Liability,2116-001,Hutang Bank
+69,Liability,2116-002,Hutang Pemegang Saham
+17,Liability,2119-001,Uang Muka Penjualan
+68,Liability,2120-001,Titipan Setoran Bank
+77,Liability,2120-002,Titipan Sementara
+18,Equity,3110-001,Modal Saham
+19,Equity,3180-001,Laba Ditahan
+20,Equity,3190-001,Laba Tahun Berjalan
+21,Income,4100-001,Penjualan valuta asing
+91,Income,4100-002,Penjualan USD
+92,Income,4100-003,Penjualan SGD
+93,Income,4100-004,Penjualan CNY
+94,Income,4100-005,Penjualan MYR
+95,Income,4100-006,Penjualan SAR
+96,Income,4100-007,Penjualan KRW
+97,Income,4100-008,Penjualan JPY
+98,Income,4100-009,Penjualan THB
+99,Income,4100-010,Penjualan VND
+100,Income,4100-011,Penjualan EUR
+101,Income,4100-012,Penjualan AUD
+104,Income,4100-013,Penjualan AED
+125,Income,4100-014,Penjualan HKD
+126,Income,4100-015,Penjualan TWD
+127,Income,4100-016,Penjualan CHF
+128,Income,4100-017,Penjualan NZD
+130,Income,4100-018,Penjualan TRY
+133,Income,4100-019,Penjualan GBP
+138,Income,4100-020,Penjualan PHP
+139,Income,4100-021,Penjualan CAD
+10134,Income,4100-022,Penjualan INR
+10137,Income,4100-023,Penjualan QAR
+22,Income,4200-002,Pendapatan Administrasi
+23,Income,4200-003,Pendapatan Asuransi
+24,Income,4200-004,Pendapatan BPKB & STNK
+25,Income,4200-005,Pendapatan Denda
+26,Income,4200-006,Pendapatan Admin Perpanjangan
+27,Income,4200-007,Pendapatan Bunga Perpanjangan
+28,Income,4200-008,Pendapatan Tebus
+29,Income,4200-009,Pendapatan Nota Hilang
+67,Income,4200-010,Pendapatan Lain-Lain
+70,Income,4200-011,Pendapatan customer deposit
+71,Income,4200-012,Keuntungan penjualan barang jaminan
+72,Income,4200-013,Kerugian penjualan barang jaminan
+30,Expense,5110-001,Pembelian
+31,Expense,5110-002,Retur Pembelian
+32,Expense,5110-003,Biaya Tagih
+75,Expense,5110-004,Biaya Pelatihan dan Sertifikasi
+132,Expense,5110-005,Biaya Asosiasi APVA
+33,Expense,5110-006,Biaya Pekerja Harian
+105,Expense,5113-001,Harga Pokok Penjualan USD
+106,Expense,5113-002,Harga Pokok Penjualan SGD
+107,Expense,5113-003,Harga Pokok Penjualan CNY
+108,Expense,5113-004,Harga Pokok Penjualan KRW
+110,Expense,5113-005,Harga Pokok Penjualan THB
+111,Expense,5113-006,Harga Pokok Penjualan VND
+112,Expense,5113-007,Harga Pokok Penjualan EUR
+113,Expense,5113-008,Harga Pokok Penjualan AUD
+114,Expense,5113-009,Harga Pokok Penjualan AED
+115,Expense,5113-010,Harga Pokok Penjualan SAR
+116,Expense,5113-011,Harga Pokok Penjualan MYR
+117,Expense,5113-012,Harga Pokok Penjualan HKD
+118,Expense,5113-013,Harga Pokok Penjualan TWD
+119,Expense,5113-014,Harga Pokok Penjualan NZD
+120,Expense,5113-015,Harga Pokok Penjualan CHF
+109,Expense,5113-016,Harga Pokok Penjualan JPY
+131,Expense,5113-017,Harga Pokok Penjualan TRY
+135,Expense,5113-018,Harga Pokok Penjualan GBP
+140,Expense,5113-019,Harga Pokok Penjualan PHP
+141,Expense,5113-020,Harga Pokok Penjualan CAD
+10133,Expense,5113-021,Harga Pokok Penjualan INR
+10138,Expense,5113-022,Harga Pokok Penjualan QAR
+34,Expense,6110-001,Biaya Gaji Karyawan
+35,Expense,6110-002,Biaya Lembur Karyawan
+36,Expense,6110-003,Uang Makan Karyawan
+37,Expense,6110-004,Uang Transport Karyawan
+38,Expense,6110-005,Tunjangan Hari Raya (THR)
+39,Expense,6110-006,Bonus Karyawan
+40,Expense,6111-001,Biaya Perlengkapan Kantor
+41,Expense,6111-002,Biaya Fotocopy
+42,Expense,6111-003,Biaya Listrik dan Air
+43,Expense,6111-004,Biaya Telp
+44,Expense,6111-005,Biaya Sewa
+45,Expense,6111-006,Biaya Parkir, Bensin, Tol
+46,Expense,6111-007,Biaya Jasa Profesional
+47,Expense,6111-008,Biaya Asuransi
+48,Expense,6111-009,Biaya Lain Lain
+49,Expense,6111-010,Biaya Pribadi
+50,Expense,6111-011,Biaya Keamanan
+51,Expense,6112-001,Biaya Pengiriman dan Ekspedisi
+52,Expense,6112-002,Biaya Insentive Penjualan
+53,Expense,6112-003,Biaya Iklan dan Promosi
+54,Expense,6112-004,Biaya Entertainment
+55,Expense,6112-005,Biaya Internet
+56,Expense,6112-006,Biaya Transport
+57,Expense,6112-007,Biaya Pantry
+58,Expense,6113-001,Biaya Penyusutan Bangunan Kantor
+59,Expense,6113-002,Biaya Penyusutan Inventaris Kantor
+60,Expense,6113-002,Biaya Penyusutan Kendaraan
+61,Income,7110-001,Pendapatan Jasa Giro
+62,Income,7110-002,Pendapatan Bunga Bank
+63,Expense,8110-001,Biaya Bunga Bank
+64,Expense,8110-002,Biaya Admin Bank
+65,Expense,8111-001,Biaya Pajak Penghasilan
+66,NULL,9110-001,Pos Silang
+102,Liability,9110-002,Rekening Antara

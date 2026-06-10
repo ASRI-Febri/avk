@@ -10,30 +10,66 @@
     <div class="row mb-3">
         <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Kode Pembayaran</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Payment ID</span>
                 <input id="PaymentID" type="text" class="form-control" />
             </div>
         </div>
         <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Keterangan</span> 
-                <input id="RemarkHeader" type="text" class="form-control" />
+                <span class="input-group-text" id="inputGroup-sizing-default">Payment Date</span>
+                <input id="PaymentDate" type="text" class="form-control" />
             </div>
-        </div> 
+        </div>
     </div>
     <div class="row mb-3">
         <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">No Rekening</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Kode FA</span>
                 <input id="FinancialAccountID" type="text" class="form-control" />
             </div>
         </div>
         <div class="col-6">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Business Partner</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Partner</span>
                 <input id="PartnerName" type="text" class="form-control" />
             </div>
-        </div>  
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Voucher No Manual</span>
+                <input id="VoucherNoManual" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nama Perusahaan</span>
+                <input id="CompanyName" type="text" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Payment Amount</span>
+                <input id="PaymentAmount" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">No PDC</span>
+                <input id="PDCNo" type="text" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Remark</span>
+                <input id="RemarkHeader" type="text" class="form-control" />
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -44,12 +80,17 @@
         { data: "IDX_M_Company", visible: false },
         { data: "IDX_M_Branch", visible: false }, 
 
-        { data: "CompanyName", visible: true },
-        { data: "PaymentID", visible: true },
-        { data: "VoucherNoManual", visible: true },
+        { data: "CompanyName", visible: false },
+        { data: "PaymentID", visible: true, "render":
+            function( data, type, row )
+            {
+                return row['PaymentID'] + '<br><small class="text-muted">' + row['PaymentDate'] + '</small>';
+            }
+        },
+        { data: "VoucherNoManual", visible: false },
         { data: "FinancialAccountID", visible: true },
-        { data: "PDCNo", visible: true },
-        { data: "PaymentDate", visible: true },
+        { data: "PDCNo", visible: false },
+        { data: "PaymentDate", visible: false },
         { data: "PartnerName", visible: true },
 
         { "data": "PaymentAmount", "bVisible": true, "bSearchable": true, "bSortable": true, "sClass": "text-right", 

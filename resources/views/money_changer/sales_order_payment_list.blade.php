@@ -50,10 +50,7 @@
                 @if(!isset($show_action) || $show_action == TRUE)
                 <td class="text-center">
                     @if($row->ReceiveStatus == 'D')
-                    <div class="input-group-prepend text-center">
-                        <x-btn-edit-detail :id="$row->IDX_T_FinancialReceiveHeader" />
-                        <x-btn-delete-detail :id="$row->IDX_T_FinancialReceiveHeader" :label="$row->FinancialAccountDesc" function="deleteDetailValas" />                    
-                    </div>
+                    
                     @endif
                 </td>
                 @endif

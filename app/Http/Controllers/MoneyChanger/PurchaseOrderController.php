@@ -74,10 +74,10 @@ class PurchaseOrderController extends MyController
         {       
             // TABLE HEADER & FOOTER
             $this->data['table_header'] = array('No','IDX_T_PurchaseOrder','Perusahaan','Cabang','No Nota','Nomor System',
-            'Tanggal','Beli Dari', 'Keterangan','POStatus','Status','Action');         
+            'Tanggal','Beli Dari', 'Keterangan','<div class="text-right">Nilai Transaksi</div>','POStatus','Status','Action');
 
             $this->data['table_footer'] = array('','IDX_T_PurchaseOrder','CompanyName','BranchName','ReferenceNo','PONumber',
-            '','PartnerName','PONotes','','','Action');
+            '','PartnerName','PONotes','','','','Action');
 
             $this->data['array_filter'] = array('CompanyName','BranchName','ReferenceNo','PONumber','PONotes','PartnerName');
 
@@ -108,7 +108,7 @@ class PurchaseOrderController extends MyController
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
         $this->array_column = array('RowNumber','IDX_T_PurchaseOrder','CompanyName','BranchName','ReferenceNo','PONumber',
-            'PODate','PartnerName', 'PONotes','POStatus','StatusDesc');
+            'PODate','PartnerName', 'PONotes','TotalAmount','POStatus','StatusDesc');
 
         return $this->get_datatables($request); 
     }

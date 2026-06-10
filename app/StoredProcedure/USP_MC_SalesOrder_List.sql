@@ -14,7 +14,7 @@ Description		: Sales order list for money changer
 */
 -- ============================================= */
 
-CREATE PROCEDURE [dbo].[USP_MC_SalesOrder_List]
+ALTER PROCEDURE [dbo].[USP_MC_SalesOrder_List]
 	@Page					INT,	
 	@Row					INT,
 	@SortBy					VARCHAR(50),
@@ -96,18 +96,23 @@ BEGIN
 	END
 
 	SET @SqlSelect = '	SELECT * FROM (
-							SELECT 
-								ROW_NUMBER() OVER (ORDER BY ' + @_Sort1 + ') AS RowNumber, 
-								IDX_T_SalesOrder, C.CompanyName, B.BranchName, 
-								SO.ReferenceNo, 
-								SO.SONumber, SODate, PartnerName, SONotes, SOStatus, 
+							SELECT
+								ROW_NUMBER() OVER (ORDER BY ' + @_Sort1 + ') AS RowNumber,
+								SO.IDX_T_SalesOrder, C.CompanyName, B.BranchName,
+								SO.ReferenceNo,
+								SO.SONumber, SODate, PartnerName, SONotes, SOStatus,
 								StatusDesc = CASE SOStatus WHEN ''D'' THEN ''Draft'' WHEN ''A'' THEN ''Approved'' WHEN ''V'' THEN ''Void''
-								WHEN ''C'' THEN ''Cancel'' WHEN ''F'' THEN ''Validate'' ELSE ''Unknown'' END ' 	
+								WHEN ''C'' THEN ''Cancel'' WHEN ''F'' THEN ''Validate'' ELSE ''Unknown'' END,
+								TotalAmount = ISNULL(SOD.TotalAmount, 0) '
 
 	SET @SqlFrom = 'FROM MC_T_SalesOrder SO
 					LEFT JOIN GN_M_Company C ON C.IDX_M_Company = SO.IDX_M_Company
 					LEFT JOIN GN_M_Branch B ON B.IDX_M_Branch = SO.IDX_M_Branch
 					LEFT JOIN GN_M_Partner MP ON MP.IDX_M_Partner = SO.IDX_M_Partner
+					LEFT JOIN ( SELECT IDX_T_SalesOrder, SUM(BaseCurrencyAmount) AS TotalAmount
+								FROM MC_T_SalesOrderDetail WITH(NOLOCK)
+								WHERE RecordStatus = ''A''
+								GROUP BY IDX_T_SalesOrder ) SOD ON SOD.IDX_T_SalesOrder = SO.IDX_T_SalesOrder
 					INNER JOIN ( SELECT B.IDX_M_Branch
 								FROM SM_M_User A WITH(NOLOCK)
 								INNER JOIN SM_M_UserBranch B WITH(NOLOCK) ON A.IDX_M_User = B.IDX_M_User

@@ -56,11 +56,23 @@
         { data: "IDX_T_PurchaseOrder", visible: false }, 
         { data: "CompanyName", visible: false }, 
         { data: "BranchName", visible: false },
-        { data: "ReferenceNo", visible: true },
-        { data: "PONumber", visible: true,  "bSortable": false },
+        { data: "ReferenceNo", visible: true, "render":
+            function( data, type, row )
+            {
+                return row['ReferenceNo'] + '<br><small class="text-muted">' + row['PONumber'] + '</small>';
+            }
+        },
+        { data: "PONumber", visible: false,  "bSortable": false },
         { data: "PODate", visible: true },
         { data: "PartnerName", visible: true },
         { data: "PONotes", visible: true },
+
+        { "data": "TotalAmount", "bVisible": true, "bSortable": false, "sClass": "text-end",
+          "render": function ( data, type, row ){
+                        return commaSeparateNumber(data);
+                    }
+        },
+
         { data: "POStatus", visible: false },
        
         { data: "StatusDesc", render: 
