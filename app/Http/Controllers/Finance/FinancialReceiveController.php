@@ -679,9 +679,9 @@ class FinancialReceiveController extends MyController
     
     public function generate_pdf($data = array(), $return_type = 'stream')
     {
-        $data['img_logo_w'] = '142';
-        $data['img_logo_h'] = '60';
-        $data['img_logo'] = url('public/logo-quality.jpeg');
+        $data['img_logo_w'] = '90';
+        $data['img_logo_h'] = '';
+        $data['img_logo'] = public_path('assets/images/logo-avk-print.png');
 
         $this->sp_getdata = '[dbo].[USP_CM_FinancialReceive_Info]';
         $data['fields'] = $this->get_detail_by_id($data['IDX_T_FinancialReceiveHeader'])[0];

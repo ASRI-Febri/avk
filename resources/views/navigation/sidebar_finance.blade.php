@@ -49,6 +49,16 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Penerimaan Uang
                             </a>
                         </li>
+                        <li id="nav-li-view-it">
+                            <a href="{{ url('fm-internal-transfer') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Internal Transfer
+                            </a>
+                        </li>
+                        <li id="nav-li-view-pc">
+                            <a href="{{ url('fm-petty-cash') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Petty Cash
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

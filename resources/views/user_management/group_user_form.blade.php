@@ -25,11 +25,11 @@
     <hr>
     <ul class="nav nav-tabs pb-3" role="tablist">    
         <li class="nav-item">
-        <a class="nav-link text-muted active" href="#form" role="tab" data-toggle="tab"><i class="fas fa-align-justify"></i> <strong>Group Access</strong></a>
+        <a class="nav-link text-muted active" href="#form" role="tab" data-bs-toggle="tab"><i class="fas fa-align-justify"></i> <strong>Group Access</strong></a>
         </li>
     </ul>
     <div class="tab-content mb-3">
-        <div role="tabpanel" class="tab-pane fade in active" id="form"> 
+        <div role="tabpanel" class="tab-pane fade active show" id="form">
             <div class="card">
                 <div class="card-body">
                     <x-btn-add-detail id="btn-add-detail" label="Add New Access" />

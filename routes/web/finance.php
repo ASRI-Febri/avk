@@ -243,6 +243,40 @@ Route::post('/fm-financial-receive-detail/save-delete-allocation', 'Finance\Fina
 Route::post('fm-financial-receive-detail/approve-allocation/{id?}', 'Finance\FinancialReceiveDetailController@approve_allocation');
 Route::post('/fm-financial-receive-detail/save-approve-allocation', 'Finance\FinancialReceiveDetailController@save_approve_allocation');
 
+// INTERNAL TRANSFER
+Route::get('/fm-internal-transfer', 'Finance\InternalTransferController@inquiry');
+Route::post('/fm-internal-transfer-list', 'Finance\InternalTransferController@inquiry_data');
+Route::get('/fm-internal-transfer/create', 'Finance\InternalTransferController@create');
+Route::get('/fm-internal-transfer/update/{id}', 'Finance\InternalTransferController@update');
+Route::post('/fm-internal-transfer/save', 'Finance\InternalTransferController@save');
+Route::post('/fm-internal-transfer/approve', 'Finance\InternalTransferController@approve');
+Route::post('/fm-internal-transfer/save-approve', 'Finance\InternalTransferController@save_approve');
+Route::post('/fm-internal-transfer/reverse', 'Finance\InternalTransferController@reverse');
+Route::post('/fm-internal-transfer/save-reverse', 'Finance\InternalTransferController@save_reverse');
+Route::post('/fm-internal-transfer/void', 'Finance\InternalTransferController@cancel');
+Route::post('/fm-internal-transfer/save-void', 'Finance\InternalTransferController@save_cancel');
+Route::get('/fm-internal-transfer/download-pdf/{id}', 'Finance\InternalTransferController@download_pdf');
+
+// PETTY CASH
+Route::get('/fm-petty-cash', 'Finance\PettyCashController@inquiry');
+Route::post('/fm-petty-cash-list', 'Finance\PettyCashController@inquiry_data');
+Route::get('/fm-petty-cash/create', 'Finance\PettyCashController@create');
+Route::get('/fm-petty-cash/update/{id}', 'Finance\PettyCashController@update');
+Route::post('/fm-petty-cash/save', 'Finance\PettyCashController@save');
+Route::post('/fm-petty-cash/close', 'Finance\PettyCashController@close');
+Route::post('/fm-petty-cash/save-close', 'Finance\PettyCashController@save_close');
+Route::post('/fm-petty-cash/reopen', 'Finance\PettyCashController@reopen');
+Route::post('/fm-petty-cash/save-reopen', 'Finance\PettyCashController@save_reopen');
+Route::get('/fm-petty-cash/download-pdf/{id}', 'Finance\PettyCashController@download_pdf');
+
+// PETTY CASH - DETAIL
+Route::post('/fm-petty-cash-detail/create', 'Finance\PettyCashDetailController@create');
+Route::post('/fm-petty-cash-detail/update/{id}', 'Finance\PettyCashDetailController@update');
+Route::post('/fm-petty-cash-detail/save', 'Finance\PettyCashDetailController@save');
+Route::get('/fm-petty-cash-detail/reload/{id}', 'Finance\PettyCashDetailController@reload'); // RELOAD TABLE AFTER SAVE
+Route::post('/fm-petty-cash-detail/delete/{id?}', 'Finance\PettyCashDetailController@delete');
+Route::post('/fm-petty-cash-detail/save-delete', 'Finance\PettyCashDetailController@save_delete');
+
 // FINANCIAL PAYMENT
 Route::get('/fm-financial-payment', 'Finance\FinancialPaymentController@inquiry');
 Route::post('/fm-financial-payment-list', 'Finance\FinancialPaymentController@inquiry_data');

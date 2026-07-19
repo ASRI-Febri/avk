@@ -1,69 +1,35 @@
 @extends('layouts.master-form-with-log')
 
-@section('form_remark')
+@section('active_link')
+	$('#nav-setting').addClass('mm-active');
+    $('#nav-ul-setting').addClass('mm-show');
+    $('#nav-li-setting-form').addClass('mm-active');
+@endsection
+
+@section('form-remark')
     {{ $form_remark ?? '' }}
 @endsection 
 
-@section('left_header')    
-    @include('form_helper.btn_back_to_list')
-@endsection
-
-@section('right_header')    
-    @include('form_helper.btn_save_header')
-@endsection
-
 @section('content-form')
 
-    <form id="form-entry" name="form-entry" autocomplete="off" enctype="multipart/form-data" action="{{ $url_save_header ?? '#' }}" role="form" method="post">        
+    <!-- HIDDEN FIELDS -->
+    <input type="hidden" id="IDX_M_Form" name="IDX_M_Form" value="{{ $fields->IDX_M_Form }}"/>
 
-        <!-- HIDDEN FIELDS -->
-        <input type="hidden" id="IDX_M_Form" name="IDX_M_Form" value="{{ $fields->IDX_M_Form }}"/>
+    <x-select-horizontal label="Application" id="IDX_M_Application" :value="$fields->IDX_M_Application" class="required" :array="$dd_asbs_application"/>
+    <x-select-horizontal label="Module" id="IDX_M_Module" :value="$fields->IDX_M_Module" class="required" :array="$dd_module"/>
+ 
+    <x-textbox-horizontal label="Form ID" id="FormID" :value="$fields->FormID" placeholder="" class="required" />
+    <x-textbox-horizontal label="Form Name" id="FormName" :value="$fields->FormName" placeholder="" class="required" />
+    <x-textbox-horizontal label="Form Description" id="FormDescription" :value="$fields->FormDescription" placeholder="" class="" />
+    <x-textbox-horizontal label="Form URL" id="FormURL" :value="$fields->FormURL" placeholder="" class="" />
+    <x-textbox-horizontal label="Icon Class 1" id="IconClass1" :value="$fields->IconClass1" placeholder="" class="" />
+    <x-textbox-horizontal label="Icon Class 2" id="IconClass2" :value="$fields->IconClass2" placeholder="" class="" />
+    <x-textbox-horizontal label="Icon Class 3" id="IconClass3" :value="$fields->IconClass3" placeholder="" class="" />
 
-        <div class="form-row">
-            <div class="col-6 mb-3"> 
-                <label for="IDX_M_Application">Application</label>                                               
-                <select id="IDX_M_Application" name="IDX_M_Application" class="select2 form-control">
-                    <option label="Choose on thing">Select</option>
-                    @foreach($dd_asbs_application as $key => $value)
-                        <option value="{{ $key }}" {{ $fields->IDX_M_Application == $key ? 'selected=' : '' }}>{{ $value }}</option>                            
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-6 mb-3"> 
-                <label for="email">Module</label>                                               
-                <select id="IDX_M_Module" name="IDX_M_Module" class="select2 form-control">
-                    <option label="Choose on thing">Select</option>
-                    <option>Master</option>
-                    <option>Transaction</option>
-                    <option>Report</option>                    
-                </select>
-            </div>
-            <div class="col-6 mb-3">
-                <label for="username">Form ID</label>
-                <input type="text" id="FormID" name="FormID" class="form-control" placeholder="Form ID" value="{{ $fields->FormID }}">
-            </div>
-            <div class="col-6 mb-3"> 
-                <label for="email">Form Name</label>                                               
-                <input type="text" class="form-control" placeholder="" value="{{ $fields->FormName }}">
-            </div>
-            <div class="col-6 mb-3"> 
-                <label for="email">Form URL</label>                                               
-                <input type="text" class="form-control" placeholder="URL" value="{{ $fields->FormURL }}">
-            </div>
-            <div class="col-6 mb-3"> 
-                <label for="email">Icon Class 1</label>                                               
-                <input type="text" id="IconClass1" name="IconClass1" class="form-control" placeholder="URL" value="{{ $fields->IconClass1 }}">
-            </div>
-            <div class="col-6 mb-3"> 
-                <label for="email">Icon Class 2</label>                                               
-                <input type="text" id="IconClass2" name="IconClass2" class="form-control" placeholder="URL" value="{{ $fields->IconClass2 }}">
-            </div>
-            <div class="col-6 mb-3"> 
-                <label for="email">Icon Class 3</label>                                               
-                <input type="text" id="IconClass3" name="IconClass3" class="form-control" placeholder="URL" value="{{ $fields->IconClass3 }}">
-            </div>
-            
+    <div class="row"> 
+        <div class="col-12 mb-3">           
+            @include('form_helper.btn_save_header')
         </div>
-    </form>
+    </div> 
     
 @endsection 

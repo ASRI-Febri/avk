@@ -1,4 +1,4 @@
-@extends('layouts.datatables_modal')
+@extends('layouts.master-datatable-modal')
 
 @section('datatables_array')
 
@@ -52,7 +52,7 @@
 
 @endsection
 
-@section('additional_form')    
+@section('additional-form')    
 
     <!-- HIDDEN FIELDS -->
     <input type="hidden" id="IDX_M_Group" name="IDX_M_Group" value="{{ $IDX_M_Group }}"/>

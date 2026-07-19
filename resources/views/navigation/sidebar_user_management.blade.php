@@ -25,20 +25,20 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow ">
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-setting">
                         <i class="fa fa-cogs"></i>
                         <span>Setting</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ url('sm-user') }}">
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-setting">
+                        <li id="nav-li-setting-userid"><a href="{{ url('sm-user') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> User ID
                             </a>
                         </li>
-                        <li><a href="{{ url('sm-group-user') }}">
+                        <li id="nav-li-setting-groupid"><a href="{{ url('sm-group-user') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Group ID
                             </a>
                         </li>
-                        <li><a href="{{ url('sm-form') }}">
+                        <li id="nav-li-setting-form"><a href="{{ url('sm-form') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Form ID
                             </a>
                         </li>

@@ -8,12 +8,21 @@
 
     <input type="hidden" id="IDX_T_FinancialPaymentDetail" name="IDX_T_FinancialPaymentDetail" value="{{ $fields->IDX_T_FinancialPaymentDetail }}"/>
     <input type="hidden" id="IDX_T_FinancialPaymentHeader" name="IDX_T_FinancialPaymentHeader" value="{{ $fields->IDX_T_FinancialPaymentHeader }}"/>
-    <input type="hidden" id="IDX_M_COA" name="IDX_M_COA" value="{{ $fields->IDX_M_COA }}"/>
     <input type="hidden" id="IDX_DocumentNo" name="IDX_DocumentNo" value="{{ $fields->IDX_DocumentNo ?? 0 }}"/>
     <input type="hidden" id="DocumentNo" name="DocumentNo" value="{{ $fields->DocumentNo ?? '' }}"/>
 
     <x-select-horizontal label="Project" id="IDX_M_Project" :value="$fields->IDX_M_Project" class="required" :array="$dd_project"/>
-    <x-textbox-horizontal label="Account" id="COADesc" :value="$fields->COADesc1" placeholder="Select CoA..." class="required" />
+
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label text-secondary">Account</label>
+        <div class="col-sm-9">
+            <select id="IDX_M_COA" name="IDX_M_COA" class="select2-coa required" style="width:100%;">
+                @if(($fields->IDX_M_COA ?? 0) > 0)
+                    <option value="{{ $fields->IDX_M_COA }}" selected>{{ $fields->COADesc1 }}</option>
+                @endif
+            </select>
+        </div>
+    </div>
     <x-textbox-horizontal label="Payment Amount" id="PaymentAmount" :value="$fields->PaymentAmount" placeholder="Payment Amount" class="required auto" />
     <x-textbox-horizontal label="Notes" id="RemarkDetail" :value="$fields->RemarkDetail" placeholder="Notes" class="required" />
 
@@ -29,28 +38,31 @@
                 dropdownParent: $('#div-form-modal')	
             });	
 
-            $("#COADesc").autocomplete({                
-                
-                source: function( request, response ){
-                    $.ajax( {
+            $('.select2-coa').select2({
+                width: "100%",
+                dropdownParent: $('#div-form-modal'),
+                placeholder: 'Ketik min. 3 huruf untuk cari COA...',
+                allowClear: true,
+                minimumInputLength: 3,
+                ajax: {
                     url: "{{ url('/fm-account/search') }}",
-                    dataType: "json",
                     type: "POST",
-                    data: {
-                        q: request.term,
-                        _token: $('#_token').val()
+                    dataType: "json",
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term,
+                            _token: $('#_token').val()
+                        };
                     },
-                    success: function(data){					
-                        response( data );
-                    }
-                    });
-                },			
-                minLength: 3,
-                select: function( event, ui )
-                {   
-                    $("#IDX_M_COA").val(ui.item.IDX_M_COA);
-
-                    $("#COADesc").text(ui.item.COADesc);
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return { id: item.IDX_M_COA, text: item.label };
+                            })
+                        };
+                    },
+                    cache: true
                 }
             });
         });

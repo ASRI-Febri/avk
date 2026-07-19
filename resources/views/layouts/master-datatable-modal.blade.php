@@ -15,6 +15,8 @@
             
             <form id="form-modal" name="form-modal" autocomplete="off" enctype="multipart/form-data" class="" action="#" role="form" method="post">
 
+            @yield('additional-form')
+
             <!-- FOR SEARCHING FORM OR CUSTOM FIELD -->
             <div class="card portlet text-start border">
                 <div class="card-body">

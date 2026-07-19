@@ -27,6 +27,7 @@ class FormController extends MyController
         // FORM TITLE
         $this->data['module_name'] = 'User Management';
         $this->data['form_title'] = 'Form ID';
+        $this->data['form_remark'] = 'Master menu atau form ID'; 
 
         // NAVIGATION
         $this->data['navbar'] = 'navigation.navbar_user_management';     
@@ -183,7 +184,8 @@ class FormController extends MyController
         // DROPDOWN
         $dd = new DropdownController;        
         $this->data['dd_asbs_application'] = (array) $dd->asbs_application();  
-        $this->data['dd_yes_no'] = (array) $dd->yes_no();                
+        $this->data['dd_yes_no'] = (array) $dd->yes_no();   
+        $this->data['dd_module'] = (array) $dd->asbs_module();             
 
         // URL
         $this->data['url_save_header'] = url('/sm-form/save');
@@ -233,7 +235,7 @@ class FormController extends MyController
         //$this->data['view'] = 'user_management/form_form';
 
         // GENERAL FORM MASTER
-        $this->data['view'] = 'layouts/form_master';
+        $this->data['view'] = 'user_management/form_form';
         return view($this->data['view'], $this->data);
     }
 
@@ -257,7 +259,6 @@ class FormController extends MyController
             'IDX_M_Application' => 'required',
             'FormID' => 'required',
             'FormName' => 'required',
-            'FormDescription' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -278,9 +279,9 @@ class FormController extends MyController
             $param['IconClass1'] = $data['IconClass1'];
             $param['IconClass2'] = $data['IconClass2'];
             $param['IconClass3'] = $data['IconClass3'];
-            $param['ShowInSidebar'] = $data['ShowInSidebar'];
+            $param['ShowInSidebar'] = isset($data['ShowInSidebar']) ? $data['ShowInSidebar']: 'N';
             
-            $param['UserID'] = $this->data['user_id'];
+            $param['UserID'] = 'XXX'.$this->data['user_id'];
             $param['RecordStatus'] = 'A';            
 
             return $this->store($state, $param);

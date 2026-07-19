@@ -79,11 +79,11 @@
         $('.readonly').attr('readonly', true);
 
         var e = "rtl" === $("html").attr("dir") ? "rtl" : "ltr";
-        $('.select2').select2({		
-            dir: e,            
-            dropdownAutoWidth: !0,            
-            width: "100%",                        
-        });	
+        $('.select2').not('.select2-hidden-accessible').select2({
+            dir: e,
+            dropdownAutoWidth: !0,
+            width: "100%",
+        });
 
     });
 

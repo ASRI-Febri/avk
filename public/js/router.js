@@ -11,11 +11,11 @@ function initUI()
 		autoclose: true
 	});
 	
-	$('.select2').select2({		
+	$('.select2').not('.select2-hidden-accessible').select2({
 		theme: 'bootstrap4',
 		width: "100%",
-		placeholder: $(this).attr('placeholder'),		
-	});	
+		placeholder: $(this).attr('placeholder'),
+	});
 
 	$(".inputmask-date").inputmask("9999-99-99", {
 		"placeholder": "yyyy-mm-dd",
@@ -245,7 +245,7 @@ function callAjaxModalView2(url,data)
 
 function initSelect2()
 {
-	$('.select2').select2({
+	$('.select2').not('.select2-hidden-accessible').select2({
 		width: "100%"
 	});
 }
