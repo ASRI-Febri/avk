@@ -167,3 +167,14 @@ Route::post('/ac-fa-asset-import/save', 'Accounting\FAAssetImportController@save
 // FIXED ASSET - REKONSILIASI VS GL
 Route::get('/ac-rpt-fa-recon', 'Accounting\RptFAReconController@period');
 Route::post('/ac-rpt-fa-recon', 'Accounting\RptFAReconController@period_report');
+
+// JOURNAL RECURRING
+Route::get('/ac-recurring-journal', 'Accounting\RecurringJournalController@inquiry');
+Route::post('/ac-recurring-journal-list', 'Accounting\RecurringJournalController@inquiry_data');
+Route::get('/ac-recurring-journal/create', 'Accounting\RecurringJournalController@create');
+Route::get('/ac-recurring-journal/update/{id}', 'Accounting\RecurringJournalController@update');
+Route::post('/ac-recurring-journal/save', 'Accounting\RecurringJournalController@save');
+Route::post('/ac-recurring-journal/generate', 'Accounting\RecurringJournalController@generate');
+Route::post('/ac-recurring-journal/save-generate', 'Accounting\RecurringJournalController@save_generate');
+Route::get('/ac-recurring-journal-log', 'Accounting\RecurringJournalController@log_inquiry');
+Route::post('/ac-recurring-journal-log-list', 'Accounting\RecurringJournalController@log_inquiry_data');

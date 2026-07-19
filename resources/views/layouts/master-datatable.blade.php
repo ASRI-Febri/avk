@@ -231,7 +231,10 @@
             $("#datatable_filter").hide();     
 
             // Move tfoot before tbody
-            table.children('tfoot').insertBefore(table.children('tbody'));
+            // NOTE: dinonaktifkan - `table` di sini adalah objek DataTable API,
+            // bukan jQuery, sehingga .children() selalu melempar TypeError di
+            // console pada semua halaman list tanpa pernah berfungsi.
+            // table.children('tfoot').insertBefore(table.children('tbody'));
 
         });
 

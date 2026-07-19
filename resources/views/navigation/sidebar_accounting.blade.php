@@ -42,6 +42,10 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Detail Journal
                             </a>
                         </li>
+                        <li id="nav-li-recurring-journal"><a href="{{ url('ac-recurring-journal') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Journal Recurring
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
