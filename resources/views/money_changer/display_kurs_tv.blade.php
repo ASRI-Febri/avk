@@ -75,8 +75,7 @@
         .title-center h1 {
             font-family: "Rajdhani", sans-serif; font-weight: 700;
             font-size: 4vmin; letter-spacing: .6px;
-            background: linear-gradient(90deg, #fff, var(--accent));
-            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            color: #ffffff;
         }
         .title-center .sub { font-size: 1.5vmin; letter-spacing: 4px; color: var(--muted); margin-top: .4vmin; }
 
@@ -128,8 +127,8 @@
 
         .rates { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2vmin; }
         .rate-box { background: rgba(3, 8, 24, .5); border-radius: 1.1vmin; padding: 1.1vmin 1.4vmin; border: .12vmin solid rgba(255, 255, 255, .05); }
-        .rate-box .label { font-size: 1.35vmin; letter-spacing: 3px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
-        .rate-box .val { font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 3.3vmin; line-height: 1.1; margin-top: .4vmin; white-space: nowrap; }
+        .rate-box .label { font-size: 1.5vmin; letter-spacing: 3px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+        .rate-box .val { font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 4.6vmin; line-height: 1.1; margin-top: .4vmin; white-space: nowrap; }
         .rate-box.jual { border-color: rgba(255, 212, 94, .22); }
         .rate-box.jual .val { color: var(--gold); }
         .rate-box.beli .val { color: #cfe6ff; }
@@ -161,7 +160,7 @@
             color: #04122b; font-family: "Rajdhani", sans-serif; font-weight: 700;
             font-size: 2vmin; letter-spacing: 2px; padding: 0 2.4vmin; display: grid; place-items: center;
         }
-        .ticker { display: inline-flex; white-space: nowrap; padding-left: 100%; animation: ticker 48s linear infinite; }
+        .ticker { display: inline-flex; white-space: nowrap; padding-left: 100%; animation: ticker 110s linear infinite; }
         .ticker .item { font-size: 2vmin; margin-right: 4vmin; display: inline-flex; align-items: center; gap: 1vmin; }
         .ticker .item .fi { width: 2.6vmin; height: 1.9vmin; border-radius: .3vmin; }
         .ticker .item b { font-family: "Rajdhani", sans-serif; font-weight: 700; color: var(--accent); }
