@@ -1,7 +1,3 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 -- ==========================================================================================
 -- Author		: Samuel Febrianto
 -- Create date	: 04 Sep 2018
@@ -300,32 +296,19 @@ BEGIN
 		-- ============================================================================================================================================
 		-- Update Base Beginning Balance From Journal Detail
 		-- Beginning Balance = (Opening Balance + Movement Before Current Period)
-
-		-- Update all account except account Current Earning / Laba Tahun Berjalan (304.01.01.003)
-		-- karena account ini akan diupdate dengan perhitungan profit and loss (Income - Expense) dan
-		-- journal memorial yang menggunakan account tersebut
+		--
+		-- FIX 19 Jul 2026 (Samuel Febrianto):
+		-- Sebelumnya update saldo awal mensyaratkan join #PL.IDX_M_Project = _Journal.IDX_M_Project,
+		-- padahal jurnal hasil generate sistem (penjualan/HPP money changer) tercatat dengan
+		-- JD.IDX_M_Project = 0 sedangkan baris #PL dibuat per project master (mis. IDX = 1).
+		-- Akibatnya saldo awal (kolom periode sebelum bulan berjalan) akun Penjualan & HPP selalu 0.
+		-- Join project dihilangkan agar konsisten dengan update mutasi bulan berjalan di atas
+		-- yang juga join tanpa project. Query kedua (WHERE IDX_M_Project = 0) tidak diperlukan
+		-- lagi karena update ini mencakup semua baris #PL.
+		-- Catatan: variabel @IDX_GC/@IDX_BRANCH (sisa cursor) diganti @IDX_M_Company/@IDX_M_Branch.
 		-- ============================================================================================================================================
 		UPDATE #PL SET
-			 BBBalanceAmount = BBBalanceAmount + (_Journal.BDebetAmount - _Journal.BCreditAmount)		
-		FROM (
-			SELECT JH.IDX_M_Company, JH.IDX_M_Branch, JD.IDX_M_Project, JD.IDX_M_COA, 
-				BDebetAmount = SUM(JD.BDebetAmount), 
-				BCreditAmount = SUM(JD.BCreditAmount)
-			FROM GL_T_JournalDetail JD WITH(NOLOCK)
-				INNER JOIN GL_T_JournalHeader JH WITH(NOLOCK) ON JD.IDX_T_JournalHeader = JH.IDX_T_JournalHeader
-			WHERE JH.IDX_M_Company = @IDX_GC AND JH.IDX_M_Branch = @IDX_BRANCH AND JH.PostingStatus = 'P'
-				AND CONVERT(DATE,JH.JournalDate) < @_StartDate AND JH.RecordStatus = 'A' AND JD.RecordStatus = 'A'
-				AND YEAR(JH.JournalDate) = @_CurrentYear
-			GROUP BY JH.IDX_M_Company, JH.IDX_M_Branch, JD.IDX_M_Project, JD.IDX_M_COA
-			) _Journal
-		INNER JOIN #PL ON #PL.IDX_M_Company = _Journal.IDX_M_Company 
-				AND #PL.IDX_M_Branch = _Journal.IDX_M_Branch 
-				AND #PL.IDX_M_Project = _Journal.IDX_M_Project 
-				AND #PL.IDX_M_COA = _Journal.IDX_M_COA
-		WHERE #PL.IDX_M_Project <> 0
-
-		UPDATE #PL SET
-			 BBBalanceAmount = BBBalanceAmount + (_Journal.BDebetAmount - _Journal.BCreditAmount)		
+			 BBBalanceAmount = BBBalanceAmount + (_Journal.BDebetAmount - _Journal.BCreditAmount)
 		FROM (
 			SELECT JH.IDX_M_Company, JH.IDX_M_Branch, JD.IDX_M_COA, BDebetAmount = SUM(JD.BDebetAmount), BCreditAmount = SUM(JD.BCreditAmount)
 			FROM GL_T_JournalDetail JD WITH(NOLOCK)
@@ -335,10 +318,9 @@ BEGIN
 				AND YEAR(JH.JournalDate) = @_CurrentYear
 			GROUP BY JH.IDX_M_Company, JH.IDX_M_Branch, JD.IDX_M_COA
 			) _Journal
-		INNER JOIN #PL ON #PL.IDX_M_Company = _Journal.IDX_M_Company 
-			AND #PL.IDX_M_Branch = _Journal.IDX_M_Branch 
+		INNER JOIN #PL ON #PL.IDX_M_Company = _Journal.IDX_M_Company
+			AND #PL.IDX_M_Branch = _Journal.IDX_M_Branch
 			AND #PL.IDX_M_COA = _Journal.IDX_M_COA
-		WHERE #PL.IDX_M_Project = 0
 	END
 
 	--UPDATE #PL SET BBBalanceAmount = (BBBalanceAmount * -1) 
@@ -440,4 +422,3 @@ BEGIN
 END
 
 
-GO

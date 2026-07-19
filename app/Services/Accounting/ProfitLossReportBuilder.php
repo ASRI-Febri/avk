@@ -6,34 +6,42 @@ namespace App\Services\Accounting;
  * Builds a structured Profit & Loss report from raw stored-procedure rows
  * returned by USP_GL_R_ProfitLoss.
  *
+ * Every amount is provided in three flavours (columns):
+ *   - prior   : akumulasi awal tahun s/d bulan sebelum periode (BBBalanceAmount)
+ *   - current : mutasi periode berjalan (BDebetAmount - BCreditAmount)
+ *   - ytd     : year-to-date s/d akhir periode (BEBalanceAmount = prior + current)
+ *
  * Output shape (designed to be view-friendly and recursion-friendly):
  *
  * [
- *   'period'   => '202604',
+ *   'period'   => '202606',
+ *   'labels'   => ['prior' => 'Jan - Mei 2026', 'current' => 'Jun 2026', 'ytd' => 'YTD Jun 2026'],
  *   'sections' => [
  *      [
  *        'key'    => 'gross_profit',
  *        'title'  => 'PERHITUNGAN LABA KOTOR',
  *        'nodes'  => [ Node, Node, ... ],
- *        'result' => ['label' => 'PENDAPATAN KOTOR', 'amount' => 1234.56],
+ *        'result' => ['label' => ..., 'amount_prior' => N, 'amount_current' => N, 'amount' => N],
  *      ],
  *      ...
  *   ],
  *   'summary'  => [
- *      'total_pendapatan' => N,
- *      'total_biaya'      => N,
- *      'laba_bersih'      => N,
+ *      'total_pendapatan_prior' => N, 'total_pendapatan_current' => N, 'total_pendapatan' => N,
+ *      'total_biaya_prior'      => N, 'total_biaya_current'      => N, 'total_biaya'      => N,
+ *      'laba_bersih_prior'      => N, 'laba_bersih_current'      => N, 'laba_bersih'      => N,
  *   ],
  * ]
  *
  * Node shape (recursive — view does not need to know depth):
  * [
- *   'title'    => 'PENDAPATAN USAHA',
- *   'level'    => 0,
- *   'sign'     => +1 | -1,   // sign applied when contributing to parent result
- *   'rows'     => [ { COA, COADesc, amount, ... }, ... ],
- *   'children' => [ Node, ... ],
- *   'subtotal' => float,
+ *   'title'            => 'PENDAPATAN USAHA',
+ *   'level'            => 0,
+ *   'sign'             => +1 | -1,   // sign applied when contributing to parent result
+ *   'rows'             => [ { COA, COADesc, amount_prior, amount_current, amount, ... }, ... ],
+ *   'children'         => [ Node, ... ],
+ *   'subtotal_prior'   => float,
+ *   'subtotal_current' => float,
+ *   'subtotal'         => float,     // ytd
  * ]
  */
 class ProfitLossReportBuilder
@@ -63,8 +71,41 @@ class ProfitLossReportBuilder
 
         return [
             'period'   => $period,
+            'labels'   => $this->buildColumnLabels($period),
             'sections' => $sections,
             'summary'  => $summary,
+        ];
+    }
+
+    /**
+     * Column labels derived from the selected period, e.g. period 202606:
+     *   prior = 'Jan - Mei 2026', current = 'Jun 2026', ytd = 'YTD Jun 2026'.
+     * For January the prior column has no months — label it '-'.
+     */
+    private function buildColumnLabels(string $period): array
+    {
+        $bulan = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
+        ];
+
+        $year  = (int) substr($period, 0, 4);
+        $month = (int) substr($period, 4, 2);
+
+        $current = ($bulan[$month] ?? '?') . ' ' . $year;
+
+        if ($month <= 1) {
+            $prior = '-';
+        } elseif ($month == 2) {
+            $prior = 'Jan ' . $year;
+        } else {
+            $prior = 'Jan - ' . $bulan[$month - 1] . ' ' . $year;
+        }
+
+        return [
+            'prior'   => $prior,
+            'current' => $current,
+            'ytd'     => 'YTD ' . $current,
         ];
     }
 
@@ -105,34 +146,38 @@ class ProfitLossReportBuilder
     }
 
     /**
-     * Normalize raw SP row -> display row.
+     * Normalize raw SP row -> display row with the three amount columns.
      * IC accounts have natural credit balance (negative) — flip sign so amounts display positive.
      */
     private function normalizeRow($row): array
     {
-        $amount = ($row->AccountType === 'IC')
-            ? ($row->BEBalanceAmount * -1)
-            : $row->BEBalanceAmount;
+        $sign = ($row->AccountType === 'IC') ? -1 : 1;
+
+        $prior   = $sign * (float) $row->BBBalanceAmount;
+        $current = $sign * ((float) $row->BDebetAmount - (float) $row->BCreditAmount);
+        $ytd     = $sign * (float) $row->BEBalanceAmount;
 
         return [
-            'COA'      => $row->COA,
-            'COADesc'  => $row->COADesc,
-            'amount'   => (float) $amount,
-            'raw'      => $row,
+            'COA'            => $row->COA,
+            'COADesc'        => $row->COADesc,
+            'amount_prior'   => $prior,
+            'amount_current' => $current,
+            'amount'         => $ytd,
+            'raw'            => $row,
         ];
     }
 
     private function makeLeafNode(string $title, array $rows, int $sign = 1, int $level = 0): array
     {
-        $subtotal = array_sum(array_column($rows, 'amount'));
-
         return [
-            'title'    => $title,
-            'level'    => $level,
-            'sign'     => $sign,
-            'rows'     => $rows,
-            'children' => [],
-            'subtotal' => (float) $subtotal,
+            'title'            => $title,
+            'level'            => $level,
+            'sign'             => $sign,
+            'rows'             => $rows,
+            'children'         => [],
+            'subtotal_prior'   => (float) array_sum(array_column($rows, 'amount_prior')),
+            'subtotal_current' => (float) array_sum(array_column($rows, 'amount_current')),
+            'subtotal'         => (float) array_sum(array_column($rows, 'amount')),
         ];
     }
 
@@ -151,8 +196,10 @@ class ProfitLossReportBuilder
             'title'  => 'PERHITUNGAN LABA KOTOR',
             'nodes'  => $nodes,
             'result' => [
-                'label'  => 'PENDAPATAN KOTOR (Pendapatan Usaha - HPP)',
-                'amount' => $this->sumNodes($nodes),
+                'label'          => 'PENDAPATAN KOTOR (Pendapatan Usaha - HPP)',
+                'amount_prior'   => $this->sumNodes($nodes, 'subtotal_prior'),
+                'amount_current' => $this->sumNodes($nodes, 'subtotal_current'),
+                'amount'         => $this->sumNodes($nodes, 'subtotal'),
             ],
         ];
     }
@@ -173,39 +220,45 @@ class ProfitLossReportBuilder
             'title'  => 'PENDAPATAN & BIAYA LAIN-LAIN',
             'nodes'  => $nodes,
             'result' => [
-                'label'  => 'SUBTOTAL LAIN-LAIN (Pendapatan Lain-lain - (Biaya Operasional + Biaya Lain-lain))',
-                'amount' => $this->sumNodes($nodes),
+                'label'          => 'SUBTOTAL LAIN-LAIN (Pendapatan Lain-lain - (Biaya Operasional + Biaya Lain-lain))',
+                'amount_prior'   => $this->sumNodes($nodes, 'subtotal_prior'),
+                'amount_current' => $this->sumNodes($nodes, 'subtotal_current'),
+                'amount'         => $this->sumNodes($nodes, 'subtotal'),
             ],
         ];
     }
 
     private function buildSummary(array $buckets): array
     {
-        $total_pendapatan = array_sum(array_column($buckets['PO'], 'amount'))
-                          + array_sum(array_column($buckets['PL'], 'amount'));
+        $summary = [];
 
-        $total_biaya      = array_sum(array_column($buckets['HPP'], 'amount'))
-                          + array_sum(array_column($buckets['BO'],  'amount'))
-                          + array_sum(array_column($buckets['BL'],  'amount'));
+        foreach (['amount_prior' => '_prior', 'amount_current' => '_current', 'amount' => ''] as $field => $suffix) {
+            $total_pendapatan = array_sum(array_column($buckets['PO'], $field))
+                              + array_sum(array_column($buckets['PL'], $field));
 
-        return [
-            'total_pendapatan' => (float) $total_pendapatan,
-            'total_biaya'      => (float) $total_biaya,
-            'laba_bersih'      => (float) ($total_pendapatan - $total_biaya),
-        ];
+            $total_biaya      = array_sum(array_column($buckets['HPP'], $field))
+                              + array_sum(array_column($buckets['BO'],  $field))
+                              + array_sum(array_column($buckets['BL'],  $field));
+
+            $summary['total_pendapatan' . $suffix] = (float) $total_pendapatan;
+            $summary['total_biaya' . $suffix]      = (float) $total_biaya;
+            $summary['laba_bersih' . $suffix]      = (float) ($total_pendapatan - $total_biaya);
+        }
+
+        return $summary;
     }
 
     /**
-     * Sum a list of nodes, applying each node's sign.
+     * Sum a list of nodes on the given subtotal field, applying each node's sign.
      * Recursive — handles arbitrarily deep trees.
      */
-    private function sumNodes(array $nodes): float
+    private function sumNodes(array $nodes, string $field = 'subtotal'): float
     {
         $sum = 0.0;
         foreach ($nodes as $node) {
-            $value = $node['subtotal'];
+            $value = $node[$field];
             if (!empty($node['children'])) {
-                $value += $this->sumNodes($node['children']);
+                $value += $this->sumNodes($node['children'], $field);
             }
             $sum += $node['sign'] * $value;
         }

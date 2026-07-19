@@ -31,11 +31,15 @@
     <table id="table-report" class="minimalistBlack" style="width:100%;">
         <thead>
             <tr>
-                <th style="width:5%;">#</th>
-                <th style="width:15%;">COA</th>
-                <th>COA DESCRIPTION</th>
-                <th class="text-center" style="width:18%;">AMOUNT</th>
-                <th class="text-center" style="width:20%;">SUBTOTAL</th>
+                <th rowspan="2" style="width:4%;">#</th>
+                <th rowspan="2" style="width:12%;">COA</th>
+                <th rowspan="2">COA DESCRIPTION</th>
+                <th colspan="3" class="text-center" style="width:48%;">AMOUNT</th>
+            </tr>
+            <tr>
+                <th class="text-center" style="width:16%;">{{ $report['labels']['prior'] }}</th>
+                <th class="text-center" style="width:16%;">{{ $report['labels']['current'] }}</th>
+                <th class="text-center" style="width:16%;">{{ $report['labels']['ytd'] }}</th>
             </tr>
         </thead>
         <tbody>
@@ -44,7 +48,7 @@
 
                 {{-- Section header --}}
                 <tr class="bg-secondary">
-                    <th class="text-left" colspan="5" style="background:#d9edf7;">
+                    <th class="text-left" colspan="6" style="background:#d9edf7;">
                         {{ $section['title'] }}
                     </th>
                 </tr>
@@ -56,8 +60,14 @@
 
                 {{-- Section result --}}
                 <tr>
-                    <td colspan="4" class="text-right">
+                    <td colspan="3" class="text-right">
                         <strong>{{ $section['result']['label'] }}</strong>
+                    </td>
+                    <td class="text-right">
+                        <strong>{{ number_format($section['result']['amount_prior'], 2, '.', ',') }}</strong>
+                    </td>
+                    <td class="text-right">
+                        <strong>{{ number_format($section['result']['amount_current'], 2, '.', ',') }}</strong>
                     </td>
                     <td class="text-right">
                         <strong>{{ number_format($section['result']['amount'], 2, '.', ',') }}</strong>
@@ -65,29 +75,50 @@
                 </tr>
 
                 {{-- spacer --}}
-                <tr><td colspan="5">&nbsp;</td></tr>
+                <tr><td colspan="6">&nbsp;</td></tr>
 
             @endforeach
 
             {{-- Grand total --}}
             <tr class="bg-info">
-                <th class="text-left" colspan="5">RINGKASAN</th>
+                <th class="text-left" colspan="3">RINGKASAN</th>
+                <th class="text-center">{{ $report['labels']['prior'] }}</th>
+                <th class="text-center">{{ $report['labels']['current'] }}</th>
+                <th class="text-center">{{ $report['labels']['ytd'] }}</th>
             </tr>
             <tr>
-                <td colspan="4" class="text-right"><strong>TOTAL PENDAPATAN</strong></td>
+                <td colspan="3" class="text-right"><strong>TOTAL PENDAPATAN</strong></td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['summary']['total_pendapatan_prior'], 2, '.', ',') }}</strong>
+                </td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['summary']['total_pendapatan_current'], 2, '.', ',') }}</strong>
+                </td>
                 <td class="text-right">
                     <strong>{{ number_format($report['summary']['total_pendapatan'], 2, '.', ',') }}</strong>
                 </td>
             </tr>
             <tr>
-                <td colspan="4" class="text-right"><strong>TOTAL BIAYA</strong></td>
+                <td colspan="3" class="text-right"><strong>TOTAL BIAYA</strong></td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['summary']['total_biaya_prior'], 2, '.', ',') }}</strong>
+                </td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['summary']['total_biaya_current'], 2, '.', ',') }}</strong>
+                </td>
                 <td class="text-right">
                     <strong>{{ number_format($report['summary']['total_biaya'], 2, '.', ',') }}</strong>
                 </td>
             </tr>
             <tr>
-                <td colspan="4" class="text-right">
+                <td colspan="3" class="text-right">
                     <strong>LABA / (RUGI) BERSIH (Total Pendapatan - Total Biaya)</strong>
+                </td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['summary']['laba_bersih_prior'], 2, '.', ',') }}</strong>
+                </td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['summary']['laba_bersih_current'], 2, '.', ',') }}</strong>
                 </td>
                 <td class="text-right">
                     <strong>{{ number_format($report['summary']['laba_bersih'], 2, '.', ',') }}</strong>

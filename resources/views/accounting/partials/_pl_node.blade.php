@@ -2,7 +2,10 @@
     Recursive node renderer for Profit & Loss report.
 
     Expects:
-      $node  : ['title','level','sign','rows','children','subtotal']
+      $node  : ['title','level','sign','rows','children',
+                'subtotal_prior','subtotal_current','subtotal']
+
+    Columns: # | COA | DESC | PRIOR (s/d bulan lalu) | CURRENT (periode) | YTD
 
     Renders the node header, then either its leaf rows or recurses into children.
 --}}
@@ -10,7 +13,7 @@
 @php
     $indent     = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $node['level']);
     $isLeaf     = empty($node['children']);
-    $colspanAll = 5;
+    $colspanAll = 6;
 @endphp
 
 {{-- Group header --}}
@@ -28,7 +31,8 @@
             <td></td>
             <td>{!! $indent !!}<em>(tidak ada data)</em></td>
             <td class="text-right">0.00</td>
-            <td></td>
+            <td class="text-right">0.00</td>
+            <td class="text-right">0.00</td>
         </tr>
     @else
         @foreach($node['rows'] as $i => $r)
@@ -36,8 +40,9 @@
                 <td class="text-center">{{ $i + 1 }}</td>
                 <td class="text-center">{{ $r['COA'] }}</td>
                 <td>{!! $indent !!}{{ $r['COADesc'] }}</td>
+                <td class="text-right">{{ number_format($r['amount_prior'], 2, '.', ',') }}</td>
+                <td class="text-right">{{ number_format($r['amount_current'], 2, '.', ',') }}</td>
                 <td class="text-right">{{ number_format($r['amount'], 2, '.', ',') }}</td>
-                <td></td>
             </tr>
         @endforeach
     @endif
@@ -53,7 +58,12 @@
     <td colspan="3" class="text-right">
         <span class="total">{!! $indent !!}Total {{ $node['title'] }}</span>
     </td>
-    <td></td>
+    <td class="text-right">
+        <span class="total">{{ number_format($node['subtotal_prior'], 2, '.', ',') }}</span>
+    </td>
+    <td class="text-right">
+        <span class="total">{{ number_format($node['subtotal_current'], 2, '.', ',') }}</span>
+    </td>
     <td class="text-right">
         <span class="total">{{ number_format($node['subtotal'], 2, '.', ',') }}</span>
     </td>

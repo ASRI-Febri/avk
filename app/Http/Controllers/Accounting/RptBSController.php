@@ -159,7 +159,7 @@ class RptBSController extends MyController
 
         $rawRows = $this->exec_sp('USP_GL_R_BalanceSheet_V2', $param, 'list', 'sqlsrv');
 
-        $this->data['report'] = $builder->build($rawRows, $param['EndDate']);
+        $this->data['report'] = $builder->build($rawRows, $param['StartDate'], $param['EndDate']);
 
         $this->data['view'] = 'accounting/rpt_bs_report_v2';
         return view($this->data['view'], $this->data);

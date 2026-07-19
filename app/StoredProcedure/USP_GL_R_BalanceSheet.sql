@@ -62,8 +62,29 @@ BEGIN
 	INSERT INTO #TB
 	EXEC [dbo].[USP_GL_R_TrialBalance] @IDX_M_Company, @IDX_M_Branch, @StartDate, @EndDate
 
+	-- ============================================================
+	-- INJEKSI LABA PERIODE BERJALAN KE AKUN LABA TAHUN BERJALAN
+	--
+	-- FIX 19 Jul 2026 (Samuel Febrianto):
+	-- USP_GL_R_TrialBalance versi perbaikan 19 Jul 2026 tidak lagi menaruh
+	-- mutasi sintetis (pendapatan/beban periode) pada akun Laba Tahun Berjalan.
+	-- Karena Balance Sheet hanya menampilkan akun AS/LI/EQ, laba periode
+	-- berjalan ditambahkan di sini agar neraca tetap balanced.
+	-- (Pola sama dengan USP_GL_R_BalanceSheet_V2.)
+	-- ============================================================
+	DECLARE @_PeriodPL				DECIMAL(22,2)
+
+	SELECT @_PeriodPL = ISNULL(SUM(BCreditAmount - BDebetAmount), 0)
+	FROM #TB
+	WHERE AccountType IN ('IC','EX')
+
+	UPDATE #TB SET
+		 BCreditAmount = BCreditAmount + @_PeriodPL
+		,BEBalanceAmount = BBBalanceAmount + BDebetAmount - (BCreditAmount + @_PeriodPL)
+	WHERE IDX_M_COA = @_CurrentEarningAccount
+
 	UPDATE #TB SET BEBalanceAmount = (BEBalanceAmount * -1)
-	WHERE AccountType IN ('LI','EQ') AND BEBalanceAmount < 0 
+	WHERE AccountType IN ('LI','EQ') AND BEBalanceAmount < 0
 
 	UPDATE #TB SET BEBalanceAmount = (BEBalanceAmount * -1)
 	WHERE IDX_M_COA = @_RetainedEarningAccount AND BEBalanceAmount > 0

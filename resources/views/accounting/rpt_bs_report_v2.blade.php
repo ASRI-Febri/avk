@@ -37,11 +37,15 @@
     <table id="table-report" class="minimalistBlack" style="width:100%;">
         <thead>
             <tr>
-                <th>NO</th>
-                <th>COA</th>
-                <th>URAIAN</th>
-                <th class="text-center" style="width:20%;">JUMLAH</th>
-                <th class="text-center" style="width:20%;">SUBTOTAL / TOTAL</th>
+                <th rowspan="2" style="width:4%;">NO</th>
+                <th rowspan="2" style="width:12%;">COA</th>
+                <th rowspan="2">URAIAN</th>
+                <th colspan="3" class="text-center" style="width:48%;">JUMLAH</th>
+            </tr>
+            <tr>
+                <th class="text-center" style="width:16%;">{{ $report['labels']['prior'] }}</th>
+                <th class="text-center" style="width:16%;">{{ $report['labels']['current'] }}</th>
+                <th class="text-center" style="width:16%;">{{ $report['labels']['ending'] }}</th>
             </tr>
         </thead>
         <tbody>
@@ -52,7 +56,7 @@
                 'totalLabel'   => 'TOTAL ASET',
             ])
 
-            <tr><td colspan="5">&nbsp;</td></tr>
+            <tr><td colspan="6">&nbsp;</td></tr>
 
             {{-- ============================== LIABILITAS ============================== --}}
             @include('accounting.partials._bs_section', [
@@ -60,7 +64,7 @@
                 'totalLabel'   => 'TOTAL LIABILITAS',
             ])
 
-            <tr><td colspan="5">&nbsp;</td></tr>
+            <tr><td colspan="6">&nbsp;</td></tr>
 
             {{-- ============================== EKUITAS ============================== --}}
             @include('accounting.partials._bs_section', [
@@ -68,39 +72,56 @@
                 'totalLabel'   => 'TOTAL EKUITAS',
             ])
 
-            <tr><td colspan="5">&nbsp;</td></tr>
+            <tr><td colspan="6">&nbsp;</td></tr>
 
             {{-- ============================== RINGKASAN & BALANCE CHECK ============================== --}}
             <tr style="background:#d9edf7;">
-                <th class="text-left" colspan="5">RINGKASAN</th>
+                <th class="text-left" colspan="3">RINGKASAN</th>
+                <th class="text-center">{{ $report['labels']['prior'] }}</th>
+                <th class="text-center">{{ $report['labels']['current'] }}</th>
+                <th class="text-center">{{ $report['labels']['ending'] }}</th>
             </tr>
             <tr>
-                <td colspan="4" class="text-right"><strong>TOTAL ASET</strong></td>
+                <td colspan="3" class="text-right"><strong>TOTAL ASET</strong></td>
                 <td class="text-right">
-                    <strong>{{ number_format($report['totals']['asset'], 2, '.', ',') }}</strong>
+                    <strong>{{ number_format($report['totals']['asset']['prior'], 2, '.', ',') }}</strong>
+                </td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['totals']['asset']['current'], 2, '.', ',') }}</strong>
+                </td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['totals']['asset']['ending'], 2, '.', ',') }}</strong>
                 </td>
             </tr>
             <tr>
-                <td colspan="4" class="text-right">
+                <td colspan="3" class="text-right">
                     <strong>TOTAL LIABILITAS + EKUITAS</strong>
                 </td>
                 <td class="text-right">
-                    <strong>{{ number_format($report['totals']['liab_plus_eq'], 2, '.', ',') }}</strong>
+                    <strong>{{ number_format($report['totals']['liab_plus_eq']['prior'], 2, '.', ',') }}</strong>
+                </td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['totals']['liab_plus_eq']['current'], 2, '.', ',') }}</strong>
+                </td>
+                <td class="text-right">
+                    <strong>{{ number_format($report['totals']['liab_plus_eq']['ending'], 2, '.', ',') }}</strong>
                 </td>
             </tr>
             <tr>
-                <td colspan="4" class="text-right"><strong>SELISIH (Aset - (Liabilitas + Ekuitas))</strong></td>
-                <td class="text-right">
-                    @if($report['totals']['is_balanced'])
-                        <strong style="color:green;">
-                            {{ number_format($report['totals']['difference'], 2, '.', ',') }} &nbsp; (Balanced)
-                        </strong>
-                    @else
-                        <strong style="color:red;">
-                            {{ number_format($report['totals']['difference'], 2, '.', ',') }} &nbsp; (Tidak Balanced)
-                        </strong>
-                    @endif
-                </td>
+                <td colspan="3" class="text-right"><strong>SELISIH (Aset - (Liabilitas + Ekuitas))</strong></td>
+                @foreach(['prior','current','ending'] as $col)
+                    <td class="text-right">
+                        @if($report['totals']['is_balanced'][$col])
+                            <strong style="color:green;">
+                                {{ number_format($report['totals']['difference'][$col], 2, '.', ',') }} &nbsp; (Balanced)
+                            </strong>
+                        @else
+                            <strong style="color:red;">
+                                {{ number_format($report['totals']['difference'][$col], 2, '.', ',') }} &nbsp; (Tidak Balanced)
+                            </strong>
+                        @endif
+                    </td>
+                @endforeach
             </tr>
 
         </tbody>
