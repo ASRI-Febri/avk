@@ -1044,11 +1044,105 @@ class DropdownController extends Controller
     function group_report()
     {
         $value[''] = '--SELECT--';
-        $value['VALAS'] = 'Valuta Asing'; 
-        $value['NOTA'] = 'Nota Transaksi'; 
-        $value['PARTNER'] = 'Konsumen / Supplier'; 
+        $value['VALAS'] = 'Valuta Asing';
+        $value['NOTA'] = 'Nota Transaksi';
+        $value['PARTNER'] = 'Konsumen / Supplier';
 
         return $value;
     }
+
+    // BEGIN::FIXED ASSET
+    public function coa($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_COA, COAID, COADesc
+                FROM GL_M_COA WITH(NOLOCK)
+                WHERE RecordStatus = 'A'
+                ORDER BY COAID";
+
+        $result =  DB::connection($connection)->select($sql);
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_COA)] = trim($row->COAID . ' - ' . $row->COADesc);
+        }
+        return $value;
+    }
+
+    public function asset_category($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_AssetCategory, CategoryCode, CategoryName
+                FROM FA_M_AssetCategory WITH(NOLOCK)
+                WHERE RecordStatus = 'A'
+                ORDER BY CategoryCode";
+
+        $result =  DB::connection($connection)->select($sql);
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_AssetCategory)] = trim($row->CategoryCode . ' - ' . $row->CategoryName);
+        }
+        return $value;
+    }
+
+    function depr_method()
+    {
+        $value[''] = '--SELECT--';
+        $value['SL'] = 'Garis Lurus (Straight Line)';
+        $value['DB'] = 'Saldo Menurun (Declining Balance)';
+
+        return $value;
+    }
+
+    function fiscal_group()
+    {
+        $value[''] = '--SELECT--';
+        $value['1'] = 'Kelompok 1 (4 tahun)';
+        $value['2'] = 'Kelompok 2 (8 tahun)';
+        $value['3'] = 'Kelompok 3 (16 tahun)';
+        $value['4'] = 'Kelompok 4 (20 tahun)';
+        $value['BP'] = 'Bangunan Permanen (20 tahun)';
+        $value['BN'] = 'Bangunan Non-Permanen (10 tahun)';
+
+        return $value;
+    }
+
+    function asset_status()
+    {
+        $value[''] = '--SELECT--';
+        $value['D'] = 'Draft';
+        $value['A'] = 'Aktif';
+        $value['S'] = 'Dijual';
+        $value['W'] = 'Hapus Buku';
+        $value['H'] = 'Hibah';
+
+        return $value;
+    }
+
+    public function asset_active($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_Asset, AssetCode, AssetName
+                FROM FA_M_Asset WITH(NOLOCK)
+                WHERE RecordStatus = 'A' AND AssetStatus = 'A'
+                ORDER BY AssetCode";
+
+        $result =  DB::connection($connection)->select($sql);
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row){
+            $value[trim($row->IDX_M_Asset)] = trim($row->AssetCode . ' - ' . $row->AssetName);
+        }
+        return $value;
+    }
+
+    function disposal_type()
+    {
+        $value[''] = '--SELECT--';
+        $value['S'] = 'Dijual';
+        $value['W'] = 'Hapus Buku (Write-Off)';
+        $value['H'] = 'Hibah';
+
+        return $value;
+    }
+    // END::FIXED ASSET
 
 }

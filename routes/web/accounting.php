@@ -97,3 +97,73 @@ Route::post('/ac-rpt-cf', 'Accounting\RptCFController@period_report');
 
 Route::get('/ac-rpt-eq', 'Accounting\RptEQController@period');
 Route::post('/ac-rpt-eq', 'Accounting\RptEQController@period_report');
+// ==============================================================================
+// FIXED ASSET (ASET TETAP)
+// ==============================================================================
+
+// FIXED ASSET - KATEGORI ASET
+Route::get('/ac-fa-category', 'Accounting\FACategoryController@inquiry');
+Route::post('/ac-fa-category-list', 'Accounting\FACategoryController@inquiry_data');
+Route::get('/ac-fa-category/create/{id?}', 'Accounting\FACategoryController@create');
+Route::get('/ac-fa-category/update/{id}', 'Accounting\FACategoryController@update');
+Route::post('/ac-fa-category/save', 'Accounting\FACategoryController@save');
+
+// FIXED ASSET - REGISTER ASET
+Route::get('/ac-fa-asset', 'Accounting\FAAssetController@inquiry');
+Route::post('/ac-fa-asset-list', 'Accounting\FAAssetController@inquiry_data');
+Route::get('/ac-fa-asset/create', 'Accounting\FAAssetController@create');
+Route::get('/ac-fa-asset/update/{id}', 'Accounting\FAAssetController@update');
+Route::post('/ac-fa-asset/save', 'Accounting\FAAssetController@save');
+
+// FIXED ASSET - PENYUSUTAN BULANAN
+Route::get('/ac-fa-depreciation', 'Accounting\FADepreciationController@inquiry');
+Route::post('/ac-fa-depreciation-list', 'Accounting\FADepreciationController@inquiry_data');
+Route::get('/ac-fa-depreciation/create', 'Accounting\FADepreciationController@create');
+Route::post('/ac-fa-depreciation/save', 'Accounting\FADepreciationController@save');
+Route::get('/ac-fa-depreciation/success', 'Accounting\FADepreciationController@success');
+Route::post('/ac-fa-depreciation/generate-journal', 'Accounting\FADepreciationController@generate_journal');
+Route::post('/ac-fa-depreciation/save-generate-journal', 'Accounting\FADepreciationController@save_generate_journal');
+Route::post('/ac-fa-depreciation/cancel', 'Accounting\FADepreciationController@cancel');
+Route::post('/ac-fa-depreciation/save-cancel', 'Accounting\FADepreciationController@save_cancel');
+
+// JOURNAL TYPE
+Route::get('/ac-journal-type', 'Accounting\JournalTypeController@inquiry');
+Route::post('/ac-journal-type-list', 'Accounting\JournalTypeController@inquiry_data');
+Route::get('/ac-journal-type/create/{id?}', 'Accounting\JournalTypeController@create');
+Route::get('/ac-journal-type/update/{id}', 'Accounting\JournalTypeController@update');
+Route::post('/ac-journal-type/save', 'Accounting\JournalTypeController@save');
+
+// FIXED ASSET - MUTASI ASET
+Route::get('/ac-fa-mutation', 'Accounting\FAMutationController@inquiry');
+Route::post('/ac-fa-mutation-list', 'Accounting\FAMutationController@inquiry_data');
+Route::get('/ac-fa-mutation/create/{asset_id?}', 'Accounting\FAMutationController@create');
+Route::post('/ac-fa-mutation/save', 'Accounting\FAMutationController@save');
+
+// FIXED ASSET - PELEPASAN ASET (DISPOSAL)
+Route::get('/ac-fa-disposal', 'Accounting\FADisposalController@inquiry');
+Route::post('/ac-fa-disposal-list', 'Accounting\FADisposalController@inquiry_data');
+Route::get('/ac-fa-disposal/create/{asset_id?}', 'Accounting\FADisposalController@create');
+Route::post('/ac-fa-disposal/save', 'Accounting\FADisposalController@save');
+
+// FIXED ASSET - REPORT
+Route::get('/ac-rpt-fa-list', 'Accounting\RptFAListController@period');
+Route::post('/ac-rpt-fa-list', 'Accounting\RptFAListController@period_report');
+
+Route::get('/ac-rpt-fa-card', 'Accounting\RptFACardController@period');
+Route::post('/ac-rpt-fa-card', 'Accounting\RptFACardController@period_report');
+
+Route::get('/ac-rpt-fa-depr', 'Accounting\RptFADeprController@period');
+Route::post('/ac-rpt-fa-depr', 'Accounting\RptFADeprController@period_report');
+
+Route::get('/ac-rpt-fa-fiscal', 'Accounting\RptFAFiscalController@period');
+Route::post('/ac-rpt-fa-fiscal', 'Accounting\RptFAFiscalController@period_report');
+
+// FIXED ASSET - IMPORT ASET (MIGRASI SALDO AWAL)
+Route::get('/ac-fa-asset-import', 'Accounting\FAAssetImportController@show');
+Route::get('/ac-fa-asset-import/template', 'Accounting\FAAssetImportController@template');
+Route::post('/ac-fa-asset-import/preview', 'Accounting\FAAssetImportController@preview');
+Route::post('/ac-fa-asset-import/save', 'Accounting\FAAssetImportController@save');
+
+// FIXED ASSET - REKONSILIASI VS GL
+Route::get('/ac-rpt-fa-recon', 'Accounting\RptFAReconController@period');
+Route::post('/ac-rpt-fa-recon', 'Accounting\RptFAReconController@period_report');

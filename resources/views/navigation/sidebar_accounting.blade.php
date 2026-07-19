@@ -46,6 +46,45 @@
                 </li>
 
                 <li>
+                    <a href="javascript: void(0);" class="has-arrow" id="nav-fixed-asset">
+                        <i class="fas fa-building"></i>
+                        <span>Fixed Asset</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false" id="nav-ul-fixed-asset">
+                        <li id="nav-li-fa-asset">
+                            <a href="{{ url('ac-fa-asset') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Aset
+                            </a>
+                        </li>
+                        <li id="nav-li-fa-asset-create">
+                            <a href="{{ url('ac-fa-asset/create') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input Aset
+                            </a>
+                        </li>
+                        <li id="nav-li-fa-depreciation">
+                            <a href="{{ url('ac-fa-depreciation') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Penyusutan Bulanan
+                            </a>
+                        </li>
+                        <li id="nav-li-fa-mutation">
+                            <a href="{{ url('ac-fa-mutation') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Mutasi Aset
+                            </a>
+                        </li>
+                        <li id="nav-li-fa-disposal">
+                            <a href="{{ url('ac-fa-disposal') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Pelepasan Aset
+                            </a>
+                        </li>
+                        <li id="nav-li-fa-import">
+                            <a href="{{ url('ac-fa-asset-import') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Import Aset (Saldo Awal)
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
                     <a href="javascript: void(0);" class="has-arrow" id="nav-report">
                         <i class="fas fa-list-ul"></i>
                         <span>Report</span>
@@ -81,6 +120,31 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perubahan Ekuitas
                             </a>
                         </li>
+                        <li id="nav-li-rpt-fa-list">
+                            <a href="{{ url('ac-rpt-fa-list') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Daftar Aset Tetap
+                            </a>
+                        </li>
+                        <li id="nav-li-rpt-fa-card">
+                            <a href="{{ url('ac-rpt-fa-card') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Kartu Aset
+                            </a>
+                        </li>
+                        <li id="nav-li-rpt-fa-depr">
+                            <a href="{{ url('ac-rpt-fa-depr') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Rekap Penyusutan
+                            </a>
+                        </li>
+                        <li id="nav-li-rpt-fa-fiscal">
+                            <a href="{{ url('ac-rpt-fa-fiscal') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Penyusutan Fiskal
+                            </a>
+                        </li>
+                        <li id="nav-li-rpt-fa-recon">
+                            <a href="{{ url('ac-rpt-fa-recon') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Rekonsiliasi Aset vs GL
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
@@ -113,6 +177,11 @@
                         <li id="nav-li-setting-journal-type">
                             <a href="{{ url('ac-journal-type') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Journal Type
+                            </a>
+                        </li>
+                        <li id="nav-li-setting-fa-category">
+                            <a href="{{ url('ac-fa-category') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Kategori Aset
                             </a>
                         </li>
                     </ul>
