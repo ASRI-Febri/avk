@@ -51,6 +51,27 @@
                         </div>
                     @endif
 
+                    @php
+                        $no_bi_rate = [];
+                        if ($source == 'computed' && $records) {
+                            foreach ($records as $r) {
+                                if (isset($r->RateSource) && trim($r->RateSource) != 'BI') {
+                                    $no_bi_rate[] = $r->CurrencyID;
+                                }
+                            }
+                        }
+                    @endphp
+                    @if(count($no_bi_rate) > 0)
+                        <div class="alert alert-warning">
+                            <b>Kurs tengah BI belum tersedia</b> untuk valuta:
+                            <b>{{ implode(', ', $no_bi_rate) }}</b> pada tanggal akhir bulan periode ini —
+                            sementara memakai kurs master (rata-rata kurs jual/beli internal).
+                            Upload file Kurs Transaksi dari website BI di menu
+                            <a href="{{ url('mc-bi-middle-rate') }}" target="_blank">Kurs Tengah BI</a>,
+                            lalu preview ulang periode ini.
+                        </div>
+                    @endif
+
                     @if(!empty($result['saved']))
                         <div class="alert alert-success">
                             <b>{{ $result['saved'] }}</b> baris valuta tersimpan untuk periode {{ $PeriodDesc }}.

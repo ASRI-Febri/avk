@@ -22,8 +22,10 @@ GO
 --				dengan ForeignAmount > 0 dan BaseCurrencyAmount > 0), saldo awal dari
 --				EB HPP periode sebelumnya. Proses HPP dulu agar angka final.
 --
---				Kurs tengah: (BuyRate + SellRate) / 2 dari master currency, bisa
---				dikoreksi admin di layar preview.
+--				Kurs tengah: dari MC_T_BIMiddleRate (upload website BI) pada tanggal
+--				akhir bulan periode laporan (RateSource = 'BI'). Bila valuta belum ada
+--				kursnya, fallback (BuyRate + SellRate) / 2 master currency
+--				(RateSource = 'MASTER') dan bisa dikoreksi admin di layar preview.
 -- =============================================
 
 -- EXEC USP_MC_BIMonthly_Preview '202603'
@@ -54,17 +56,28 @@ BEGIN
 		BuyIDR				DECIMAL(18,2),
 		SellForeign			DECIMAL(18,2),
 		SellIDR				DECIMAL(18,2),
-		MiddleRate			DECIMAL(18,4)
+		MiddleRate			DECIMAL(18,4),
+		RateSource			VARCHAR(6)
 	)
 
 	INSERT INTO #Data
 	SELECT C.IDX_M_Currency, RTRIM(ISNULL(C.CurrencyID,'')), RTRIM(ISNULL(C.CurrencyName,'')),
 		0, 0, 0, 0, 0, 0,
-		(ISNULL(C.BuyRate,0) + ISNULL(C.SellRate,0)) / 2
+		(ISNULL(C.BuyRate,0) + ISNULL(C.SellRate,0)) / 2,
+		'MASTER'
 	FROM MC_M_Currency C
 	WHERE RTRIM(ISNULL(C.Recordstatus,'')) = 'A'
 		AND RTRIM(ISNULL(C.CurrencyID,'')) <> ''
 		AND RTRIM(ISNULL(C.CurrencyID,'')) <> 'IDR'
+
+	-- ============================================================
+	-- KURS TENGAH BI: DARI UPLOAD WEBSITE BI PADA TANGGAL AKHIR BULAN
+	-- ============================================================
+	UPDATE #Data SET MiddleRate = R.MiddleRate, RateSource = 'BI'
+	FROM MC_T_BIMiddleRate R
+	INNER JOIN #Data ON #Data.CurrencyID = RTRIM(ISNULL(R.CurrencyID,''))
+	WHERE R.RateDate = @EndDate
+		AND RTRIM(ISNULL(R.RecordStatus,'')) = 'A'
 
 	IF @HasCOGS = 1
 	BEGIN
@@ -157,6 +170,7 @@ BEGIN
 		ClosingIDR = CASE WHEN D.CurrencyID = 'JPY'
 			THEN ((D.OpeningForeign + D.BuyForeign - D.SellForeign) * D.MiddleRate) / 100
 			ELSE (D.OpeningForeign + D.BuyForeign - D.SellForeign) * D.MiddleRate END,
+		D.RateSource,
 		@HasCOGS AS HasCOGS,
 		SavedRows = (SELECT COUNT(*) FROM MC_T_BIMonthly M
 			WHERE M.ReportPeriod = @ReportPeriod AND RTRIM(ISNULL(M.RecordStatus,'')) = 'A')

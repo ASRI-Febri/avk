@@ -81,6 +81,13 @@
                     </a>
                 </li>
 
+                <li id="nav-li-bi-middle-rate">
+                    <a href="{{ url('mc-bi-middle-rate') }}" class="">
+                        <i class="fas fa-file-import"></i>
+                        <span>Kurs Tengah BI</span>
+                    </a>
+                </li>
+
                 <li>
                     <a href="javascript: void(0);" class="has-arrow" id="nav-sop">
                         <i class="fas fa-list"></i>

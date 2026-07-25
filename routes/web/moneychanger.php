@@ -237,6 +237,11 @@ Route::post('/mc-ltkm/preview', 'MoneyChanger\LTKMController@preview');
 Route::post('/mc-ltkm/process', 'MoneyChanger\LTKMController@process');
 Route::get('/mc-ltkm/success', 'MoneyChanger\LTKMController@success');
 
+// KURS TENGAH BANK INDONESIA (AKHIR BULAN)
+Route::get('/mc-bi-middle-rate', 'MoneyChanger\BIMiddleRateController@upload');
+Route::post('/mc-bi-middle-rate/preview', 'MoneyChanger\BIMiddleRateController@preview');
+Route::post('/mc-bi-middle-rate/save', 'MoneyChanger\BIMiddleRateController@save');
+
 // LAPORAN BULANAN BANK INDONESIA (FORM B0001)
 Route::get('/mc-bi-monthly', 'MoneyChanger\BIMonthlyController@create');
 Route::post('/mc-bi-monthly/preview', 'MoneyChanger\BIMonthlyController@preview');
