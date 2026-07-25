@@ -15,9 +15,9 @@
 $ErrorActionPreference = 'Stop'
 
 # ----------------------------- KONFIGURASI -----------------------------------
-$AppPath  = 'C:\inetpub\wwwroot\avk'   # <-- SESUAIKAN dengan folder aplikasi di server
+$AppPath  = 'C:\xampp7\htdocs\avk'      # folder aplikasi di server (XAMPP)
 $Branch   = 'main'
-$Php      = 'php'                       # <-- atau path lengkap, mis. 'C:\php\php.exe'
+$Php      = 'C:\xampp7\php\php.exe'     # PHP bawaan XAMPP
 $Composer = 'composer'                  # <-- atau 'php C:\composer\composer.phar'
 # -----------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ finally {
 }
 
 # 6) Pengingat stored procedure: tampilkan file .sql yang berubah di commit baru.
-$sqlChanged = git diff --name-only "$before" "HEAD" -- 'app/StoredProcedure/*.sql' 'SQLTable/*.sql' 'app/SQLTable/*.sql'
+$sqlChanged = git diff --name-only "$before" "HEAD" -- 'SQLStoredProcedure/*.sql' 'SQLTable/*.sql'
 if ($sqlChanged) {
     Write-Host ""
     Write-Host "!!  ADA PERUBAHAN SQL - terapkan manual ke SQL Server (SSMS):" -ForegroundColor Yellow

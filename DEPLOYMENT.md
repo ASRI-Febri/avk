@@ -1,8 +1,8 @@
-# Deployment AVK — Windows Server (pull dari GitHub)
+# Deployment AVK — Windows Server + XAMPP (pull dari GitHub)
 
-Aplikasi sudah ter-deploy di VPS Windows Server 2016 dan terhubung ke repo
-GitHub (`origin/main`). Dokumen ini menjelaskan cara mempermudah deployment:
-**push dari lokal → pull di server**.
+Aplikasi ter-deploy di Windows Server dengan XAMPP di `C:\xampp7\htdocs\avk`.
+Dokumen ini menjelaskan cara menghubungkan folder server ke repo GitHub
+(`origin/main`) dan alur deployment: **push dari lokal → pull di server**.
 
 Kunci yang membuat ini sederhana:
 
@@ -53,14 +53,34 @@ Cara termudah — **Personal Access Token (PAT)** disimpan oleh Git Credential M
 
 > Alternatif lebih aman: **deploy key** (SSH key read-only khusus server).
 
-### c. Pastikan remote benar
+### c. Menghubungkan folder server yang sudah ada (satu kali)
+Bila folder aplikasi di server berasal dari copy-paste manual (belum git repo),
+hubungkan langsung di tempat — `.env` dan `vendor/` aman karena di-gitignore:
+
 ```powershell
-cd C:\inetpub\wwwroot\avk      # sesuaikan path
+# BACKUP dulu — langkah reset di bawah menimpa file yang ter-track
+Compress-Archive C:\xampp7\htdocs\avk C:\backup\avk-sebelum-git.zip
+
+cd C:\xampp7\htdocs\avk
+git init
+git remote add origin https://github.com/ASRI-Febri/avk.git
+git fetch origin               # diminta login -> isi username + PAT (tersimpan)
+git reset --hard origin/main   # samakan isi folder dengan repo
+```
+
+> Peringatan: edit langsung di server yang belum pernah dibawa ke repo akan
+> tertimpa oleh `git reset --hard`. Pastikan repo berisi versi terbaru.
+
+### d. Pastikan remote benar
+```powershell
+cd C:\xampp7\htdocs\avk      # sesuaikan path
 git remote -v                  # harus menunjuk ke github.com/ASRI-Febri/avk.git
 ```
 
-### d. Sesuaikan path di `deploy.ps1`
-Edit variabel `$AppPath`, `$Php`, `$Composer` di bagian atas `deploy.ps1`.
+### e. Sesuaikan path di `deploy.ps1`
+Variabel di bagian atas `deploy.ps1` sudah diisi untuk server XAMPP saat ini
+(`$AppPath = C:\xampp7\htdocs\avk`, `$Php = C:\xampp7\php\php.exe`).
+Sesuaikan `$Composer` bila composer tidak ada di PATH.
 
 ---
 
@@ -83,7 +103,7 @@ baru, sebagai pengingat untuk diterapkan ke SQL Server.
 RDP ke server, lalu:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File C:\inetpub\wwwroot\avk\deploy.ps1
+powershell -ExecutionPolicy Bypass -File C:\xampp7\htdocs\avk\deploy.ps1
 ```
 
 Script otomatis: maintenance mode → `git reset --hard origin/main` →
@@ -106,7 +126,7 @@ Agar setiap `git push` ke `main` langsung men-deploy:
        runs-on: [self-hosted, windows]
        steps:
          - name: Jalankan deploy.ps1
-           run: powershell -ExecutionPolicy Bypass -File C:\inetpub\wwwroot\avk\deploy.ps1
+           run: powershell -ExecutionPolicy Bypass -File C:\xampp7\htdocs\avk\deploy.ps1
    ```
 
    Setelah ini, push ke `main` otomatis memicu deploy di server.
