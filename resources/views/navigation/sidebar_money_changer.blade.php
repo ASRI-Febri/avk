@@ -275,6 +275,11 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> LTKM
                             </a>
                         </li>
+                        <li id="nav-li-rpt-bi-monthly">
+                            <a href="{{ url('mc-bi-monthly') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Bulanan BI
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

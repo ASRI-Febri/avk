@@ -237,6 +237,13 @@ Route::post('/mc-ltkm/preview', 'MoneyChanger\LTKMController@preview');
 Route::post('/mc-ltkm/process', 'MoneyChanger\LTKMController@process');
 Route::get('/mc-ltkm/success', 'MoneyChanger\LTKMController@success');
 
+// LAPORAN BULANAN BANK INDONESIA (FORM B0001)
+Route::get('/mc-bi-monthly', 'MoneyChanger\BIMonthlyController@create');
+Route::post('/mc-bi-monthly/preview', 'MoneyChanger\BIMonthlyController@preview');
+Route::post('/mc-bi-monthly/save', 'MoneyChanger\BIMonthlyController@save');
+Route::get('/mc-bi-monthly/edit', 'MoneyChanger\BIMonthlyController@edit');
+Route::get('/mc-bi-monthly/download', 'MoneyChanger\BIMonthlyController@download');
+
 // REPORT
 Route::get('/mc-rpt-ltkt', 'MoneyChanger\LTKTController@report');
 Route::post('/mc-rpt-ltkt', 'MoneyChanger\LTKTController@report_show');
