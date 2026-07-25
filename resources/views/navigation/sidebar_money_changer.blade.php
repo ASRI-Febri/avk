@@ -125,6 +125,14 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Lihat Konsumen
                             </a>
                         </li>
+                        <li id="nav-li-dttot"><a href="{{ url('mc-dttot') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> DTTOT
+                            </a>
+                        </li>
+                        <li id="nav-li-dttot-screening"><a href="{{ url('mc-dttot/screening') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Screening DTTOT
+                            </a>
+                        </li>
                         <li id="nav-li-opening-closing"><a href="{{ url('mc-open-close') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Opening & Closing
                             </a>
@@ -162,6 +170,16 @@
                         <li id="nav-li-cogs-calculation">
                             <a href="{{ url('mc-cogs-calculation') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan HPP
+                            </a>
+                        </li>
+                        <li id="nav-li-ltkt">
+                            <a href="{{ url('mc-ltkt') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Proses LTKT
+                            </a>
+                        </li>
+                        <li id="nav-li-ltkm">
+                            <a href="{{ url('mc-ltkm') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Proses LTKM
                             </a>
                         </li>
                         <li id="nav-li-check-stock-card">
@@ -208,6 +226,11 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Closing Harian
                             </a>
                         </li>
+                        <li id="nav-li-rpt-customer">
+                            <a href="{{ url('mc-rpt-customer') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Data Customer
+                            </a>
+                        </li>
                         <li id="nav-li-rpt-so">
                             <a href="{{ url('mc-rpt-so') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Penjualan Harian
@@ -241,7 +264,17 @@
                             <a href="{{ url('mc-rpt-cogs-calculation') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan HPP
                             </a>
-                        </li>                     
+                        </li>
+                        <li id="nav-li-rpt-ltkt">
+                            <a href="{{ url('mc-rpt-ltkt') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> LTKT
+                            </a>
+                        </li>
+                        <li id="nav-li-rpt-ltkm">
+                            <a href="{{ url('mc-rpt-ltkm') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> LTKM
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

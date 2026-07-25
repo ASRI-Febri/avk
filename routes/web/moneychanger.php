@@ -216,7 +216,37 @@ Route::get('/mc-cogs-calculation/success', 'MoneyChanger\COGSCalculationControll
 Route::post('/mc-cogs-calculation/generate-journal', 'MoneyChanger\COGSCalculationController@generate_journal');
 Route::post('/mc-cogs-calculation/save-generate-journal', 'MoneyChanger\COGSCalculationController@save_generate_journal');
 
+// DTTOT (DAFTAR TERDUGA TERORIS DAN ORGANISASI TERORIS)
+Route::get('/mc-dttot', 'MoneyChanger\DTTOTController@inquiry');
+Route::post('/mc-dttot-list', 'MoneyChanger\DTTOTController@inquiry_data');
+Route::get('/mc-dttot/upload', 'MoneyChanger\DTTOTController@upload');
+Route::post('/mc-dttot/preview', 'MoneyChanger\DTTOTController@preview');
+Route::post('/mc-dttot/save', 'MoneyChanger\DTTOTController@save');
+Route::get('/mc-dttot/screening', 'MoneyChanger\DTTOTController@screening');
+Route::post('/mc-dttot/screening-save', 'MoneyChanger\DTTOTController@screening_save');
+
+// PROSES LTKT (LAPORAN TRANSAKSI KEUANGAN TUNAI)
+Route::get('/mc-ltkt', 'MoneyChanger\LTKTController@create');
+Route::post('/mc-ltkt/preview', 'MoneyChanger\LTKTController@preview');
+Route::post('/mc-ltkt/process', 'MoneyChanger\LTKTController@process');
+Route::get('/mc-ltkt/success', 'MoneyChanger\LTKTController@success');
+
+// PROSES LTKM (LAPORAN TRANSAKSI KEUANGAN MENCURIGAKAN)
+Route::get('/mc-ltkm', 'MoneyChanger\LTKMController@create');
+Route::post('/mc-ltkm/preview', 'MoneyChanger\LTKMController@preview');
+Route::post('/mc-ltkm/process', 'MoneyChanger\LTKMController@process');
+Route::get('/mc-ltkm/success', 'MoneyChanger\LTKMController@success');
+
 // REPORT
+Route::get('/mc-rpt-ltkt', 'MoneyChanger\LTKTController@report');
+Route::post('/mc-rpt-ltkt', 'MoneyChanger\LTKTController@report_show');
+
+Route::get('/mc-rpt-ltkm', 'MoneyChanger\LTKMController@report');
+Route::post('/mc-rpt-ltkm', 'MoneyChanger\LTKMController@report_show');
+
+Route::get('/mc-rpt-customer', 'MoneyChanger\RptTransactionController@customer');
+Route::post('/mc-rpt-customer', 'MoneyChanger\RptTransactionController@customer_report');
+
 Route::get('/mc-rpt-so', 'MoneyChanger\RptTransactionController@period_sales');
 Route::post('/mc-rpt-so', 'MoneyChanger\RptTransactionController@period_sales_report');
 

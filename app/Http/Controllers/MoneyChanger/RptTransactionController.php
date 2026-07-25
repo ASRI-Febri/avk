@@ -261,6 +261,74 @@ class RptTransactionController extends MyController
         }
     }
 
+    public function customer()
+    {
+        //$access = $this->check_permission($this->data['user_index'], 'sm-acct-002');
+
+        $access = TRUE;
+
+        $this->data['title'] = 'AVK';
+        $this->data['form_title'] = 'Laporan Data Customer';
+        $this->data['form_sub_title'] = 'Laporan Data Customer';
+        $this->data['form_desc'] = 'Laporan Data Customer';
+
+        $this->data['form_remark'] = 'Laporan data customer berdasarkan periode tanggal pendaftaran (tanggal input data customer)';
+
+        // BREADCRUMB
+        array_push($this->data['breads'], 'Customer');
+
+        $this->data['state'] = 'update';
+
+        if ($access == TRUE) {
+            $this->data['fields'] = (object) array();
+
+            // DEFAULT PARAMETER
+            $this->data['IDPJK'] = '1049422';
+            $this->data['start_date'] = date('Y-m-01');
+            $this->data['end_date'] = date('Y-m-d');
+
+            // URL SAVE
+            $this->data['url_show_repoprt'] = url('mc-rpt-customer');
+
+            return view('money_changer/rpt_customer_form', $this->data);
+        } else {
+            return $this->show_no_access();
+        }
+    }
+
+    public function customer_report(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required',
+            'end_date' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validation_fails($validator->errors(), $request->input('start_date'));
+        } else {
+            // GET POST VALUE
+            $this->data['fields'] = $request->all();
+
+            // REPORT INFORMATION
+            $this->data['page_title'] = 'LAPORAN DATA CUSTOMER';
+            $this->data['title'] = 'Laporan Data Customer';
+            $this->data['form_title'] = 'Laporan Data Customer';
+
+            $this->data['IDPJK'] = $request->input('IDPJK', '');
+
+            // REPORT PARAMETER ** Param sequence must refer to param sequence in stored procedure **
+            $param['start_date'] = $this->data['fields']['start_date'];
+            $param['end_date'] = $this->data['fields']['end_date'];
+
+            // RECORDS
+            $this->data['records'] = $this->exec_sp('USP_MC_R_Customer', $param, 'list', 'sqlsrv');
+
+            // VIEW
+            $this->data['view'] = 'money_changer/rpt_customer_report';
+            return view($this->data['view'], $this->data);
+        }
+    }
+
     public function daily_calculation()
     {
         //$access = $this->check_permission($this->data['user_index'], 'sm-acct-002');
