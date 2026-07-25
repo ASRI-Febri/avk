@@ -22,7 +22,7 @@ use Validator;
  */
 class BIMonthlyController extends MyController
 {
-    const SANDI_PELAPOR = '777294834';
+    const SANDI_PELAPOR = '777249834';
     const FORM_CODE = 'B0001';
     const REPORT_NO = '01';
 
