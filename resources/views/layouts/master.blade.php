@@ -115,6 +115,7 @@
     <!-- CUSTOM SCRIPT -->
     <script src="{{ URL::asset('public/js/save.js') }}"></script>
     <script src="{{ URL::asset('public/js/router.js') }}"></script>
+    <script src="{{ URL::asset('public/js/loader.js') }}"></script>
 
 </body>
 

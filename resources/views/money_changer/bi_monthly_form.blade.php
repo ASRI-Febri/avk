@@ -22,7 +22,8 @@
                         <span class="text-muted">{{ $form_remark }}</span>
                     </div>
 
-                    <form id="form-entry" name="form-entry" action="{{ $url_preview }}" method="POST" class="needs-validation" novalidate>
+                    <form id="form-entry" name="form-entry" action="{{ $url_preview }}" method="POST" class="needs-validation" novalidate
+                        data-loader="Menghitung data laporan bulanan...">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                         <input type="hidden" name="state" value="{{ $state }}" />
 
@@ -52,7 +53,7 @@
                         <hr>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <button type="submit" id="btn-preview" class="btn btn-primary">
+                            <button type="submit" id="btn-preview" class="btn btn-primary" data-loader-text="Memuat...">
                                 <i class="fas fa-search me-1"></i> Preview Data
                             </button>
                         </div>
@@ -70,11 +71,6 @@
             $('#nav-report').addClass('mm-active');
             $('#nav-ul-report').addClass('mm-show');
             $('#nav-li-rpt-bi-monthly').addClass('mm-active');
-
-            $('#form-entry').on('submit', function () {
-                $('#btn-preview').prop('disabled', true)
-                    .html('<i class="fa fa-spinner fa-spin me-1"></i> Memuat...');
-            });
         });
     </script>
 @endsection

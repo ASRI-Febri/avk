@@ -11,7 +11,7 @@
 @section('content')
 
     <div class="row">
-        <div class="col-xl-10 col-md-12 col-sm-12">
+        <div class="col-xl-12 col-md-12 col-sm-12">
             <div class="card">
                 <div class="card-header card-header-bordered">
                     <h3 class="card-title">{{ $form_sub_title }}</h3>
@@ -39,8 +39,7 @@
                     {{-- ============================ HASIL SIMPAN ============================ --}}
                     @if(!empty($result))
                     <div class="alert {{ $result['failed'] > 0 ? 'alert-warning' : 'alert-success' }}">
-                        <b>Hasil upload:</b> {{ $result['success'] }} kurs tersimpan
-                        @if($result['date'] !== '') untuk tanggal <b>{{ date('d M Y', strtotime($result['date'])) }}</b> @endif,
+                        <b>Hasil upload:</b> {{ $result['success'] }} kurs tersimpan{{ $result['date'] !== '' ? ' untuk tanggal ' : '' }}@if($result['date'] !== '')<b>{{ date('d M Y', strtotime($result['date'])) }}</b>@endif,
                         {{ $result['failed'] }} gagal.
                         @if(count($result['messages']))
                             <hr>
@@ -53,20 +52,21 @@
 
                     {{-- ============================ STEP 1: UPLOAD ============================ --}}
                     @if($state == 'upload')
-                    <form action="{{ url('mc-bi-middle-rate/preview') }}" method="POST" enctype="multipart/form-data">
+                    <form id="form-upload" action="{{ url('mc-bi-middle-rate/preview') }}" method="POST" enctype="multipart/form-data"
+                        data-loader="Membaca file kurs Bank Indonesia...">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
                         <div class="d-grid gap-3">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label text-secondary">Periode (Akhir Bulan)</label>
-                                <div class="col-sm-4">
+                                <label class="col-sm-2 col-form-label text-secondary">Periode (Akhir Bulan)</label>
+                                <div class="col-sm-3">
                                     <select id="PeriodMonth" name="PeriodMonth" class="form-control" required>
                                         @foreach($dd_month as $key => $value)
                                             <option value="{{ $key }}" {{ $PeriodMonth == $key ? 'selected' : '' }}>{{ $value }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <select id="PeriodYear" name="PeriodYear" class="form-control" required>
                                         @foreach($dd_year as $key => $value)
                                             <option value="{{ $key }}" {{ $PeriodYear == $key ? 'selected' : '' }}>{{ $value }}</option>
@@ -75,8 +75,8 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label text-secondary">File Excel Kurs BI</label>
-                                <div class="col-sm-7">
+                                <label class="col-sm-2 col-form-label text-secondary">File Excel Kurs BI</label>
+                                <div class="col-sm-5">
                                     <input type="file" id="file_import" name="file_import" class="form-control" accept=".xlsx,.xls" required />
                                     <small class="text-muted">File asli dari website BI tanpa diubah susunannya.</small>
                                 </div>
@@ -85,7 +85,7 @@
 
                         <hr>
                         <div class="d-flex justify-content-end gap-2">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" id="btn-upload" class="btn btn-primary" data-loader-text="Membaca file...">
                                 <i class="fas fa-search me-1"></i> Upload &amp; Preview
                             </button>
                         </div>
@@ -95,7 +95,7 @@
                     @if(count($saved_dates) > 0)
                         <hr>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <h5 class="mb-3">Periode Tersimpan</h5>
                                 <table class="table table-sm table-bordered">
                                     <thead>
@@ -115,7 +115,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 @if(count($saved_rates) > 0)
                                     <h5 class="mb-3">
                                         Kurs Tengah BI — {{ date('d M Y', strtotime($saved_rates[0]->RateDate)) }}
@@ -248,6 +248,7 @@
                     if (result.isConfirmed) {
                         $('#btn-save').prop('disabled', true)
                             .html('<i class="fa fa-spinner fa-spin me-1"></i> Menyimpan...');
+                        showPageLoader('Menyimpan kurs tengah...');
                         form.submit();
                     }
                 });

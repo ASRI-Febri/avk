@@ -83,12 +83,12 @@
                     @endif
 
                     @if($has_saved && $source == 'saved')
-                        <form action="{{ $url_preview }}" method="POST" class="mb-3">
+                        <form action="{{ $url_preview }}" method="POST" class="mb-3" data-loader="Menghitung ulang dari transaksi...">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                             <input type="hidden" name="PeriodYear" value="{{ substr($ReportPeriod,0,4) }}" />
                             <input type="hidden" name="PeriodMonth" value="{{ substr($ReportPeriod,4,2) }}" />
                             <input type="hidden" name="recalc" value="1" />
-                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" data-loader-text="Menghitung ulang...">
                                 <i class="fas fa-sync me-1"></i> Hitung Ulang dari Transaksi (abaikan data tersimpan)
                             </button>
                         </form>
@@ -220,6 +220,7 @@
                     if (result.isConfirmed) {
                         $('#btn-save').prop('disabled', true)
                             .html('<i class="fa fa-spinner fa-spin me-1"></i> Menyimpan...');
+                        showPageLoader('Menyimpan laporan bulanan BI...');
                         form.submit();
                     }
                 });

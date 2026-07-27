@@ -59,7 +59,8 @@
 
                     {{-- ============================ STEP 1: UPLOAD ============================ --}}
                     @if($state == 'upload')
-                    <form action="{{ url('mc-dttot/preview') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url('mc-dttot/preview') }}" method="POST" enctype="multipart/form-data"
+                        data-loader="Membaca file DTTOT...">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
                         <div class="d-grid gap-3">
@@ -74,7 +75,7 @@
 
                         <hr>
                         <div class="d-flex justify-content-end gap-2">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" data-loader-text="Membaca file...">
                                 <i class="fas fa-search me-1"></i> Upload &amp; Preview
                             </button>
                         </div>
@@ -175,6 +176,7 @@
                     if (result.isConfirmed) {
                         $('#btn-save').prop('disabled', true)
                             .html('<i class="fa fa-spinner fa-spin me-1"></i> Menyimpan...');
+                        showPageLoader('Menyimpan daftar DTTOT...');
                         form.submit();
                     }
                 });
