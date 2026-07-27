@@ -118,6 +118,7 @@
 
                 $('#btn-process').prop('disabled', true)
                     .html('<i class="fa fa-spinner fa-spin me-1"></i> Memproses...');
+                showPageLoader('Memproses penyusutan aset...');
             });
         });
     </script>

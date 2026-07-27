@@ -180,6 +180,7 @@
                     if (result.isConfirmed) {
                         $('#btn-save').prop('disabled', true)
                             .html('<i class="fa fa-spinner fa-spin me-1"></i> Menyimpan...');
+                        showPageLoader('Menyimpan penandaan DTTOT...');
                         form.submit();
                     }
                 });

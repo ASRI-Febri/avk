@@ -44,8 +44,14 @@ function hidePageLoader()
 // tersangkut saat ada field wajib yang belum diisi.
 $(document).ready(function ()
 {
-	$('form[data-loader]').on('submit', function ()
+	$('form[data-loader]').on('submit', function (e)
 	{
+		// Handler halaman terpasang lebih dulu (@yield('script') dirender sebelum
+		// file ini), jadi hormati bila submit sudah dibatalkan oleh validasi sendiri.
+		if (e.isDefaultPrevented()) {
+			return;
+		}
+
 		if (this.checkValidity && !this.checkValidity()) {
 			return;
 		}
