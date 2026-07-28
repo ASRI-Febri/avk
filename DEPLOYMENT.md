@@ -35,13 +35,30 @@ git push origin main
 ## 1) Persiapan satu kali di server
 
 ### a. Git for Windows
-Pastikan `git`, `php`, dan `composer` bisa dipanggil dari PowerShell:
+Pastikan `git` bisa dipanggil dari PowerShell:
 
 ```powershell
 git --version
-php --version
-composer --version
 ```
+
+### a2. PENTING — server punya dua instalasi XAMPP
+
+| Folder | Versi PHP | Dipakai |
+|--------|-----------|---------|
+| `C:\xampp`  | PHP 5 | aplikasi lama |
+| `C:\xampp7` | PHP 7 | **AVK** |
+
+Karena itu **jangan panggil `php` polos** — bisa mengarah ke PHP 5 dan gagal
+(Laravel 7 butuh PHP 7.2.5+). Selalu pakai path lengkap:
+
+```powershell
+C:\xampp7\php\php.exe --version      # harus 7.x
+```
+
+`deploy.ps1` sudah memakai path lengkap ini, memverifikasi versinya sebelum
+jalan, dan menjalankan composer lewat php.exe PHP 7 agar tidak salah versi.
+Perhatikan variabel `$Php` harus menunjuk **file `php.exe`**, bukan foldernya —
+bila terlanjur diisi folder, script otomatis melengkapinya.
 
 ### b. Autentikasi GitHub (repo privat)
 Cara termudah — **Personal Access Token (PAT)** disimpan oleh Git Credential Manager:
@@ -70,6 +87,12 @@ git reset --hard origin/main   # samakan isi folder dengan repo
 
 > Peringatan: edit langsung di server yang belum pernah dibawa ke repo akan
 > tertimpa oleh `git reset --hard`. Pastikan repo berisi versi terbaru.
+
+Langkah `git reset --hard origin/main` di atas **wajib dijalankan manual** pada
+setup pertama. Sebelum langkah itu, folder server masih memakai `deploy.ps1`
+hasil copy-paste lama; versi terbaru (yang sudah menangani dua XAMPP) baru
+tersedia setelah reset. Setelah reset berhasil, deployment berikutnya cukup
+menjalankan `deploy.ps1`.
 
 ### d. Pastikan remote benar
 ```powershell
