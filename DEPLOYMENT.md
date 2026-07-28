@@ -165,6 +165,18 @@ Sederhana, tapi tanpa kontrol kapan rilis — kurang disarankan untuk produksi.
 
 ## 4) Catatan tambahan
 
+- **Nama file harus valid di Windows.** Server memakai Windows, sehingga file
+  yang di-commit dari mac/Linux dengan karakter ilegal di Windows
+  (`\ : * ? " < > |`) akan menggagalkan checkout dengan pesan
+  `error: invalid path ...` dan `fatal: Could not reset index file`.
+  Contoh yang pernah terjadi: file bernama
+  `Laporan Bulanan\Laporan\PVA\2026030001.txt` (backslash dianggap bagian
+  nama file di mac, tapi ilegal di Windows) — solusinya menyimpannya sebagai
+  folder bertingkat sungguhan. Cek sebelum commit:
+  ```bash
+  git ls-files | grep '\\'
+  ```
+
 - **Izin folder**: pastikan user IIS/Apache punya akses tulis ke `storage\` dan
   `bootstrap\cache\`. Ini hanya perlu diatur sekali (pull tidak mengubahnya).
 - **`route:cache` dihindari** di script karena beberapa route memakai closure
