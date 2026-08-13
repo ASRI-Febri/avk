@@ -1,18 +1,25 @@
-
-/****** Object:  StoredProcedure [dbo].[USP_MC_GenerateJournalCOGSValas]    Script Date: 6/4/2026 12:55:18 AM ******/
+USE [AVKDB]
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
+GO
+-- Revisi 13 Agustus 2026: laporkan nota yang gagal dan jangan commit hasil separuh jalan.
+
+IF OBJECT_ID('[dbo].[USP_MC_GenerateJournalCOGSValas]', 'P') IS NOT NULL
+	DROP PROCEDURE [dbo].[USP_MC_GenerateJournalCOGSValas]
 GO
 
 /* 
 	EXEC [dbo].[USP_MC_GenerateJournalCOGSValas] 1,'202603','it_febry'
 	EXEC [dbo].[USP_MC_GenerateJournalCOGSValas] 1,'202604','it_febry'
 	EXEC [dbo].[USP_MC_GenerateJournalCOGSValas] 1,'202605','it_febry'
+	EXEC [dbo].[USP_MC_GenerateJournalCOGSValas] 1,'202606','it_febry'
+	EXEC [dbo].[USP_MC_GenerateJournalCOGSValas] 1,'202607','it_febry'
 */
 
 
-ALTER PROCEDURE [dbo].[USP_MC_GenerateJournalCOGSValas] 
+CREATE PROCEDURE [dbo].[USP_MC_GenerateJournalCOGSValas] 
 	@IDX_M_Company				BIGINT,
 	@COGSPeriod					VARCHAR(6),
 	@UserID						VARCHAR(20)
@@ -72,20 +79,22 @@ BEGIN
 				--YEAR(JournalDate) = LEFT(@COGSPeriod, 4) AND MONTH(JournalDate) = RIGHT(@COGSPeriod, 2)		
 
 				DECLARE @_IDX_T_SalesOrder			BIGINT
+				DECLARE @_SONumber					VARCHAR(50)
+				DECLARE @_CountJournal				INT = 0
+				DECLARE @_CountSkip					INT = 0
+				DECLARE @_IDX_M_JournalType			INT = 8 -- JOURNAL PERHITUNGAN HPP
 
 				DECLARE crs CURSOR FOR
-				SELECT IDX_T_SalesOrder 
+				SELECT IDX_T_SalesOrder, RTRIM(ISNULL(SONumber,''))
 				FROM MC_T_SalesOrder
 				WHERE SOStatus = 'A' AND YEAR(SODate) = LEFT(@COGSPeriod, 4) AND MONTH(SODate) = RIGHT(@COGSPeriod, 2)	
 					
 
 				OPEN crs
-				FETCH NEXT FROM crs INTO @_IDX_T_SalesOrder
+				FETCH NEXT FROM crs INTO @_IDX_T_SalesOrder, @_SONumber
 
 				WHILE @@FETCH_STATUS = 0
 				BEGIN
-					PRINT CONVERT(VARCHAR, @_IDX_T_SalesOrder)
-
 					-- ========================================================
 					-- GENERATE JOURNAL
 					-- ========================================================
@@ -95,10 +104,26 @@ BEGIN
 
 					IF @_JournalResult <> 1
 					BEGIN
-						INSERT INTO @TableLog VALUES ('error', 1, 'Create journal failed!')
+						-- Sebutkan notanya supaya user tahu mana yang harus diperiksa
+						INSERT INTO @TableLog VALUES ('error', @_IDX_T_SalesOrder,
+							'Gagal membuat jurnal HPP untuk nota ' + @_SONumber
+							+ ' (IDX ' + CONVERT(VARCHAR, @_IDX_T_SalesOrder) + '). '
+							+ 'Cek apakah valas pada nota ini punya baris perhitungan HPP periode ' + @COGSPeriod + '.')
+					END
+					ELSE
+					BEGIN
+						-- Nota tanpa penjualan valas tidak menghasilkan jurnal dan itu wajar,
+						-- jadi dihitung terpisah supaya angka di pesan tetap jujur.
+						IF EXISTS (SELECT 1 FROM GL_T_JournalHeader
+									WHERE IDX_M_JournalType = @_IDX_M_JournalType
+										AND IDX_ReferenceNo = @_IDX_T_SalesOrder
+										AND RTRIM(ReferenceNo) = @_SONumber)
+							SET @_CountJournal = @_CountJournal + 1
+						ELSE
+							SET @_CountSkip = @_CountSkip + 1
 					END
 
-					FETCH NEXT FROM crs INTO @_IDX_T_SalesOrder
+					FETCH NEXT FROM crs INTO @_IDX_T_SalesOrder, @_SONumber
 				END
 
 				CLOSE crs
@@ -106,19 +131,48 @@ BEGIN
 
 
 				-- ====================================================================================
-				-- OUTPUT		
-				-- ====================================================================================		
-				INSERT INTO @TableLog VALUES ('success', 1, 'Data Sudah Disimpan')
+				-- OUTPUT
+				-- Baris 'success' hanya ditulis kalau tidak ada nota yang gagal, supaya
+				-- pemanggil tidak menerima 'success' dan 'error' sekaligus.
+				-- ====================================================================================
+				IF NOT EXISTS (SELECT 1 FROM @TableLog WHERE Result = 'error')
+				BEGIN
+					INSERT INTO @TableLog VALUES ('success', 1,
+						'Jurnal HPP periode ' + @COGSPeriod + ' selesai dibuat untuk '
+						+ CONVERT(VARCHAR, @_CountJournal) + ' nota penjualan.'
+						+ CASE WHEN @_CountSkip > 0
+							THEN ' ' + CONVERT(VARCHAR, @_CountSkip) + ' nota dilewati karena tidak ada penjualan valas.'
+							ELSE '' END)
+				END
 
 			END		
 
-		SELECT * FROM @TableLog
+		-- ============================================================================
+		-- Kalau ada satu saja nota yang gagal, seluruh proses dibatalkan supaya tidak
+		-- tertinggal jurnal HPP separuh jalan. Perbaiki penyebabnya lalu jalankan
+		-- ulang; @TableLog tetap terbaca karena table variable tidak ikut rollback.
+		-- ============================================================================
+		IF @@TRANCOUNT > 0
+		BEGIN
+			IF EXISTS (SELECT 1 FROM @TableLog WHERE Result = 'error')
+				ROLLBACK TRANSACTION;
+			ELSE
+				COMMIT TRANSACTION;
+		END
 
-		COMMIT TRANSACTION;	
+		SELECT * FROM @TableLog
 
 	END TRY
 
 	BEGIN CATCH				
+
+		-- Cursor bisa tertinggal terbuka kalau error terjadi di tengah loop
+		IF CURSOR_STATUS('global','crs') > -3
+		BEGIN
+			IF CURSOR_STATUS('global','crs') > -1
+				CLOSE crs
+			DEALLOCATE crs
+		END
 
 		INSERT INTO @TableLog VALUES ('error', 1, CONVERT(VARCHAR, ERROR_NUMBER() + ' '  + ERROR_MESSAGE()))
 				
@@ -137,17 +191,13 @@ BEGIN
 			ROLLBACK TRANSACTION;
 		END;
 
-		-- Test whether the transaction is active and valid.
+		-- Error di tengah proses tidak boleh menyisakan jurnal separuh jalan,
+		-- jadi transaksi dibatalkan, bukan di-commit seperti sebelumnya.
 		IF (XACT_STATE()) = 1
 		BEGIN
-			PRINT N'The transaction is committable. ' + 'Committing transaction.'
-			COMMIT TRANSACTION;   
+			ROLLBACK TRANSACTION;
 		END;
 
 	END CATCH;
 END
-
-
-
-
-
+GO
