@@ -48,8 +48,8 @@ class COGSCalculationController extends MyController
         $this->data['form_remark'] = 'Daftar periode perhitungan HPP / COGS valas yang sudah diproses.';
 
         if ($access == TRUE) {
-            $this->data['table_header'] = array('No', 'COGSPeriod', 'Periode', 'Action');
-            $this->data['table_footer'] = array('', '', '', 'Action');
+            $this->data['table_header'] = array('No', 'COGSPeriod', 'Periode', 'Status Jurnal', 'Action');
+            $this->data['table_footer'] = array('', '', '', '', 'Action');
             $this->data['array_filter'] = array();
 
             $this->data['view'] = 'money_changer/cogs_calculation_list';
@@ -61,11 +61,27 @@ class COGSCalculationController extends MyController
 
     public function inquiry_data(Request $request)
     {
+        // Status jurnal per periode: berapa nota penjualan yang sudah punya jurnal HPP
+        // (GL_T_JournalHeader tipe 8) dibanding jumlah nota approved pada bulan itu.
+        // Jurnal dibuat per nota, jadi keduanya seharusnya sama kalau sudah lengkap.
         $rows = DB::connection('sqlsrv')->select("
-            SELECT COGSPeriod
-            FROM MC_T_COGSValasCalculation
-            GROUP BY COGSPeriod
-            ORDER BY COGSPeriod ASC
+            SELECT C.COGSPeriod,
+                JumlahNota = ISNULL(SO.JumlahNota, 0),
+                JumlahJurnal = ISNULL(JR.JumlahJurnal, 0)
+            FROM (SELECT COGSPeriod FROM MC_T_COGSValasCalculation GROUP BY COGSPeriod) C
+                LEFT JOIN (
+                    SELECT Periode = LEFT(CONVERT(VARCHAR, SODate, 112), 6), JumlahNota = COUNT(*)
+                    FROM MC_T_SalesOrder WITH(NOLOCK)
+                    WHERE SOStatus = 'A'
+                    GROUP BY LEFT(CONVERT(VARCHAR, SODate, 112), 6)
+                ) SO ON SO.Periode = C.COGSPeriod
+                LEFT JOIN (
+                    SELECT Periode = LEFT(CONVERT(VARCHAR, JournalDate, 112), 6), JumlahJurnal = COUNT(*)
+                    FROM GL_T_JournalHeader WITH(NOLOCK)
+                    WHERE IDX_M_JournalType = 8
+                    GROUP BY LEFT(CONVERT(VARCHAR, JournalDate, 112), 6)
+                ) JR ON JR.Periode = C.COGSPeriod
+            ORDER BY C.COGSPeriod ASC
         ");
 
         $bulan = [
@@ -82,10 +98,26 @@ class COGSCalculationController extends MyController
             $month = substr($period, 4, 2);
             $periodDesc = isset($bulan[$month]) ? $bulan[$month] . ' ' . $year : $period;
 
+            $jumlah_nota = (int) $row->JumlahNota;
+            $jumlah_jurnal = (int) $row->JumlahJurnal;
+
+            if ($jumlah_jurnal == 0) {
+                $journal_state = 'kosong';
+                $journal_desc = 'Belum dibuat';
+            } elseif ($jumlah_nota > 0 && $jumlah_jurnal >= $jumlah_nota) {
+                $journal_state = 'lengkap';
+                $journal_desc = 'Lengkap';
+            } else {
+                $journal_state = 'sebagian';
+                $journal_desc = 'Sebagian';
+            }
+
             $aaData[] = [
-                'RowNumber'  => $no++,
-                'COGSPeriod' => $period,
-                'PeriodDesc' => $periodDesc,
+                'RowNumber'    => $no++,
+                'COGSPeriod'   => $period,
+                'PeriodDesc'   => $periodDesc,
+                'JournalState' => $journal_state,
+                'JournalDesc'  => $journal_desc . ' (' . $jumlah_jurnal . '/' . $jumlah_nota . ')',
             ];
         }
 
@@ -187,12 +219,37 @@ class COGSCalculationController extends MyController
             $periodDesc = isset($bulan[$month]) ? $bulan[$month] . ' ' . $year : $journalPeriod;
         }
 
+        // Info untuk isi modal: jurnal HPP yang sudah ada akan ditimpa
+        $jumlah_jurnal = 0;
+        $jumlah_nota = 0;
+
+        if (strlen($journalPeriod) == 6) {
+            $stat = DB::connection('sqlsrv')->select("
+                SELECT
+                    JumlahJurnal = (SELECT COUNT(*) FROM GL_T_JournalHeader WITH(NOLOCK)
+                        WHERE IDX_M_JournalType = 8
+                            AND LEFT(CONVERT(VARCHAR, JournalDate, 112), 6) = ?),
+                    JumlahNota = (SELECT COUNT(*) FROM MC_T_SalesOrder WITH(NOLOCK)
+                        WHERE SOStatus = 'A'
+                            AND LEFT(CONVERT(VARCHAR, SODate, 112), 6) = ?)
+            ", [$journalPeriod, $journalPeriod]);
+
+            if ($stat) {
+                $jumlah_jurnal = (int) $stat[0]->JumlahJurnal;
+                $jumlah_nota = (int) $stat[0]->JumlahNota;
+            }
+        }
+
+        $this->data['jumlah_jurnal'] = $jumlah_jurnal;
+        $this->data['jumlah_nota'] = $jumlah_nota;
+
         $this->data['fields'] = (object) [
             'JournalPeriod' => $journalPeriod,
             'RecordStatus'  => 'A',
         ];
         $this->data['state'] = 'create';
-        $this->data['form_desc'] = 'Generate Jurnal HPP - ' . $periodDesc;
+        $this->data['form_desc'] = ($jumlah_jurnal > 0 ? 'Generate Ulang' : 'Generate')
+            . ' Jurnal HPP - ' . $periodDesc;
         $this->data['url_save_modal'] = url('mc-cogs-calculation/save-generate-journal');
 
         return view('money_changer/cogs_calculation_generate_journal_form', $this->data);

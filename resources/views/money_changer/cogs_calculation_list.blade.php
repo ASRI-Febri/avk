@@ -15,6 +15,23 @@
         { data: 'COGSPeriod', visible: false },
         { data: 'PeriodDesc', visible: true },
 
+        { data: 'JournalDesc', render:
+            function( data, type, row )
+            {
+                if(row['JournalState'] == 'lengkap')
+                {
+                    return '<x-badge-success label="__LABEL__" />'.replace('__LABEL__', data);
+                }
+                else if(row['JournalState'] == 'sebagian')
+                {
+                    return '<x-badge-primary label="__LABEL__" />'.replace('__LABEL__', data);
+                }
+
+                return '<x-badge-secondary label="__LABEL__" />'.replace('__LABEL__', data);
+            }
+            , class: "text-center"
+        },
+
         { data: 'COGSPeriod', render:
             function( data, type, row )
             {
@@ -24,9 +41,14 @@
                 var report = '<a href="' + url_report + '" class="btn btn-sm btn-info me-1">' +
                        '<i class="fas fa-file-alt me-1"></i>Lihat Laporan</a>';
 
-                var generate = '<a href="javascript:void(0)" class="btn btn-sm btn-success" ' +
+                // Jurnal yang sudah ada akan ditimpa, jadi labelnya dibedakan
+                var sudah_ada = (row['JournalState'] != 'kosong');
+
+                var generate = '<a href="javascript:void(0)" class="btn btn-sm ' +
+                       (sudah_ada ? 'btn-outline-success' : 'btn-success') + '" ' +
                        'onclick="generateJournal(\'' + url_generate + '\', \'' + row['COGSPeriod'] + '\')">' +
-                       '<i class="fas fa-book me-1"></i>Generate Journal</a>';
+                       '<i class="fas fa-book me-1"></i>' +
+                       (sudah_ada ? 'Generate Ulang' : 'Generate Journal') + '</a>';
 
                 return report + generate;
             }
