@@ -1,3 +1,5 @@
+USE [AVKDB]
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,7 +12,8 @@ GO
 --				MODE UTAMA (HasCOGS = 1): angka diambil dari hasil Perhitungan HPP
 --				(MC_T_COGSValasCalculation) periode laporan, sehingga PASTI konsisten
 --				dengan closing bulanan, jurnal HPP, neraca, dan laba rugi:
---				  - Saldo awal        : BB_ForeignAmount / BB_BaseAmount
+--				  - Saldo awal        : saldo akhir periode sebelumnya (lihat blok
+--				                        SALDO AWAL di bawah), bukan BB_BaseAmount HPP
 --				  - Volume pembelian  : IN_ForeignAmount / IN_BaseAmount (PO stok valas)
 --				  - Volume penjualan  : Sold_ForeignAmount / Sold_BaseAmount
 --				  - Saldo akhir valas : saldo awal + pembelian - penjualan (rumus form B0001,
@@ -29,6 +32,10 @@ GO
 -- =============================================
 
 -- EXEC USP_MC_BIMonthly_Preview '202603'
+
+IF OBJECT_ID('[dbo].[USP_MC_BIMonthly_Preview]', 'P') IS NOT NULL
+	DROP PROCEDURE [dbo].[USP_MC_BIMonthly_Preview]
+GO
 
 CREATE PROCEDURE [dbo].[USP_MC_BIMonthly_Preview]
 	@ReportPeriod		VARCHAR(6)
@@ -57,14 +64,16 @@ BEGIN
 		SellForeign			DECIMAL(18,2),
 		SellIDR				DECIMAL(18,2),
 		MiddleRate			DECIMAL(18,4),
-		RateSource			VARCHAR(6)
+		RateSource			VARCHAR(6),
+		OpeningSource		VARCHAR(6)
 	)
 
 	INSERT INTO #Data
 	SELECT C.IDX_M_Currency, RTRIM(ISNULL(C.CurrencyID,'')), RTRIM(ISNULL(C.CurrencyName,'')),
 		0, 0, 0, 0, 0, 0,
 		(ISNULL(C.BuyRate,0) + ISNULL(C.SellRate,0)) / 2,
-		'MASTER'
+		'MASTER',
+		'HPP'
 	FROM MC_M_Currency C
 	WHERE RTRIM(ISNULL(C.Recordstatus,'')) = 'A'
 		AND RTRIM(ISNULL(C.CurrencyID,'')) <> ''
@@ -158,6 +167,61 @@ BEGIN
 	END
 
 	-- ============================================================
+	-- SALDO AWAL HARUS SAMA DENGAN SALDO AKHIR PERIODE SEBELUMNYA
+	--
+	-- Saldo awal valas & rupiah tidak boleh diambil dari nilai perolehan HPP
+	-- (BB_BaseAmount), karena saldo akhir di form B0001 dinilai dengan kurs
+	-- tengah BI. Kalau basisnya beda, saldo awal bulan ini tidak akan pernah
+	-- sama dengan saldo akhir bulan lalu. Rupiah saldo awal SENGAJA tetap
+	-- memakai kurs tengah periode SEBELUMNYA, bukan kurs periode laporan.
+	--
+	--   (a) Kalau laporan periode sebelumnya sudah tersimpan, pakai angka itu
+	--       apa adanya, karena itulah yang sudah dilaporkan ke Bank Indonesia
+	--       (termasuk koreksi manual yang dilakukan admin di layar preview).
+	--   (b) Kalau belum tersimpan, hitung: saldo akhir valas periode sebelumnya
+	--       (EB hasil Perhitungan HPP) x kurs tengah BI akhir bulan sebelumnya.
+	-- ============================================================
+	DECLARE @PrevEndDate DATE = EOMONTH(DATEADD(MONTH, -1, @StartDate))
+
+	-- (a) DARI LAPORAN PERIODE SEBELUMNYA YANG SUDAH TERSIMPAN
+	UPDATE #Data SET
+		OpeningForeign	= ISNULL(P.ClosingForeign,0),
+		OpeningIDR		= ISNULL(P.ClosingIDR,0),
+		OpeningSource	= 'SAVED'
+	FROM MC_T_BIMonthly P
+	INNER JOIN #Data ON #Data.CurrencyID = RTRIM(ISNULL(P.CurrencyID,''))
+	WHERE P.ReportPeriod = @PrevPeriod
+		AND RTRIM(ISNULL(P.RecordStatus,'')) = 'A'
+
+	-- (b) BELUM TERSIMPAN: SALDO AKHIR VALAS HPP BULAN LALU x KURS TENGAH BI BULAN LALU
+	UPDATE #Data SET
+		OpeningForeign	= X.EB_F,
+		OpeningIDR		= CASE WHEN #Data.CurrencyID = 'JPY'
+							THEN (X.EB_F * X.PrevRate) / 100
+							ELSE X.EB_F * X.PrevRate END,
+		OpeningSource	= 'HITUNG'
+	FROM (
+		SELECT E.IDX_M_Currency,
+			EB_F = SUM(ISNULL(E.EB_ForeignAmount,0)),
+			PrevRate = ISNULL(
+				(SELECT TOP 1 R.MiddleRate FROM MC_T_BIMiddleRate R
+				 WHERE RTRIM(ISNULL(R.CurrencyID,'')) = RTRIM(ISNULL(MC.CurrencyID,''))
+					AND R.RateDate = @PrevEndDate
+					AND RTRIM(ISNULL(R.RecordStatus,'')) = 'A'),
+				(ISNULL(MC.BuyRate,0) + ISNULL(MC.SellRate,0)) / 2)
+		FROM MC_T_COGSValasCalculation E
+		INNER JOIN MC_M_Currency MC ON MC.IDX_M_Currency = E.IDX_M_Currency
+		WHERE E.COGSPeriod = @PrevPeriod
+		GROUP BY E.IDX_M_Currency, MC.CurrencyID, MC.BuyRate, MC.SellRate
+	) X
+	INNER JOIN #Data ON #Data.IDX_M_Currency = X.IDX_M_Currency
+	WHERE #Data.OpeningSource <> 'SAVED'
+
+	-- Periode paling awal (belum ada bulan sebelumnya): saldo awal nol
+	UPDATE #Data SET OpeningForeign = 0, OpeningIDR = 0, OpeningSource = 'NIHIL'
+	WHERE OpeningSource = 'HPP'
+
+	-- ============================================================
 	-- OUTPUT: HANYA VALUTA YANG ADA NILAINYA
 	-- ============================================================
 	SELECT D.CurrencyID, D.CurrencyName,
@@ -171,6 +235,7 @@ BEGIN
 			THEN ((D.OpeningForeign + D.BuyForeign - D.SellForeign) * D.MiddleRate) / 100
 			ELSE (D.OpeningForeign + D.BuyForeign - D.SellForeign) * D.MiddleRate END,
 		D.RateSource,
+		D.OpeningSource,
 		@HasCOGS AS HasCOGS,
 		SavedRows = (SELECT COUNT(*) FROM MC_T_BIMonthly M
 			WHERE M.ReportPeriod = @ReportPeriod AND RTRIM(ISNULL(M.RecordStatus,'')) = 'A')
