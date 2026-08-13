@@ -4,38 +4,26 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
--- Revisi 13 Agustus 2026: header jurnal tidak dibuat kalau tidak ada detail.
+-- Revisi 13 Agustus 2026: hapus jurnal lama berdasarkan index transaksi, bukan nomor nota.
 
-IF OBJECT_ID('[dbo].[USP_MC_COGSValasJournal_Create]', 'P') IS NOT NULL
-	DROP PROCEDURE [dbo].[USP_MC_COGSValasJournal_Create]
+IF OBJECT_ID('[dbo].[USP_MC_SalesJournal_Create]', 'P') IS NOT NULL
+	DROP PROCEDURE [dbo].[USP_MC_SalesJournal_Create]
 GO
 
 -- =============================================
 -- Author:		Samuel Febrianto
 -- Create date: 2026-01-23
--- Description:	Create COGS valas journal after COGS calculation
+-- Description:	Create transaction journal (buy or sell valas)
 -- =============================================
 
 /*
 DECLARE @_JournalResult		SMALLINT
-EXEC USP_MC_COGSValasJournal_Create 2, @_JournalResult OUTPUT
+EXEC USP_MC_SalesJournal_Create 2, @_JournalResult OUTPUT
 PRINT CONVERT(VARCHAR, @_JournalResult)
 */
 
--- =============================================
--- FIX 19 Jul 2026 (Samuel Febrianto):
--- Nilai jurnal HPP dibulatkan ROUND(...,2) saat insert.
--- Sebelumnya SUM(Quantity * AverageAmount * ValasChangeNumber) tersimpan
--- dengan 4 desimal di GL_T_JournalDetail, menyebabkan selisih pembulatan
--- beberapa sen di Trial Balance / Balance Sheet / Profit Loss yang
--- membulatkan per akun ke 2 desimal. Debet (HPP) dan kredit (Persediaan)
--- memakai ekspresi identik sehingga jurnal tetap balance setelah ROUND.
--- Jalankan bersama FIX_GL_JournalDetail_Rounding.sql untuk membereskan
--- data historis yang terlanjur tersimpan 4 desimal.
--- =============================================
-CREATE PROCEDURE [dbo].[USP_MC_COGSValasJournal_Create]
+CREATE PROCEDURE [dbo].[USP_MC_SalesJournal_Create]
 	@IDX_T_SalesOrder			BIGINT,
-	@COGSPeriod					VARCHAR(6),
 	@UserID						VARCHAR(50),
 	@Result						SMALLINT OUTPUT -- 1 = TRUE, 0 = FALSE
 AS
@@ -65,7 +53,7 @@ BEGIN
 		DECLARE @_ReceiveAmount					DECIMAL(22,2)
 		
 		-- ACCOUNTING
-		DECLARE @_IDX_M_JournalType				INT = 8 -- JOURNAL PERHITUNGAN COGS	
+		DECLARE @_IDX_M_JournalType				INT = 5 -- JOURNAL PENJUALAN VALAS	
 		DECLARE @_COA_AR						INT = 5 -- 1115-001 PIUTANG USAHA
 		DECLARE @_COA_AP						INT = 12 -- 2110-001 HUTANG USAHA
 		DECLARE @_COA_Inventory					INT = 80 -- 1117-000 - PERSEDIAAN VALAS
@@ -96,7 +84,24 @@ BEGIN
 		INNER JOIN MC_M_Currency CU ON CU.IDX_M_Currency = MV.IDX_M_Currency 
 		WHERE S.IDX_T_SalesOrder = @IDX_T_SalesOrder AND SD.IDX_M_TransactionType = 2
 
-		
+		-- GET DETAIL PEMBELIAN
+		--SELECT SD.IDX_T_SalesOrder, SD.IDX_M_TransactionType, SD.IDX_M_Valas,
+		--	MV.IDX_M_Currency,
+		--	CU.CurrencyID, SUM(SD.Quantity) AS Quantity, SUM(SD.BaseCurrencyAmount) AS BuyAmount
+		--FROM MC_T_SalesOrder S
+		--INNER JOIN MC_T_SalesOrderDetail SD ON SD.IDX_T_SalesOrder = S.IDX_T_SalesOrder
+		--INNER JOIN MC_M_Valas MV ON MV.IDX_M_Valas = SD.IDX_M_Valas
+		--INNER JOIN MC_M_Currency CU ON CU.IDX_M_Currency = MV.IDX_M_Currency 
+		--WHERE S.IDX_T_SalesOrder = @IDX_T_SalesOrder AND SD.IDX_M_TransactionType = 1
+		--GROUP BY SD.IDX_T_SalesOrder, SD.IDX_M_TransactionType, SD.IDX_M_Valas,
+		--	MV.IDX_M_Currency, CU.CurrencyID
+
+		-- CHECK PAYMENT
+		SELECT @_ReceiveAmount = SUM(FRD.ReceiveAmount) 
+		FROM CM_T_FinancialReceiveDetail FRD
+		LEFT JOIN CM_T_FinancialReceiveHeader FRH ON FRH.IDX_T_FinancialReceiveHeader = FRD.IDX_T_FinancialReceiveHeader
+		WHERE FRD.IDX_DocumentNo = @IDX_T_SalesOrder AND RTRIM(FRD.DocumentNo) = RTRIM(@_SONumber)
+			AND FRH.ReceiveStatus = 'A' AND FRH.RecordStatus = 'A'
 
 		-- ======================================================================================================
 		-- DELETE EXISTING JOURNAL
@@ -116,15 +121,7 @@ BEGIN
 
 		-- ======================================================================================================
 		-- INSERT JOURNAL HEADER FROM SALES ORDER
-		--
-		-- Header hanya dibuat kalau nota ini benar benar punya penjualan valas.
-		-- Sebelumnya header dibuat lebih dulu tanpa syarat, sedangkan detailnya
-		-- dijaga IF @_SalesAmount > 0, sehingga nota tanpa penjualan bisa
-		-- meninggalkan jurnal HPP tanpa satu pun baris detail.
 		-- ======================================================================================================
-		IF ISNULL(@_SalesAmount,0) > 0
-		BEGIN
-
 		INSERT INTO [dbo].[GL_T_JournalHeader]
 			([IDX_M_Company],[IDX_M_Branch],[IDX_M_JournalType],[IDX_M_Partner]				
 			,[ApplicationID],[IDX_ReferenceNo],[ReferenceNo],[VoucherNo]
@@ -132,8 +129,8 @@ BEGIN
 			,[PostingDate],[PostedBy],[DebetAmount],[CreditAmount]
 			,[JournalSource],[UCreate],[DCreate],[RecordStatus])
 		SELECT	1, S.IDX_M_Branch, @_IDX_M_JournalType, P.IDX_M_Partner, 
-				0, IDX_T_SalesOrder, S.SONumber, 'HP-' + S.SONumber, 
-				S.SODate, 'Perhitungan HPP', P.PartnerName, 'P', 
+				0, IDX_T_SalesOrder, S.SONumber, S.SONumber, 
+				S.SODate, 'Transaksi jual beli', P.PartnerName, 'P', 
 				S.SODate, @_UCreate, 0, 0, 
 				'S', @_UCreate, @_DCreate, 'A'
 		FROM MC_T_SalesOrder S
@@ -145,37 +142,27 @@ BEGIN
 		SET @_IDX_T_JournalHeader = (SELECT SCOPE_IDENTITY())
 
 		-- ======================================================================================================
-		-- INSERT DETAIL
+		-- INSERT DETAIL PEMBELIAN
 		-- ======================================================================================================
-		-- HPP (DEBET)
-		-- PERSEDIAAN VALAS (CREDIT)		
+		-- PERSEDIAAN (DEBET)
+		-- HUTANG (CREDIT)
 
-		-- HPP (DEBET)
-			INSERT INTO [dbo].[GL_T_JournalDetail]
-				([IDX_T_JournalHeader],[IDX_M_Project],[IDX_M_Department],[IDX_M_COA]
-				,[IDX_M_Partner],[JournalSeqNo],[COADescription],[RemarkDetail]
-				,[OriginalCurrencyID],[ODebetAmount],[OCreditAmount],[ExchangeRate]
-				,[BaseCurrencyID],[BDebetAmount],[BCreditAmount],[UCreate]
-				,[DCreate],[RecordStatus])
-			SELECT	@_IDX_T_JournalHeader, 0, 0, CU.COGSAccount, 
-					S.IDX_M_Partner, 0, 'HPP Valas', 'HPP Valas', 
-					1, ROUND(SUM(SD.Quantity * COGS.AverageAmount * VC.ValasChangeNumber), 2), 0, 1, 
-					1, ROUND(SUM(SD.Quantity * COGS.AverageAmount * VC.ValasChangeNumber), 2), 0, @_UCreate, 
-					@_DCreate, 'A'
-			FROM MC_T_SalesOrder S
-			INNER JOIN MC_T_SalesOrderDetail SD ON SD.IDX_T_SalesOrder = S.IDX_T_SalesOrder
-			INNER JOIN MC_M_Valas MV ON MV.IDX_M_Valas = SD.IDX_M_Valas
-			LEFT JOIN MC_M_ValasChange VC ON VC.IDX_M_ValasChange = MV.IDX_M_ValasChange
-			INNER JOIN MC_M_Currency CU ON CU.IDX_M_Currency = MV.IDX_M_Currency 
-			LEFT JOIN GL_M_COA CHP ON CHP.IDX_M_COA = CU.COGSAccount
-			INNER JOIN (SELECT IDX_T_COGSValasCalculation, IDX_M_Currency, IDX_M_Valas, AverageAmount 
-						FROM MC_T_COGSValasCalculation 
-						WHERE COGSPeriod = @COGSPeriod) COGS
-				ON COGS.IDX_M_Currency = CU.IDX_M_Currency AND COGS.IDX_M_Valas = MV.IDX_M_Valas
-			WHERE S.IDX_T_SalesOrder = @IDX_T_SalesOrder 
-			GROUP BY SD.IDX_T_SalesOrder, CU.COGSAccount, S.IDX_M_Partner, MV.IDX_M_Currency, CU.CurrencyID, MV.IDX_M_Valas
+		-- ======================================================================================================
+		-- INSERT DETAIL PENJUALAN
+		-- ======================================================================================================
+		-- PIUTANG USAHA (DEBET)
+		-- PENJUALAN (CREDIT)
 
-			-- PERSEDIAAN (CREDIT)
+		-- ======================================================================================================
+		-- (JIKA TRANSAKSI LANGSUNG DIBAYAR LUNAS)
+		-- ======================================================================================================
+		-- HUTANG (DEBET)		
+		-- KAS/BANK (KREDIT)
+		-- ======================================================================================================		
+
+		IF @_PurchaseAmount > 0
+		BEGIN
+			-- PERSEDIAAN (DEBET)
 			INSERT INTO [dbo].[GL_T_JournalDetail]
 				([IDX_T_JournalHeader],[IDX_M_Project],[IDX_M_Department],[IDX_M_COA]
 				,[IDX_M_Partner],[JournalSeqNo],[COADescription],[RemarkDetail]
@@ -183,38 +170,80 @@ BEGIN
 				,[BaseCurrencyID],[BDebetAmount],[BCreditAmount],[UCreate]
 				,[DCreate],[RecordStatus])
 			SELECT	@_IDX_T_JournalHeader, 0, 0, CU.PurchaseAccount, 
-					S.IDX_M_Partner, 0, 'HPP Persediaan valas', 'HPP Persediaan valas', 
-					1, 0, ROUND(SUM(SD.Quantity * COGS.AverageAmount * VC.ValasChangeNumber), 2), 1, 
-					1, 0, ROUND(SUM(SD.Quantity * COGS.AverageAmount * VC.ValasChangeNumber), 2), @_UCreate, 
+					S.IDX_M_Partner, 0, 'Persediaan Valas', 'Persediaan Valas', 
+					1, SUM(SD.BaseCurrencyAmount), 0, 1, 
+					1, SUM(SD.BaseCurrencyAmount), 0, @_UCreate, 
 					@_DCreate, 'A'
 			FROM MC_T_SalesOrder S
 			INNER JOIN MC_T_SalesOrderDetail SD ON SD.IDX_T_SalesOrder = S.IDX_T_SalesOrder
 			INNER JOIN MC_M_Valas MV ON MV.IDX_M_Valas = SD.IDX_M_Valas
-			LEFT JOIN MC_M_ValasChange VC ON VC.IDX_M_ValasChange = MV.IDX_M_ValasChange
 			INNER JOIN MC_M_Currency CU ON CU.IDX_M_Currency = MV.IDX_M_Currency 
-			LEFT JOIN GL_M_COA CHP ON CHP.IDX_M_COA = CU.PurchaseAccount
-			INNER JOIN (SELECT IDX_T_COGSValasCalculation, IDX_M_Currency, IDX_M_Valas, AverageAmount 
-						FROM MC_T_COGSValasCalculation 
-						WHERE COGSPeriod = @COGSPeriod) COGS
-				ON COGS.IDX_M_Currency = CU.IDX_M_Currency AND COGS.IDX_M_Valas = MV.IDX_M_Valas
-			WHERE S.IDX_T_SalesOrder = @IDX_T_SalesOrder 
-			GROUP BY SD.IDX_T_SalesOrder, CU.PurchaseAccount, S.IDX_M_Partner, MV.IDX_M_Currency, CU.CurrencyID, MV.IDX_M_Valas
+			WHERE S.IDX_T_SalesOrder = @IDX_T_SalesOrder AND SD.IDX_M_TransactionType = 1
+			GROUP BY SD.IDX_T_SalesOrder, SD.IDX_M_TransactionType, CU.PurchaseAccount, S.IDX_M_Partner, SD.IDX_M_Valas,
+				MV.IDX_M_Currency, CU.CurrencyID
 
-			-- Detail bisa saja tidak terbentuk, mis. valas pada nota ini tidak punya
-			-- baris di MC_T_COGSValasCalculation untuk periode tersebut (INNER JOIN
-			-- ke COGS tidak ketemu). Jangan tinggalkan header tanpa detail: buang
-			-- headernya dan laporkan gagal supaya nomor notanya muncul di pesan.
-			IF NOT EXISTS (SELECT 1 FROM GL_T_JournalDetail WHERE IDX_T_JournalHeader = @_IDX_T_JournalHeader)
-			BEGIN
-				DELETE GL_T_JournalHeader WHERE IDX_T_JournalHeader = @_IDX_T_JournalHeader
+			-- HUTANG (CREDIT)
+			INSERT INTO [dbo].[GL_T_JournalDetail]
+				([IDX_T_JournalHeader],[IDX_M_Project],[IDX_M_Department],[IDX_M_COA]
+				,[IDX_M_Partner],[JournalSeqNo],[COADescription],[RemarkDetail]
+				,[OriginalCurrencyID],[ODebetAmount],[OCreditAmount],[ExchangeRate]
+				,[BaseCurrencyID],[BDebetAmount],[BCreditAmount],[UCreate]
+				,[DCreate],[RecordStatus])
+			SELECT	@_IDX_T_JournalHeader, 0, 0, @_COA_AP, 
+					S.IDX_M_Partner, 0, 'Hutang pembelian', 'Hutang pembelian Valas', 
+					1, 0, SUM(SD.BaseCurrencyAmount), 1, 
+					1, 0, SUM(SD.BaseCurrencyAmount), @_UCreate, 
+					@_DCreate, 'A'
+			FROM MC_T_SalesOrder S
+			INNER JOIN MC_T_SalesOrderDetail SD ON SD.IDX_T_SalesOrder = S.IDX_T_SalesOrder
+			INNER JOIN MC_M_Valas MV ON MV.IDX_M_Valas = SD.IDX_M_Valas
+			INNER JOIN MC_M_Currency CU ON CU.IDX_M_Currency = MV.IDX_M_Currency 
+			WHERE S.IDX_T_SalesOrder = @IDX_T_SalesOrder AND SD.IDX_M_TransactionType = 1
+			GROUP BY SD.IDX_T_SalesOrder, SD.IDX_M_TransactionType, S.IDX_M_Partner
+				--SD.IDX_M_Valas, MV.IDX_M_Currency, CU.CurrencyID
+		END
 
-				COMMIT TRANSACTION;
+		IF @_SalesAmount > 0
+		BEGIN
+			-- PIUTANG (DEBET)
+			INSERT INTO [dbo].[GL_T_JournalDetail]
+				([IDX_T_JournalHeader],[IDX_M_Project],[IDX_M_Department],[IDX_M_COA]
+				,[IDX_M_Partner],[JournalSeqNo],[COADescription],[RemarkDetail]
+				,[OriginalCurrencyID],[ODebetAmount],[OCreditAmount],[ExchangeRate]
+				,[BaseCurrencyID],[BDebetAmount],[BCreditAmount],[UCreate]
+				,[DCreate],[RecordStatus])
+			SELECT	@_IDX_T_JournalHeader, 0, 0, @_COA_AR, 
+					S.IDX_M_Partner, 0, 'Piutang Valas', 'Piutang penjualan valas', 
+					1, SUM(SD.BaseCurrencyAmount), 0, 1, 
+					1, SUM(SD.BaseCurrencyAmount), 0, @_UCreate, 
+					@_DCreate, 'A'
+			FROM MC_T_SalesOrder S
+			INNER JOIN MC_T_SalesOrderDetail SD ON SD.IDX_T_SalesOrder = S.IDX_T_SalesOrder
+			INNER JOIN MC_M_Valas MV ON MV.IDX_M_Valas = SD.IDX_M_Valas
+			INNER JOIN MC_M_Currency CU ON CU.IDX_M_Currency = MV.IDX_M_Currency 
+			WHERE S.IDX_T_SalesOrder = @IDX_T_SalesOrder AND SD.IDX_M_TransactionType = 2
+			GROUP BY SD.IDX_T_SalesOrder, SD.IDX_M_TransactionType, S.IDX_M_Partner, SD.IDX_M_Valas,
+				MV.IDX_M_Currency, CU.CurrencyID
 
-				SELECT @Result = 0
-
-				RETURN
-			END
-
+			-- PENJUALAN (CREDIT)
+			INSERT INTO [dbo].[GL_T_JournalDetail]
+				([IDX_T_JournalHeader],[IDX_M_Project],[IDX_M_Department],[IDX_M_COA]
+				,[IDX_M_Partner],[JournalSeqNo],[COADescription],[RemarkDetail]
+				,[OriginalCurrencyID],[ODebetAmount],[OCreditAmount],[ExchangeRate]
+				,[BaseCurrencyID],[BDebetAmount],[BCreditAmount],[UCreate]
+				,[DCreate],[RecordStatus])
+			SELECT	@_IDX_T_JournalHeader, 0, 0, CU.SalesAccount, 
+					S.IDX_M_Partner, 0, 'Penjualan Valas', 'Penjualan valas', 
+					1, 0, SUM(SD.BaseCurrencyAmount), 1, 
+					1, 0, SUM(SD.BaseCurrencyAmount), @_UCreate, 
+					@_DCreate, 'A'
+			FROM MC_T_SalesOrder S
+			INNER JOIN MC_T_SalesOrderDetail SD ON SD.IDX_T_SalesOrder = S.IDX_T_SalesOrder
+			INNER JOIN MC_M_Valas MV ON MV.IDX_M_Valas = SD.IDX_M_Valas
+			INNER JOIN MC_M_Currency CU ON CU.IDX_M_Currency = MV.IDX_M_Currency 
+			WHERE S.IDX_T_SalesOrder = @IDX_T_SalesOrder AND SD.IDX_M_TransactionType = 2
+			GROUP BY SD.IDX_T_SalesOrder, SD.IDX_M_TransactionType, CU.SalesAccount, S.IDX_M_Partner, SD.IDX_M_Valas,
+				MV.IDX_M_Currency, CU.CurrencyID
 		END
 				
 
