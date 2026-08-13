@@ -116,7 +116,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $i = 0; @endphp
+                                    @php
+                                        $i = 0;
+
+                                        // Angka ditampilkan dengan pemisah ribuan dan desimal.
+                                        // Aman untuk input yang bisa dikoreksi: BIMonthlyController::num()
+                                        // membuang koma sebelum menyimpan, dan toNum() di bawah juga.
+                                        $fmt = function ($value, $dec = 2) {
+                                            return number_format((float) $value, $dec, '.', ',');
+                                        };
+                                    @endphp
                                     @if($records)
                                     @foreach($records as $row)
                                         <tr>
@@ -127,15 +136,15 @@
                                             <td class="align-middle" style="white-space:nowrap;">
                                                 <b>{{ $row->CurrencyID }}</b> <small class="text-muted">{{ $row->CurrencyName ?? '' }}</small>
                                             </td>
-                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][OpeningForeign]" value="{{ round($row->OpeningForeign, 2) }}" /></td>
-                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][OpeningIDR]" value="{{ round($row->OpeningIDR, 2) }}" /></td>
-                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][BuyForeign]" value="{{ round($row->BuyForeign, 2) }}" /></td>
-                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][BuyIDR]" value="{{ round($row->BuyIDR, 2) }}" /></td>
-                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][SellForeign]" value="{{ round($row->SellForeign, 2) }}" /></td>
-                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][SellIDR]" value="{{ round($row->SellIDR, 2) }}" /></td>
-                                            <td><input type="text" class="form-control form-control-sm text-end closing-f" data-ccy="{{ $row->CurrencyID }}" value="{{ round($row->ClosingForeign, 2) }}" readonly tabindex="-1" /></td>
-                                            <td><input type="text" class="form-control form-control-sm text-end num rate" name="rows[{{ $i }}][MiddleRate]" value="{{ round($row->MiddleRate, 4) }}" /></td>
-                                            <td><input type="text" class="form-control form-control-sm text-end closing-r" value="{{ round($row->ClosingIDR) }}" readonly tabindex="-1" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][OpeningForeign]" value="{{ $fmt($row->OpeningForeign) }}" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][OpeningIDR]" value="{{ $fmt($row->OpeningIDR) }}" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][BuyForeign]" value="{{ $fmt($row->BuyForeign) }}" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][BuyIDR]" value="{{ $fmt($row->BuyIDR) }}" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][SellForeign]" value="{{ $fmt($row->SellForeign) }}" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end num" name="rows[{{ $i }}][SellIDR]" value="{{ $fmt($row->SellIDR) }}" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end closing-f" data-ccy="{{ $row->CurrencyID }}" value="{{ $fmt($row->ClosingForeign) }}" readonly tabindex="-1" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end num rate" name="rows[{{ $i }}][MiddleRate]" value="{{ $fmt($row->MiddleRate, 4) }}" /></td>
+                                            <td><input type="text" class="form-control form-control-sm text-end closing-r" value="{{ $fmt($row->ClosingIDR) }}" readonly tabindex="-1" /></td>
                                         </tr>
                                         @php $i++; @endphp
                                     @endforeach
@@ -184,6 +193,15 @@
                 return isNaN(v) ? 0 : v;
             }
 
+            // Tampilan angka: pemisah ribuan koma, desimal titik
+            function fmtNum(v, dec) {
+                if (dec === undefined) dec = 2;
+                return toNum(v).toLocaleString('en-US', {
+                    minimumFractionDigits: dec,
+                    maximumFractionDigits: dec
+                });
+            }
+
             // HITUNG ULANG SALDO AKHIR SAAT ANGKA DIUBAH (RUMUS FORM B0001)
             function recalcRow(tr) {
                 var opening = toNum(tr.find('input[name*="[OpeningForeign]"]').val());
@@ -195,11 +213,25 @@
                 var closing = opening + buy - sell;
                 var closingIdr = (ccy === 'JPY') ? (closing * rate) / 100 : closing * rate;
 
-                tr.find('.closing-f').val(Math.round(closing * 100) / 100);
-                tr.find('.closing-r').val(Math.round(closingIdr));
+                tr.find('.closing-f').val(fmtNum(closing));
+                tr.find('.closing-r').val(fmtNum(closingIdr));
             }
 
             $('#grid-bi').on('input', 'input.num', function () {
+                recalcRow($(this).closest('tr'));
+            });
+
+            // Saat diklik, pemisah ribuan dilepas supaya angka mudah diketik ulang;
+            // begitu pindah kolom, tampilannya diformat lagi.
+            $('#grid-bi').on('focus', 'input.num', function () {
+                var v = toNum($(this).val());
+                $(this).val(v === 0 ? '' : v);
+                $(this).select();
+            });
+
+            $('#grid-bi').on('blur', 'input.num', function () {
+                var dec = $(this).hasClass('rate') ? 4 : 2;
+                $(this).val(fmtNum($(this).val(), dec));
                 recalcRow($(this).closest('tr'));
             });
 
