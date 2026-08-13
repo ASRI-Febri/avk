@@ -222,6 +222,21 @@
             callAjaxModalView(url,data);
         }
 
+        function linkDocument(idx)
+        {
+            var url = "{{ url('fm-financial-payment-detail/link-document') }}"+'/'+idx;
+
+            // GET CURRENT SCROLL TOP POSITION
+            getScrollPosition();
+
+            var data = {
+                "_token": $('#_token').val(),
+                "IDX_T_FinancialPaymentDetail": idx
+            }
+
+            callAjaxModalView(url,data);
+        }
+
         function allocateDetail(idx)
         {
             //alert('Delete ' + idx);

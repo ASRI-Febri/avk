@@ -131,14 +131,37 @@ class SalesOrderPaymentController extends MyController
             $this->sp_getdata = '[dbo].[USP_MC_SalesOrder_Info]';
             $this->data['header'] = (object) $this->get_detail_by_id($request->IDX_T_SalesOrder)[0];
 
+            // PEMBAYARAN HANYA UNTUK NOTA PENJUALAN YANG SUDAH APPROVED.
+            // Selama masih Draft nomornya masih DRAFT-xxxx dan akan berubah saat
+            // approval, sehingga DocumentNo yang tersimpan di penerimaan jadi basi.
+            // Penolakan yang sebenarnya ada di [USP_MC_SalesOrder_Payment];
+            // pemeriksaan di sini supaya user langsung dapat pesannya.
+            if (trim($this->data['header']->SOStatus ?? '') !== 'A')
+            {
+                $this->data['form_desc'] = 'Input Pembayaran';
+                $this->data['message_title'] = 'Nota penjualan belum di-approve';
+                $this->data['message_body'] = 'Nota '.trim($this->data['header']->SONumber ?? '')
+                    .' masih berstatus '.trim($this->data['header']->StatusDesc ?? 'Draft')
+                    .'. Pembayaran hanya bisa diinput untuk nota penjualan yang sudah Approved.';
+
+                return view('layouts/message_modal_form', $this->data);
+            }
+
             // SET DEFAULT VALUE
             $this->data['fields']->IDX_T_FinancialReceiveHeader = '0';
             $this->data['fields']->IDX_M_DocumentType = '0';
             $this->data['fields']->IDX_M_FinancialAccount = '0';
             $this->data['fields']->IDX_T_SalesOrder = $request->IDX_T_SalesOrder;  
             $this->data['fields']->ReceiveAmount = '0.00';     
-            $this->data['fields']->PaymentNotes = ''; 
-            $this->data['fields']->ReceiveDate = date('Y-m-d');            
+            $this->data['fields']->PaymentNotes = '';
+
+            // DEFAULT TANGGAL PEMBAYARAN MENGIKUTI TANGGAL TRANSAKSI PENJUALAN,
+            // bukan tanggal hari ini. Kalau SODate kosong, jatuh ke tanggal hari ini.
+            $so_date = isset($this->data['header']->SODate) ? trim($this->data['header']->SODate) : '';
+            $this->data['fields']->ReceiveDate = $so_date !== '' && strtotime($so_date)
+                ? date('Y-m-d', strtotime($so_date))
+                : date('Y-m-d');
+
             $this->data['fields']->RecordStatus = 'A';
 
             return $this->show_form(0, 'create');

@@ -235,6 +235,9 @@ Route::post('/fm-financial-receive-detail/save', 'Finance\FinancialReceiveDetail
 Route::get('/fm-financial-receive-detail/reload/{id}', 'Finance\FinancialReceiveDetailController@reload'); // RELOAD TABLE AFTER SAVE
 Route::post('fm-financial-receive-detail/delete/{id?}', 'Finance\FinancialReceiveDetailController@delete');
 Route::post('/fm-financial-receive-detail/save-delete', 'Finance\FinancialReceiveDetailController@save_delete');
+Route::post('/fm-financial-receive-detail/link-document/{id}', 'Finance\FinancialReceiveDetailController@link_document');
+Route::post('/fm-financial-receive-detail/save-link-document', 'Finance\FinancialReceiveDetailController@save_link_document');
+Route::post('/fm-financial-receive-detail/search-document', 'Finance\FinancialReceiveDetailController@search_document');
 Route::post('/fm-financial-receive-detail/create-allocation/{id}', 'Finance\FinancialReceiveDetailController@create_allocation');
 Route::post('/fm-financial-receive-detail/update-allocation/{id}', 'Finance\FinancialReceiveDetailController@update_allocation');
 Route::post('/fm-financial-receive-detail/save-allocation', 'Finance\FinancialReceiveDetailController@save_allocation');
@@ -312,6 +315,9 @@ Route::post('/fm-financial-payment-detail/save', 'Finance\FinancialPaymentDetail
 Route::get('/fm-financial-payment-detail/reload/{id}', 'Finance\FinancialPaymentDetailController@reload'); // RELOAD TABLE AFTER SAVE
 Route::post('fm-financial-payment-detail/delete/{id?}', 'Finance\FinancialPaymentDetailController@delete');
 Route::post('/fm-financial-payment-detail/save-delete', 'Finance\FinancialPaymentDetailController@save_delete');
+Route::post('/fm-financial-payment-detail/link-document/{id}', 'Finance\FinancialPaymentDetailController@link_document');
+Route::post('/fm-financial-payment-detail/save-link-document', 'Finance\FinancialPaymentDetailController@save_link_document');
+Route::post('/fm-financial-payment-detail/search-document', 'Finance\FinancialPaymentDetailController@search_document');
 Route::post('/fm-financial-payment-detail/create-allocation/{id}', 'Finance\FinancialPaymentDetailController@create_allocation');
 Route::post('/fm-financial-payment-detail/update-allocation/{id}', 'Finance\FinancialPaymentDetailController@update_allocation');
 Route::post('/fm-financial-payment-detail/save-allocation', 'Finance\FinancialPaymentDetailController@save_allocation');

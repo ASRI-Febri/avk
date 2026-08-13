@@ -208,9 +208,16 @@ class FinancialReceiveDetailController extends MyController
 
             $param['IDX_T_FinancialReceiveHeader'] = $data['IDX_T_FinancialReceiveHeader'];
             $param['IDX_M_Project'] = $data['IDX_M_Project'];
-            $param['IDX_M_DocumentType'] = 1;
-            $param['IDX_DocumentNo'] = $data['IDX_DocumentNo'];;
-            $param['DocumentNo'] = $data['DocumentNo'];;
+            // JANGAN TIMPA DOCUMENT TYPE YANG SUDAH ADA. Sebelumnya nilai ini
+            // dipaksa 1 (Sales Invoice), sehingga detail yang dibuat dari Sales
+            // Order valas (12) berubah jadi 1 begitu disunting di sini dan
+            // pembayarannya hilang dari laporan AR yang join-nya memakai
+            // document type. Baris baru tanpa dokumen tetap default 1.
+            $document_type = trim($data['IDX_M_DocumentType'] ?? '');
+
+            $param['IDX_M_DocumentType'] = $document_type !== '' && $document_type > 0 ? $document_type : 1;
+            $param['IDX_DocumentNo'] = $data['IDX_DocumentNo'];
+            $param['DocumentNo'] = $data['DocumentNo'];
             $param['COADetail'] = $data['IDX_M_COA'];
 
             $param['ReceiveAmount'] = (double)str_replace(',','',$data['ReceiveAmount']);
@@ -281,6 +288,107 @@ class FinancialReceiveDetailController extends MyController
 
             return $this->store($state, $param);
         }
+    }
+
+    // =========================================================================================
+    // LINK DOKUMEN
+    // Menghubungkan detail penerimaan yang DocumentNo-nya masih kosong dengan
+    // transaksi penjualan valas (Sales Order).
+    // =========================================================================================
+    public function link_document($id)
+    {
+        $this->data['form_id'] = 'FM-FRD-U';
+
+        $access = $this->check_permission($this->data['user_id'], $this->data['form_id'], 'R');
+
+        $this->data['form_title'] = 'Link Dokumen';
+        $this->data['form_sub_title'] = 'Link Penerimaan ke Transaksi Penjualan';
+        $this->data['form_desc'] = 'Link Penerimaan ke Transaksi Penjualan';
+        $this->data['state'] = 'update';
+
+        if ($access == TRUE)
+        {
+            $this->sp_getdata = '[dbo].[USP_CM_FinancialReceiveDetail_Info]';
+            $this->data['fields'] = $this->get_detail_by_id($id)[0];
+
+            $this->data['fields']->ReceiveAmount = number_format($this->data['fields']->ReceiveAmount,2,'.',',');
+
+            // URL
+            $this->data['url_save_modal'] = url('/fm-financial-receive-detail/save-link-document');
+            $this->data['url_search_document'] = url('/fm-financial-receive-detail/search-document');
+
+            // BUTTON SAVE
+            $this->data['button_save_status'] = '';
+            $this->data['button_change_status'] = '';
+
+            $this->data['form_remark'] = 'Link Dokumen Penerimaan';
+            $this->data['view'] = 'finance/financial_receive_detail_link_form';
+            return view($this->data['view'], $this->data);
+        }
+        else
+        {
+            return $this->show_no_access_modal($this->data);
+        }
+    }
+
+    public function save_link_document(Request $request)
+    {
+        $this->sp_update = '[dbo].[USP_CM_FinancialReceiveDetail_LinkDocument]';
+        $this->next_action = 'reload';
+        $this->next_url = url('/fm-financial-receive-detail/reload');
+
+        $validator = Validator::make($request->all(), [
+            'IDX_T_FinancialReceiveDetail' => 'required',
+            'IDX_M_DocumentType' => 'required',
+            'IDX_DocumentNo' => 'required',
+            'DocumentNo' => 'required',
+        ],[
+            'IDX_M_DocumentType.required' => 'Transaksi penjualan belum dipilih!',
+            'IDX_DocumentNo.required' => 'Transaksi penjualan belum dipilih!',
+            'DocumentNo.required' => 'Transaksi penjualan belum dipilih!',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validation_fails($validator->errors(), $request->input('IDX_T_FinancialReceiveDetail'));
+        } else {
+
+            $data = $request->all();
+
+            // URUTAN PARAMETER HARUS SAMA DENGAN SP
+            $param['IDX_T_FinancialReceiveDetail'] = $data['IDX_T_FinancialReceiveDetail'];
+            $param['IDX_M_DocumentType'] = $data['IDX_M_DocumentType'];
+            $param['IDX_DocumentNo'] = $data['IDX_DocumentNo'];
+            $param['DocumentNo'] = 'XXX'.trim($data['DocumentNo']);
+            $param['UserID'] = 'XXX'.$this->data['user_id'];
+
+            return $this->store('update', $param);
+        }
+    }
+
+    // PENCARIAN TRANSAKSI PENJUALAN UNTUK AUTOCOMPLETE DI MODAL LINK DOKUMEN
+    public function search_document(Request $request)
+    {
+        $param['TransactionType'] = 'XXXR'; // R = Financial Receive -> Sales Order
+        $param['SearchValue'] = 'XXX'.trim($request->input('q',''));
+        $param['RowLimit'] = 20;
+
+        $records = $this->exec_sp('USP_CM_FinancialDetail_DocumentSearch',$param,'list','sqlsrv');
+
+        $items = array();
+
+        foreach ($records as $row)
+        {
+            $items[] = array(
+                'label' => $row->DocumentNo.'  |  '.$row->DocumentDate.'  |  '.$row->PartnerName
+                    .'  |  '.number_format($row->DocumentAmount,2,'.',','),
+                'value' => $row->DocumentNo,
+                'IDX_M_DocumentType' => $row->IDX_M_DocumentType,
+                'IDX_DocumentNo' => $row->IDX_DocumentNo,
+                'DocumentNo' => $row->DocumentNo,
+            );
+        }
+
+        echo json_encode($items);
     }
 
     // =========================================================================================

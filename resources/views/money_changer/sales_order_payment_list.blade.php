@@ -44,7 +44,17 @@
                 <td>{{ date('d M Y', strtotime($row->ReceiveDate)) }}</td>
                 <td>{{ $row->FinancialAccountDesc }}</td>
                 <td>{{ $row->RemarkHeader }}</td>
-                <td>{{ $row->StatusDesc }}</td>
+                <td class="text-center">
+                    @if($row->ReceiveStatus == 'A')
+                        <x-badge-success :label="$row->StatusDesc" />
+                    @elseif($row->ReceiveStatus == 'D')
+                        <x-badge-secondary :label="$row->StatusDesc" />
+                    @elseif($row->ReceiveStatus == 'V' || $row->ReceiveStatus == 'C')
+                        <x-badge-danger :label="$row->StatusDesc" />
+                    @else
+                        <x-badge-secondary :label="$row->StatusDesc" />
+                    @endif
+                </td>
                 <td class="text-end">{{ number_format($row->ReceiveAmount, 2, '.', ',') }}</td>
                
                 @if(!isset($show_action) || $show_action == TRUE)

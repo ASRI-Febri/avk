@@ -9,6 +9,10 @@
     <input type="hidden" id="IDX_T_FinancialReceiveDetail" name="IDX_T_FinancialReceiveDetail" value="{{ $fields->IDX_T_FinancialReceiveDetail }}"/>
     <input type="hidden" id="IDX_T_FinancialReceiveHeader" name="IDX_T_FinancialReceiveHeader" value="{{ $fields->IDX_T_FinancialReceiveHeader }}"/>
     <input type="hidden" id="IDX_M_COA" name="IDX_M_COA" value="{{ $fields->IDX_M_COA }}"/>
+    {{-- DOCUMENT TYPE IKUT DIKIRIM APA ADANYA SUPAYA TIDAK TERTIMPA SAAT DETAIL DISUNTING.
+         SEBELUMNYA CONTROLLER MEMAKSA NILAI 1 (Sales Invoice) SEHINGGA DETAIL YANG
+         TERTAUT KE SALES ORDER VALAS (12) PUTUS DARI LAPORAN AR. --}}
+    <input type="hidden" id="IDX_M_DocumentType" name="IDX_M_DocumentType" value="{{ $fields->IDX_M_DocumentType ?? '' }}"/>
     <input type="hidden" id="IDX_DocumentNo" name="IDX_DocumentNo" value="{{ $fields->IDX_DocumentNo ?? 0 }}"/>
     <input type="hidden" id="DocumentNo" name="DocumentNo" value="{{ $fields->DocumentNo ?? '' }}"/>
     <input type="hidden" id="COADesc" name="COADesc" value="{{ $fields->COADesc }}"/>  

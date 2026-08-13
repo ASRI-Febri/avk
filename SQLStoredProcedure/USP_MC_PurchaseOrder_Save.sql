@@ -6,33 +6,31 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- Revisi 13 Agustus 2026: Save tidak lagi menimpa nomor sistem dan status transaksi.
 
-IF OBJECT_ID('[dbo].[USP_MC_SalesOrder_Save]', 'P') IS NOT NULL
-	DROP PROCEDURE [dbo].[USP_MC_SalesOrder_Save]
+IF OBJECT_ID('[dbo].[USP_MC_PurchaseOrder_Save]', 'P') IS NOT NULL
+	DROP PROCEDURE [dbo].[USP_MC_PurchaseOrder_Save]
 GO
 
 -- =============================================
 -- Author:		Samuel Febrianto
 -- Create date: 04 Jun 2025
--- Description:	Create and update sales order for money changer 
+-- Description:	Create and update purchase order for money changer 
 -- =============================================
 
 /*		
-	EXEC [dbo].[USP_MC_SalesOrder_Save] 'Admin','Administrator','',0,'','','admin','A'	
-    EXEC [dbo].[USP_MC_SalesOrder_Save] 0,1,1,1,'','-','2025-06-16','Pembelian stok awal','D','it_febry','A'
+	EXEC [dbo].[USP_MC_PurchaseOrder_Save] 'Admin','Administrator','',0,'','','admin','A'	
+    EXEC [dbo].[USP_MC_PurchaseOrder_Save] 0,1,1,1,'','-','2025-06-16','Pembelian stok awal','D','it_febry','A'
 */
 
-CREATE PROCEDURE [dbo].[USP_MC_SalesOrder_Save] 
-	@IDX_T_SalesOrder		BIGINT,	
+CREATE PROCEDURE [dbo].[USP_MC_PurchaseOrder_Save] 
+	@IDX_T_PurchaseOrder		BIGINT,	
 	@IDX_M_Company				INT,
 	@IDX_M_Branch				INT,	
 	@IDX_M_Partner				INT,
-	@SONumber					VARCHAR(50),
+	@PONumber					VARCHAR(50),
     @ReferenceNo                VARCHAR(50),
-	@FundSource					VARCHAR(150),
-	@TransactionPurpose			VARCHAR(150),
-	@SODate						DATE,
-	@SONotes					VARCHAR(5000),
-	@SOStatus					CHAR(1),
+	@PODate						DATE,
+	@PONotes					VARCHAR(5000),
+	@POStatus					CHAR(1),
 	------------------------------------------------
 	@UserID						VARCHAR(50),
 	@RecordStatus				CHAR(1)		
@@ -84,7 +82,7 @@ BEGIN
 			INSERT INTO @TableLog VALUES ('error',0,'Nomor nota belum diisi!')
 		END
 
-		IF EXISTS(SELECT 1 FROM [dbo].[MC_T_SalesOrder] WHERE RTRIM(@ReferenceNo) = RTRIM(ReferenceNo) AND IDX_T_SalesOrder <> @IDX_T_SalesOrder)
+		IF EXISTS(SELECT 1 FROM [dbo].[MC_T_PurchaseOrder] WHERE RTRIM(@ReferenceNo) = RTRIM(ReferenceNo) AND IDX_T_PurchaseOrder <> @IDX_T_PurchaseOrder)
 		BEGIN
 			INSERT INTO @TableLog VALUES ('error',0,'Nomor nota sudah digunakan!')
 		END
@@ -95,75 +93,67 @@ BEGIN
 		IF @_CountLog = 0
 		BEGIN 
 
-			IF @IDX_T_SalesOrder = 0
+			IF @IDX_T_PurchaseOrder = 0
 			BEGIN
 
-				INSERT INTO [dbo].[MC_T_SalesOrder]
+				INSERT INTO [dbo].[MC_T_PurchaseOrder]
 				   ([IDX_M_Company]
 				   ,[IDX_M_Branch]
 				   ,[IDX_M_Partner]
-				   ,[IDX_M_DocumentType]
-				   ,[SONumber]
+				   ,[PONumber]
                    ,[ReferenceNo]
-				   ,[FundSource]
-				   ,[TransactionPurpose]
-				   ,[SODate]
-				   ,[SONotes]
-				   ,[SOStatus]                   
+				   ,[PODate]
+				   ,[PONotes]
+				   ,[POStatus]                   
 				   ,[UCreate]
 				   ,[DCreate]				   
 				   ,[RecordStatus])
-			 VALUES
+			 	VALUES
 				   (@IDX_M_Company
                    ,@IDX_M_Branch
 				   ,@IDX_M_Partner
-				   ,12
-				   ,@SONumber
+				   ,@PONumber
                    ,@ReferenceNo
-				   ,@FundSource
-				   ,@TransactionPurpose
-				   ,@SODate
-                   ,@SONotes
-				   ,@SOStatus
+				   ,@PODate
+                   ,@PONotes
+				   ,@POStatus
 				   ,@UserID
 				   ,GETDATE()			  
 				   ,@RecordStatus)
 				   				
-				SET @IDX_T_SalesOrder = (SELECT SCOPE_IDENTITY())
+				SET @IDX_T_PurchaseOrder = (SELECT SCOPE_IDENTITY())
 
-				UPDATE [dbo].[MC_T_SalesOrder]
-				SET SONumber = 'DRAFT-' + RTRIM(CONVERT(VARCHAR,@IDX_T_SalesOrder))
-				WHERE IDX_T_SalesOrder = @IDX_T_SalesOrder
+				UPDATE [dbo].[MC_T_PurchaseOrder]
+				SET PONumber = 'DRAFT-' + RTRIM(CONVERT(VARCHAR,@IDX_T_PurchaseOrder))
+				WHERE IDX_T_PurchaseOrder = @IDX_T_PurchaseOrder
 
 			END
 			ELSE
 			BEGIN
 
-				-- SONumber dan SOStatus SENGAJA TIDAK DIIKUTSERTAKAN.
+				-- PONumber dan POStatus SENGAJA TIDAK DIIKUTSERTAKAN.
 				-- Keduanya milik sistem: nomor dibuat saat approval
-				-- ([USP_MC_SalesOrder_Approve]) dan status diatur oleh proses
+				-- ([USP_MC_PurchaseOrder_Approve]) dan status diatur oleh proses
 				-- approve/reverse. Dulu keduanya ditimpa dari hidden field form,
 				-- sehingga halaman yang dibuka sebelum approval lalu di-Save bisa
-				-- mengembalikan nota penjualan yang sudah Approved menjadi
+				-- mengembalikan nota pembelian yang sudah Approved menjadi
 				-- DRAFT-xxxx kembali, padahal kartu stok, jurnal dan pembayarannya
 				-- sudah terlanjur mengacu ke nomor lama.
-				UPDATE [dbo].[MC_T_SalesOrder] SET
+				UPDATE [dbo].[MC_T_PurchaseOrder] SET
 					 [IDX_M_Company] = @IDX_M_Company
 					,[IDX_M_Branch] = @IDX_M_Branch
 					,[IDX_M_Partner] = @IDX_M_Partner
                     ,[ReferenceNo] = @ReferenceNo
-					,[FundSource] = @FundSource
-					,[TransactionPurpose] = @TransactionPurpose
-					,[SODate] = @SODate	
-					,[SONotes] = @SONotes		
+					,[PODate] = @PODate	
+					,[PONotes] = @PONotes		
 					,[UModified] = @UserID
 					,[DModified] = GETDATE()
 					,[RecordStatus] = @RecordStatus
-				WHERE IDX_T_SalesOrder = @IDX_T_SalesOrder
+				WHERE IDX_T_PurchaseOrder = @IDX_T_PurchaseOrder
 
 			END
 		
-			INSERT INTO @TableLog VALUES ('success', @IDX_T_SalesOrder, 'Data Sudah Disimpan')
+			INSERT INTO @TableLog VALUES ('success', @IDX_T_PurchaseOrder, 'Data Sudah Disimpan')
 		END 
 
 		SELECT * FROM @TableLog

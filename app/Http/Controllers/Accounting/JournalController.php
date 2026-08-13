@@ -63,7 +63,8 @@ class JournalController extends MyController
         $this->data['table_footer'] = array('','IDX_M_Company','CompanyName','IDX_M_Branch','BranchName','',
             '','PartnerDesc','ReferenceNo','VoucherNo','JournalDate','RemarkHeader','','PostingStatusDesc','Action');
 
-        $this->data['array_filter'] = array('IDX_M_Company','IDX_M_Branch','ReferenceNo','VoucherNo','RemarkHeader','PostingStatus','PartnerDesc');
+        $this->data['array_filter'] = array('IDX_M_Company','IDX_M_Branch','ReferenceNo','VoucherNo','RemarkHeader','PostingStatus','PartnerDesc',
+            'JournalDateFrom','JournalDateTo');
 
         // VIEW
         $this->data['view'] = 'accounting/journal_list';  
@@ -80,8 +81,13 @@ class JournalController extends MyController
         $array_filter['RemarkHeader'] = $request->input('RemarkHeader'); 
         $array_filter['PostingStatus'] = $request->input('PostingStatus');  
         $array_filter['PartnerDesc'] = $request->input('PartnerDesc'); 
-        $array_filter['UserID'] = 'XXX'.$this->data['user_id']; 
-                
+        $array_filter['UserID'] = 'XXX'.$this->data['user_id'];
+
+        // RANGE TANGGAL JOURNAL (format yyyy-mm-dd dari datepicker), urutan harus
+        // sesuai posisi parameter di [dbo].[USP_GL_Journal_List]
+        $array_filter['JournalDateFrom'] = 'XXX'.trim($request->input('JournalDateFrom', ''));
+        $array_filter['JournalDateTo'] = 'XXX'.trim($request->input('JournalDateTo', ''));
+
         // SET STORED PROCEDURE
         $this->sp_getinquiry = 'dbo.[USP_GL_Journal_List]';
 

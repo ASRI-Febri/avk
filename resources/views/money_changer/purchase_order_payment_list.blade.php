@@ -42,7 +42,17 @@
                 </td>
                 <td>{{ date('d M Y', strtotime($row->PaymentDate)) }}</td>
                 <td>{{ $row->RemarkDetail }}</td>
-                <td>{{ $row->StatusDesc }}</td>
+                <td class="text-center">
+                    @if($row->PaymentStatus == 'A')
+                        <x-badge-success :label="$row->StatusDesc" />
+                    @elseif($row->PaymentStatus == 'D')
+                        <x-badge-secondary :label="$row->StatusDesc" />
+                    @elseif($row->PaymentStatus == 'V' || $row->PaymentStatus == 'C')
+                        <x-badge-danger :label="$row->StatusDesc" />
+                    @else
+                        <x-badge-secondary :label="$row->StatusDesc" />
+                    @endif
+                </td>
                 <td class="text-end">{{ number_format($row->PaymentAmount, 2, '.', ',') }}</td>
                
                 @if(!isset($show_action) || $show_action == TRUE)

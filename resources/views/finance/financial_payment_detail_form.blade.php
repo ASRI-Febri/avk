@@ -8,6 +8,10 @@
 
     <input type="hidden" id="IDX_T_FinancialPaymentDetail" name="IDX_T_FinancialPaymentDetail" value="{{ $fields->IDX_T_FinancialPaymentDetail }}"/>
     <input type="hidden" id="IDX_T_FinancialPaymentHeader" name="IDX_T_FinancialPaymentHeader" value="{{ $fields->IDX_T_FinancialPaymentHeader }}"/>
+    {{-- DOCUMENT TYPE IKUT DIKIRIM APA ADANYA SUPAYA TIDAK TERTIMPA SAAT DETAIL DISUNTING.
+         SEBELUMNYA CONTROLLER MEMAKSA NILAI 2 (Purchase Invoice) SEHINGGA DETAIL YANG
+         TERTAUT KE PURCHASE ORDER VALAS (11) PUTUS DARI LAPORAN AP. --}}
+    <input type="hidden" id="IDX_M_DocumentType" name="IDX_M_DocumentType" value="{{ $fields->IDX_M_DocumentType ?? '' }}"/>
     <input type="hidden" id="IDX_DocumentNo" name="IDX_DocumentNo" value="{{ $fields->IDX_DocumentNo ?? 0 }}"/>
     <input type="hidden" id="DocumentNo" name="DocumentNo" value="{{ $fields->DocumentNo ?? '' }}"/>
 

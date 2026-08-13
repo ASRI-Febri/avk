@@ -28,10 +28,22 @@
         </div> 
         <div class="col-4">
             <div class="input-group">
-                <span class="input-group-text" id="inputGroup-sizing-default">Business Partner</span> 
+                <span class="input-group-text" id="inputGroup-sizing-default">Business Partner</span>
                 <input id="PartnerDesc" type="text" class="form-control" />
             </div>
-        </div>  
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Tgl Journal Dari</span>
+                <input id="JournalDateFrom" type="text" class="form-control datepicker2" placeholder="yyyy-mm-dd" autocomplete="off" />
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Tgl Journal Sampai</span>
+                <input id="JournalDateTo" type="text" class="form-control datepicker2" placeholder="yyyy-mm-dd" autocomplete="off" />
+            </div>
+        </div>
     </div>
 @endsection
 
