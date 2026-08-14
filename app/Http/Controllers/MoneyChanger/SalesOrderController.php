@@ -514,6 +514,27 @@ class SalesOrderController extends MyController
     }
 
     // DOWNLOAD PDF 
+    // =========================================================================================
+    // NOTA KASIR: tampilan HTML siap cetak ke dot matrix, dibuka di tab baru.
+    // Sengaja bukan PDF supaya ukuran huruf mengikuti driver printer dan hasilnya
+    // tetap tajam di Epson LX-310 (9 pin), bukan gambar yang di-dither.
+    // =========================================================================================
+    public function print_nota_kasir($id)
+    {
+        $param['IDX_T_SalesOrder'] = $id;
+
+        $this->data['header'] = $this->exec_sp('USP_MC_SalesOrder_NotaKasir', $param, 'list', 'sqlsrv');
+
+        if (!$this->data['header']) {
+            abort(404, 'Transaksi penjualan tidak ditemukan.');
+        }
+
+        $this->data['header'] = $this->data['header'][0];
+        $this->data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetail_List', $param, 'list', 'sqlsrv');
+
+        return view('money_changer/sales_order_nota_kasir', $this->data);
+    }
+
     public function download_pdf($id,Request $request)
     {
         $data = $request->all();

@@ -108,6 +108,7 @@ Route::post('/mc-sales-order/save-approve', 'MoneyChanger\SalesOrderController@s
 Route::post('/mc-sales-order/reverse', 'MoneyChanger\SalesOrderController@reverse');
 Route::post('/mc-sales-order/save-reverse', 'MoneyChanger\SalesOrderController@save_reverse');
 Route::get('/mc-sales-order/download-pdf/{id}', 'MoneyChanger\SalesOrderController@download_pdf');
+Route::get('/mc-sales-order/print-nota-kasir/{id}', 'MoneyChanger\SalesOrderController@print_nota_kasir');
 Route::post('/mc-sales-order/duplicate', 'MoneyChanger\SalesOrderController@duplicate');
 Route::post('/mc-sales-order/save-duplicate', 'MoneyChanger\SalesOrderController@save_duplicate');
 
