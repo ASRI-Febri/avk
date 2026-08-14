@@ -51,13 +51,19 @@
             line-height: 1.35;
         }
 
+        /*
+         * Kertas 1/2 A4 = 210 x 148 mm (A4 dipotong melintang).
+         * Lebar area cetak dikunci 196 mm supaya Chrome tidak perlu memutar
+         * halaman agar muat: begitu isi lebih lebar dari kertas, Chrome diam
+         * diam memilih landscape A4 dan hasilnya tercetak menyeberang lipatan.
+         */
         .lembar {
-            width: 225mm;                 /* area cetak 9.5" dikurangi margin traktor */
+            width: 196mm;
             margin: 0 auto;
-            padding: 6mm 8mm;
+            padding: 5mm 7mm;
         }
 
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 196mm; border-collapse: collapse; table-layout: fixed; }
         td, th { padding: 0; vertical-align: top; }
 
         .kop td { padding-bottom: 0; }
@@ -80,9 +86,9 @@
 
         .angka { text-align: right; white-space: nowrap; }
         .tebal { font-weight: bold; }
-        .ttd { margin-top: 12mm; }
+        .ttd { margin-top: 8mm; }
         .ttd td { text-align: center; }
-        .ttd .garis { padding-top: 18mm; }
+        .ttd .garis { padding-top: 14mm; }
 
         /* Panel bantu di layar, tidak ikut tercetak */
         .toolbar {
@@ -97,31 +103,46 @@
             border: 1px solid #adb5bd; background: #fff; border-radius: 3px;
             text-decoration: none; color: #212529;
         }
-        .toolbar .catatan { color: #495057; margin-left: 4px; }
+        .toolbar .catatan { color: #495057; margin-top: 6px; line-height: 1.5; }
 
         @media print {
             .toolbar { display: none; }
 
-            /* Continuous form 9.5 x 5.5 inci */
-            @page { size: 241mm 140mm; margin: 5mm 6mm; }
+            /* 1/2 A4 mendatar: 210 x 148 mm */
+            @page { size: 210mm 148mm; margin: 5mm 7mm; }
 
-            html, body { font-size: 10pt; }
+            html, body { font-size: 10pt; line-height: 1.25; }
             .lembar { width: auto; margin: 0; padding: 0; }
+            table { width: 100%; }
 
             /* 9 pin hanya bisa hitam atau kosong: paksa semuanya hitam pekat */
             * { color: #000 !important; background: transparent !important; }
+
+            /*
+             * Garis 1px di 120 dpi hanya sebaris jarum sehingga tercetak
+             * putus putus. 2px membuatnya padat tetapi tetap garis, bukan blok.
+             */
+            .rinci th, .rinci .total td { border-width: 2px; }
         }
     </style>
 </head>
 <body>
 
 <div class="toolbar">
-    <button type="button" onclick="window.print()">Cetak</button>
-    <a href="{{ url('mc-sales-order/update/'.$header->IDX_T_SalesOrder) }}">Kembali ke transaksi</a>
-    <span class="catatan">
-        Epson LX-310 &middot; continuous form 9,5" &times; 5,5" &middot;
-        di dialog cetak pilih ukuran kertas yang sama dan matikan "fit to page" agar kolom tetap lurus.
-    </span>
+    <div>
+        <button type="button" onclick="window.print()">Cetak</button>
+        <a href="{{ url('mc-sales-order/update/'.$header->IDX_T_SalesOrder) }}">Kembali ke transaksi</a>
+    </div>
+    <div class="catatan">
+        <b>Kertas 1/2 A4 (210 &times; 148 mm), Epson LX-310.</b>
+        Di dialog cetak Chrome atur: <b>Paper size</b> = A5 atau ukuran khusus 210 &times; 148 mm
+        (jangan A4, isinya akan diputar melintang) &middot;
+        <b>Scale</b> = Actual size / 100% &middot;
+        <b>Margins</b> = Default &middot;
+        <b>Headers and footers</b> jangan dicentang.
+        Di driver printer pilih kualitas <b>240 &times; 144 dpi (LQ)</b> agar huruf lebih tebal;
+        120 &times; 72 dpi adalah mode draft sehingga hasilnya tipis.
+    </div>
 </div>
 
 <div class="lembar">
@@ -129,7 +150,7 @@
     {{-- KOP: perusahaan di kiri, nasabah di kanan --}}
     <table class="kop">
         <tr>
-            <td width="55%">
+            <td style="width:112mm">
                 <div class="tebal">INVOICE</div>
                 <div class="tebal">{{ $header->CompanyName }}</div>
                 <div>{{ $header->CompanyAddress }}</div>
@@ -138,7 +159,7 @@
                     <div>NO: {{ $header->CompanyLicense }}</div>
                 @endif
             </td>
-            <td width="45%" class="kanan">
+            <td style="width:84mm" class="kanan">
                 <div class="tebal">{{ date('d F Y', strtotime($header->SODate)) }}</div>
                 <div class="tebal">{{ $header->PartnerName }}</div>
                 <div>{{ $header->PartnerAddress }}</div>
@@ -166,13 +187,13 @@
     <table class="rinci">
         <thead>
             <tr>
-                <th width="5%">No.</th>
-                <th width="10%">Currency</th>
-                <th width="30%">Description</th>
-                <th width="8%">Trx.</th>
-                <th width="15%" class="angka">Forex Amount</th>
-                <th width="13%" class="angka">Rate</th>
-                <th width="19%" class="angka">Local Amount</th>
+                <th style="width:9mm">No.</th>
+                <th style="width:21mm">Currency</th>
+                <th style="width:44mm">Description</th>
+                <th style="width:12mm">Trx.</th>
+                <th style="width:30mm" class="angka">Forex Amount</th>
+                <th style="width:28mm" class="angka">Rate</th>
+                <th style="width:38mm" class="angka">Local Amount</th>
             </tr>
         </thead>
         <tbody>
@@ -212,8 +233,8 @@
     {{-- TANDA TANGAN --}}
     <table class="ttd">
         <tr>
-            <td width="50%">Served By,</td>
-            <td width="50%">Customer,</td>
+            <td style="width:98mm">Served By,</td>
+            <td style="width:98mm">Customer,</td>
         </tr>
         <tr>
             <td class="garis">( {{ $header->AdminName }} )</td>
