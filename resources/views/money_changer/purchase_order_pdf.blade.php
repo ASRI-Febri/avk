@@ -1,227 +1,165 @@
-@extends('layouts.pdf')
+@php
+    /*
+     * NOTA PDF — isi dan tata letaknya sama persis dengan Nota Kasir
+     * (money_changer/purchase_order_nota_kasir.blade.php), bedanya keluarannya PDF
+     * untuk diarsip atau dikirim ke nasabah, bukan untuk dicetak ke dot matrix.
+     *
+     * Angka totalnya dihitung di PurchaseOrderController::nota_data() supaya kedua
+     * nota tidak pernah berbeda isinya.
+     *
+     * Ditulis untuk dompdf: hanya tabel dan CSS sederhana, tanpa flexbox,
+     * lebar kolom memakai persen, dan kertas A5 mendatar (210 x 148 mm)
+     * diatur di controller lewat setPaper().
+     */
 
-@section('title')
-    {{ $fields->PONumber }}
-@endsection
+    $baris = $records_detail ?? [];
 
-@section('content')    
+    $rp = function ($nilai, $desimal = 2) {
+        return number_format((float) $nilai, $desimal, '.', ',');
+    };
+@endphp
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <title>Nota {{ $header->PONumber }}</title>
+    <style>
+        @page { margin: 6mm 7mm; }
 
-    <div style="float:left;width:60%">
-        
-        {{-- <img src="{{ $img_logo }}" width="{{ $img_logo_w }}" height="{{ $img_logo_h }}" />
-        <br> --}}
-        <table class="noborder">
-            <tr class="noborder nopadding">                
-                <td class="td-85 bold noborder nopadding param-key">
-                    <span style="display:block;">PT. {{ strtoupper($fields->CompanyName) }}</span>
-                </td>
-            </tr>
-            <tr class="noborder nopadding">
-                <td class="td-85 bold noborder nopadding param-value">
-                    <span style="display:block;">{{ $fields->LegalAddress }}</span>
-                    
-                    <span style="display:block;">Phone: {{ $fields->Phone }} </span>  
-                    <span style="display:block;">Whatsapp: {{ $fields->WhatsappNo }} </span>                   
-                </td>
-            </tr>            
-        </table>  
-    </div>
+        body {
+            margin: 0;
+            padding: 0;
+            color: #000;
+            font-family: "Courier", "Courier New", monospace;
+            font-size: 9.5pt;
+            line-height: 1.3;
+        }
 
-    <div style="float:left;width:40%">
-        <h2>Nota Pembelian Valas</h2>
-        <table class="noborder nopadding">
-            <tr class="noborder nopadding">
-                <td class="td-20 bold noborder nopadding param-key">No Nota</td>
-                <td class="td-50 bold noborder nopadding param-value">: {{ $fields->ReferenceNo }}</td>
-            </tr>
-            <tr class="noborder nopadding">
-                <td class="td-20 bold noborder nopadding param-key">No System</td>
-                <td class="td-50 bold noborder nopadding param-value">: {{ $fields->PONumber }}</td>
-            </tr>
-            <tr class="noborder">
-                <td class="td-20 bold noborder nopadding param-key">Tanggal</td>
-                <td class="td-50 bold noborder nopadding param-value">: {{ date('d M Y',strtotime($fields->PODate)) }}</td>
-            </tr>
-        </table>
-        
-    </div>
+        table { width: 100%; border-collapse: collapse; }
+        td, th { padding: 0; vertical-align: top; }
 
-    <br>
+        .kop td { padding-bottom: 0; }
+        .kop .kanan { padding-left: 6mm; }
 
-    {{-- <div style="float:left; width:50%">
-        <p><strong>Vendor</strong></p>
-        <p>{{ $fields->PartnerName }}</p>
-        <p>{{ $fields->PartnerStreet }}</p>
-        <p>{{ $fields->PartnerPhone }}</p>
-    </div>
+        .rinci { margin-top: 3mm; }
+        .rinci th {
+            border-top: 1.5px solid #000;
+            border-bottom: 1.5px solid #000;
+            padding: 1mm;
+            text-align: left;
+            font-weight: bold;
+        }
+        .rinci td { padding: 0.6mm 1mm; }
+        .rinci .total td {
+            border-top: 1.5px solid #000;
+            border-bottom: 1.5px solid #000;
+            padding: 1mm;
+        }
 
-    <div style="float:left; width:50%; margin-bottom:5px;">       
-        <p><strong>Shipping Address</strong></p>
-        <p>{{ $fields->ShippingAddress }}</p>
-    </div>
+        .angka { text-align: right; }
+        .tebal { font-weight: bold; }
 
-    <br/> --}}
+        .ttd { margin-top: 10mm; }
+        .ttd td { text-align: center; }
+        .ttd .garis { padding-top: 16mm; }
+    </style>
+</head>
+<body>
 
-    {{-- <div style="float:left;width:60%">
-        <span class="bold" style="display:block;">Shipping Address</span>
-        <span>{{ $fields->ShippingAddress }}</span>
-
-        @if($fields->IDX_M_Project > 1)
-        <br><br>
-        <tr class="noborder">
-            <td class="td-50 noborder param-value">Project {{ $fields->ProjectName }}</td>
-            
+    {{-- KOP: perusahaan di kiri, nasabah di kanan --}}
+    <table class="kop">
+        <tr>
+            <td width="56%">
+                <div class="tebal">INVOICE</div>
+                <div class="tebal">{{ $header->CompanyName }}</div>
+                <div>{{ $header->CompanyAddress }}</div>
+                <div>{{ $header->CompanyAddress2 }}</div>
+                @if($header->CompanyLicense !== '')
+                    <div>NO: {{ $header->CompanyLicense }}</div>
+                @endif
+            </td>
+            <td width="44%" class="kanan">
+                <div class="tebal">{{ date('d F Y', strtotime($header->PODate)) }}</div>
+                <div class="tebal">{{ $header->PartnerName }}</div>
+                <div>{{ $header->PartnerAddress }}</div>
+                <div>{{ $header->PartnerAddress2 }}</div>
+                @if($header->PartnerPhone !== '')
+                    <div>{{ $header->PartnerPhone }}</div>
+                @endif
+            </td>
         </tr>
-        @endif
-    </div> --}}
-
-    <div style="float:left;width:25%">
-        <span class="bold" style="display:block;">Beli Dari</span>
-        <span style="display:block;">{{ $fields->PartnerName }}</span>
-        
-    </div>
-    <div style="float:left;width:25%">
-        <span class="bold" style="display:block;">No KTP</span>
-        <span style="display:block;">{{ $fields->SingleIdentityNumber }}</span>
-        
-    </div>
-    <div style="float:left;width:25%">
-        <span class="bold" style="display:block;">Sumber Dana</span>
-        <span style="display:block;">{{ $fields->FundSource }}</span>
-        
-    </div>
-    <div style="float:left;width:25%">
-        <span class="bold" style="display:block;">Tujuan Transaksi</span>
-        <span style="display:block;">{{ $fields->TransactionPurpose }}</span>
-        
-    </div>
-    <br>
-    <div style="float:left;width:50%">
-        <span class="bold" style="display:block;">Catatan</span>
-        <span style="display:block;">{{ $fields->PONotes }}</span>
-        
-    </div>
-
-
-    {{-- <br>
-
-    <table class="noborder nopadding">
-        <tr class="noborder nopadding">
-            <td class="td-50 bold noborder nopadding param-key">Vendor</td>
-            <td class="td-50 bold noborder nopadding param-key">Shipping Address</td>
+        <tr>
+            <td>No. Faktur / Referensi : {{ $header->ReferenceNo !== '' ? $header->ReferenceNo : $header->PONumber }}</td>
+            <td class="kanan">
+                @if($header->PartnerNIK !== '')
+                    NIK : {{ $header->PartnerNIK }}
+                @endif
+            </td>
         </tr>
-        <tr class="noborder">
-            <td class="td-50 noborder nopadding param-value">{{ $fields->PartnerName }}</td>
-            <td class="td-50 noborder nopadding param-value">{{ $fields->ShippingAddress }}</td>
+        <tr>
+            <td>No. Nota Sistem : {{ $header->PONumber }}</td>
+            <td class="kanan angka">Admin : {{ $header->AdminName }}</td>
         </tr>
-        <tr class="noborder">
-            <td class="td-50 noborder nopadding param-value">{{ $fields->PartnerStreet }}</td>
-            <td class="td-50 noborder nopadding param-key">PO Description</td>
-        </tr>
-        <tr class="noborder">
-            <td class="td-50 noborder nopadding param-value">{{ $fields->PartnerPhone }}</td>
-            <td class="td-50 noborder nopadding param-value">{{ $fields->PODescription }}</td>
-        </tr>
-        @if($fields->IDX_M_Project > 1)
-        <tr class="noborder">
-            <td class="td-50 noborder param-value">Project {{ $fields->ProjectName }}</td>
-            
-        </tr>
-        @endif
-    </table> --}}
+    </table>
 
-    <br>
-
-   
-   
-    <table>
+    {{-- RINCIAN TRANSAKSI --}}
+    <table class="rinci">
         <thead>
-            <tr>   
-                <td class="bold">No</td>
-                <td class="bold">Keterangan</td>
-                <td class="bold text-right">Nilai Tukar</td>
-                <td class="bold text-right">Nilai Valas</td>
-                <td class="bold text-right">Nilai Rupiah</td>
-            </tr>
-        </thead>
-        <tbody>
-            @if($records_detail)
-
-            @php 
-                $seq = 0; 
-
-                $subtotal_foreign_amount = 0;
-                $subtotal_base_amount = 0;			
-                
-            @endphp
-
-            @foreach($records_detail as $row)
-
-            @php 
-                $seq += 1;
-                $url_delete = url('mc-purchase-order-detail/delete/'.$row->IDX_T_PurchaseOrderDetail); 
-
-                $subtotal_foreign_amount += ($row->ForeignAmount);
-                $subtotal_base_amount += ($row->ForeignAmount  * $row->ExchangeRate);
-                
-            @endphp
-            <tr>   
-                <td>{{ $seq }}</td>
-                <td>
-                    {{ $row->ValasSKU }} X {{ number_format($row->Quantity,0,'.',',') }}
-                </td>
-                <td class="text-right">
-                    {{ number_format($row->ExchangeRate, 2, '.', ',') }}
-                </td>  
-                <td class="text-right">
-                    {{ $row->ForeignCurrencyID . ' ' . number_format($row->ForeignAmount, 2, '.', ',') }}
-                </td> 
-                <td class="text-right">
-                    {{ $row->BaseCurrencyID . ' ' . number_format($row->ForeignAmount  * $row->ExchangeRate, 2, '.', ',') }}
-                </td>                   
-            </tr>
-            @endforeach
-            @endif
             <tr>
-                <td colspan="4" class="bold text-right">TOTAL</td>
-                <td class="bold text-right">{{ $row->BaseCurrencyID }} {{ number_format($subtotal_base_amount, 2, '.', ',') }}</td>
-            </tr>
-        </tbody>        
-    </table>
-    
-
-    <br>
-
-    <table>
-        <thead>
-            <tr>                
-                <td class="bold w-50 td-50">Catatan</td>
-                <td class="bold w-20 td-25 text-center">Teller</td>
-                <td class="bold w-20 td-25 text-center">Customer</td>
+                <th width="5%">No.</th>
+                <th width="11%">Currency</th>
+                <th width="22%">Description</th>
+                <th width="6%">Trx.</th>
+                <th width="16%" class="angka">Forex Amount</th>
+                <th width="15%" class="angka">Rate</th>
+                <th width="25%" class="angka">Local Amount</th>
             </tr>
         </thead>
         <tbody>
-            <tr>                
-                <td class="w-50">
-                    Harap periksa kembali transaksi Anda, pengaduan setelah meninggalkan loket tidak akan kami layani.
-                    <br>
-                    Sesuai ketentuan Bank Indonesia PIB No 12/3/210 dan PBI No 18/20/2016, Customer wajib memberikan 
-                    foto copy kartu identitas diri dan setiap transaksi minimum 25.000 USD, Customer wajib memberikan 
-                    informasi tujuan transaksi (underlying)
-                </td>
-                <td class="w-20">&nbsp;</td>
-                <td class="w-20">&nbsp;</td>
+            @foreach($baris as $i => $b)
+                <tr>
+                    <td>{{ $i + 1 }}</td>
+                    <td>{{ $b->ForeignCurrencyID }}</td>
+                    <td>{{ strtoupper($b->ValasName) }}</td>
+                    <td>Buy</td>
+                    <td class="angka">{{ $rp($b->ForeignAmount) }}</td>
+                    <td class="angka">{{ $rp($b->ExchangeRate) }}</td>
+                    <td class="angka">{{ $rp($b->BaseCurrencyAmount) }}</td>
+                </tr>
+            @endforeach
+
+            @if(count($baris) == 0)
+                <tr><td colspan="7">Tidak ada rincian transaksi.</td></tr>
+            @endif
+
+            <tr class="total">
+                <td colspan="4">({{ date('d/m/Y H:i:s', strtotime($header->DCreate)) }})</td>
+                <td class="angka">{{ $rp($total_valas) }}</td>
+                <td class="angka tebal">Total :</td>
+                <td class="angka tebal">{{ $rp($total_net) }}</td>
             </tr>
-        </tbody>        
+        </tbody>
     </table>
 
-    <br>   
-    <hr>
-    <br>
+    <div>
+        {{ $total_net >= 0 ? 'Diterima dari nasabah' : 'Dibayarkan kepada nasabah' }} :
+        Rp {{ $rp(abs($total_net)) }}
+        @if($header->PONotes !== '')
+            &middot; {{ $header->PONotes }}
+        @endif
+    </div>
 
-    <!-- Force a page break after the first copy -->
-    {{-- <div class="page-break"></div> --}}
+    {{-- TANDA TANGAN --}}
+    <table class="ttd">
+        <tr>
+            <td width="50%">Served By,</td>
+            <td width="50%">Customer,</td>
+        </tr>
+        <tr>
+            <td class="garis">( {{ $header->AdminName }} )</td>
+            <td class="garis">( {{ $header->PartnerName }} )</td>
+        </tr>
+    </table>
 
-    {{-- @include('money_changer.sales_order_page1_pdf') --}}
-
-@endsection
+</body>
+</html>

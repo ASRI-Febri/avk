@@ -74,6 +74,7 @@ Route::post('/mc-purchase-order/save-approve', 'MoneyChanger\PurchaseOrderContro
 Route::post('/mc-purchase-order/reverse', 'MoneyChanger\PurchaseOrderController@reverse');
 Route::post('/mc-purchase-order/save-reverse', 'MoneyChanger\PurchaseOrderController@save_reverse');
 Route::get('/mc-purchase-order/download-pdf/{id}', 'MoneyChanger\PurchaseOrderController@download_pdf');
+Route::get('/mc-purchase-order/print-nota-kasir/{id}', 'MoneyChanger\PurchaseOrderController@print_nota_kasir');
 Route::post('/mc-purchase-order/duplicate', 'MoneyChanger\PurchaseOrderController@duplicate');
 Route::post('/mc-purchase-order/save-duplicate', 'MoneyChanger\PurchaseOrderController@save_duplicate');
 

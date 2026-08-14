@@ -504,6 +504,54 @@ class PurchaseOrderController extends MyController
         }   
     }
 
+    // =========================================================================================
+    // NOTA KASIR: tampilan HTML siap cetak ke dot matrix, dibuka di tab baru.
+    // Sengaja bukan PDF supaya tercetak sebagai teks di Epson LX-310 (9 pin),
+    // bukan gambar yang di-dither.
+    // =========================================================================================
+    public function print_nota_kasir($id)
+    {
+        $this->data = array_merge($this->data, $this->nota_data($id));
+
+        return view('money_changer/purchase_order_nota_kasir', $this->data);
+    }
+
+    /**
+     * Data nota: dipakai bersama oleh Nota Kasir (HTML, cetak dot matrix) dan
+     * Nota PDF, supaya isi keduanya tidak pernah berbeda.
+     *
+     * Semua baris transaksi pembelian bersifat Buy: perusahaan membeli valas
+     * dari nasabah, jadi total dari sisi nasabah selalu uang yang diterima.
+     */
+    private function nota_data($id)
+    {
+        $param['IDX_T_PurchaseOrder'] = $id;
+
+        $header = $this->exec_sp('USP_MC_PurchaseOrder_NotaKasir', $param, 'list', 'sqlsrv');
+
+        if (!$header) {
+            abort(404, 'Transaksi pembelian tidak ditemukan.');
+        }
+
+        $records_detail = $this->exec_sp('USP_MC_PurchaseOrderDetail_List', $param, 'list', 'sqlsrv');
+
+        $total_valas = 0;
+        $total_beli  = 0;
+
+        foreach ($records_detail as $baris) {
+            $total_valas += (float) $baris->ForeignAmount;
+            $total_beli  += (float) $baris->BaseCurrencyAmount;
+        }
+
+        return [
+            'header'         => $header[0],
+            'records_detail' => $records_detail,
+            'total_valas'    => $total_valas,
+            // Negatif: uang keluar dari perusahaan, dibayarkan kepada nasabah.
+            'total_net'      => -$total_beli,
+        ];
+    }
+
     // DOWNLOAD PDF 
     public function download_pdf($id,Request $request)
     {
@@ -516,20 +564,16 @@ class PurchaseOrderController extends MyController
     
     public function generate_pdf($data = array(), $return_type = 'stream')
     {
-        $data['img_logo_w'] = '142';
-        $data['img_logo_h'] = '60';
-        $data['img_logo'] = url('public/logo-avk.jpeg');
+        // Isi dan tata letaknya sama dengan Nota Kasir, hanya keluarannya PDF
+        $data = array_merge($data, $this->nota_data($data['IDX_T_PurchaseOrder']));
 
-        $this->sp_getdata = '[dbo].[USP_MC_PurchaseOrder_Info]';
-        $data['fields'] = $this->get_detail_by_id($data['IDX_T_PurchaseOrder'])[0];
-        
+        $data['fields'] = $data['header'];
         $data['show_action'] = FALSE;
 
-        // GET NUP RECORDS        
-        $param['IDX_T_PurchaseOrder'] = $data['IDX_T_PurchaseOrder'];
-        $data['records_detail'] = $this->exec_sp('USP_MC_PurchaseOrderDetail_List',$param,'list','sqlsrv');              
-
         $pdf = PDF::loadView('money_changer/purchase_order_pdf', $data);
+
+        // 1/2 A4 mendatar = 210 x 148 mm, sama dengan kertas nota kasir
+        $pdf->setPaper('A5', 'landscape');
 
         //return $pdf->download('test.pdf');        
 

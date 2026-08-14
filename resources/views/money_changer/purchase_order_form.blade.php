@@ -42,8 +42,18 @@
             <div class="dropdown-icon">
                 <i class="fa fa-file-pdf"></i>
             </div> 
-            <span class="dropdown-content">Print Pembelian</span>            
+            <span class="dropdown-content">Print Nota (PDF)</span>            
         </a>        
+
+        {{-- Nota kasir dibuka di tab baru sebagai HTML, bukan PDF, supaya tercetak
+             sebagai teks di printer dot matrix Epson LX-310 --}}
+        <a href="{{ url('mc-purchase-order/print-nota-kasir').'/'.$fields->IDX_T_PurchaseOrder }}" id="btn-print-nota-kasir"
+            target="_blank" class="dropdown-item text-success">
+            <div class="dropdown-icon">
+                <i class="fa fa-print"></i>
+            </div>
+            <span class="dropdown-content">Print Nota Kasir</span>
+        </a>
     </x-btn-action>
     @endif
 
