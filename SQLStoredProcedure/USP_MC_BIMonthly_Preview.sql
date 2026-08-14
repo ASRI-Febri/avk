@@ -26,9 +26,13 @@ GO
 --				EB HPP periode sebelumnya. Proses HPP dulu agar angka final.
 --
 --				Kurs tengah: dari MC_T_BIMiddleRate (upload website BI) pada tanggal
---				akhir bulan periode laporan (RateSource = 'BI'). Bila valuta belum ada
---				kursnya, fallback (BuyRate + SellRate) / 2 master currency
---				(RateSource = 'MASTER') dan bisa dikoreksi admin di layar preview.
+--				akhir bulan periode laporan (RateSource = 'BI'). Untuk valuta yang tidak
+--				ada di daftar kurs transaksi BI, dipakai kurs riil transaksi sendiri
+--				(RateSource = 'RIIL') sesuai pedoman LKPBU. Master hanya dipakai kalau
+--				valuta itu belum pernah ditransaksikan (RateSource = 'MASTER').
+--				Semua kurs masih bisa dikoreksi admin di layar preview.
+--				JPY memakai satuan per 100 mengikuti publikasi BI, dan saldo akhir
+--				rupiahnya otomatis dibagi 100.
 -- =============================================
 
 -- EXEC USP_MC_BIMonthly_Preview '202603'
@@ -80,13 +84,89 @@ BEGIN
 		AND RTRIM(ISNULL(C.CurrencyID,'')) <> 'IDR'
 
 	-- ============================================================
-	-- KURS TENGAH BI: DARI UPLOAD WEBSITE BI PADA TANGGAL AKHIR BULAN
+	-- KURS TENGAH, URUTAN SUMBER:
+	--   1. BI     : upload website BI pada tanggal akhir bulan periode laporan
+	--   2. RIIL   : kurs riil transaksi penyelenggara, sesuai pedoman LKPBU:
+	--               "Jika mata uang yang bersangkutan tidak ada pada daftar kurs
+	--               transaksi BI, maka kurs tengah untuk mata uang tersebut
+	--               menggunakan kurs riil transaksi Penyelenggara KUPVA Bukan Bank"
+	--               (mis. INR, MOP, QAR, TRY, TWD)
+	--   3. MASTER : rata rata kurs papan master, hanya kalau valuta itu belum
+	--               pernah ditransaksikan sama sekali
 	-- ============================================================
 	UPDATE #Data SET MiddleRate = R.MiddleRate, RateSource = 'BI'
 	FROM MC_T_BIMiddleRate R
 	INNER JOIN #Data ON #Data.CurrencyID = RTRIM(ISNULL(R.CurrencyID,''))
 	WHERE R.RateDate = @EndDate
 		AND RTRIM(ISNULL(R.RecordStatus,'')) = 'A'
+
+	-- (2) KURS RIIL TRANSAKSI PENYELENGGARA, untuk valuta yang tidak ada di
+	-- daftar kurs transaksi BI (mis. INR, MOP, QAR, TRY, TWD).
+	-- Kurs tengah = titik tengah antara kurs beli riil dan kurs jual riil
+	-- pada periode laporan, dihitung dari nilai rupiah dibagi nominal valuta
+	-- transaksi yang sudah Approved. Kalau hanya ada satu sisi, sisi itu yang
+	-- dipakai. Kalau periode laporan tidak ada transaksi sama sekali, dipakai
+	-- kurs riil dari periode terakhir yang ada transaksinya.
+	CREATE TABLE #KursRiil (
+		IDX_M_Currency	INT,
+		Periode			VARCHAR(6),
+		KursBeli		DECIMAL(18,6),
+		KursJual		DECIMAL(18,6),
+		KursTengah		DECIMAL(18,6)
+	)
+
+	INSERT INTO #KursRiil (IDX_M_Currency, Periode, KursBeli, KursJual, KursTengah)
+	SELECT X.IDX_M_Currency, X.Periode,
+		KursBeli	= CASE WHEN SUM(X.BeliValas) > 0 THEN SUM(X.BeliRupiah) / SUM(X.BeliValas) END,
+		KursJual	= CASE WHEN SUM(X.JualValas) > 0 THEN SUM(X.JualRupiah) / SUM(X.JualValas) END,
+		KursTengah	= CASE
+			WHEN SUM(X.BeliValas) > 0 AND SUM(X.JualValas) > 0
+				THEN ((SUM(X.BeliRupiah) / SUM(X.BeliValas)) + (SUM(X.JualRupiah) / SUM(X.JualValas))) / 2
+			WHEN SUM(X.BeliValas) > 0 THEN SUM(X.BeliRupiah) / SUM(X.BeliValas)
+			WHEN SUM(X.JualValas) > 0 THEN SUM(X.JualRupiah) / SUM(X.JualValas)
+		END
+	FROM (
+		SELECT V.IDX_M_Currency, Periode = LEFT(CONVERT(VARCHAR, O.PODate, 112), 6),
+			BeliValas = D.ForeignAmount, BeliRupiah = D.BaseCurrencyAmount,
+			JualValas = 0, JualRupiah = 0
+		FROM MC_T_PurchaseOrderDetail D WITH(NOLOCK)
+			INNER JOIN MC_T_PurchaseOrder O WITH(NOLOCK) ON O.IDX_T_PurchaseOrder = D.IDX_T_PurchaseOrder
+			INNER JOIN MC_M_Valas V WITH(NOLOCK) ON V.IDX_M_Valas = D.IDX_M_Valas
+		WHERE O.POStatus = 'A' AND O.PODate <= @EndDate
+			AND D.ForeignAmount > 0 AND D.BaseCurrencyAmount > 0
+		UNION ALL
+		SELECT V.IDX_M_Currency, LEFT(CONVERT(VARCHAR, O.SODate, 112), 6),
+			0, 0, D.ForeignAmount, D.BaseCurrencyAmount
+		FROM MC_T_SalesOrderDetail D WITH(NOLOCK)
+			INNER JOIN MC_T_SalesOrder O WITH(NOLOCK) ON O.IDX_T_SalesOrder = D.IDX_T_SalesOrder
+			INNER JOIN MC_M_Valas V WITH(NOLOCK) ON V.IDX_M_Valas = D.IDX_M_Valas
+		WHERE O.SOStatus = 'A' AND O.SODate <= @EndDate
+			AND D.ForeignAmount > 0 AND D.BaseCurrencyAmount > 0
+	) X
+	GROUP BY X.IDX_M_Currency, X.Periode
+
+	-- (2a) kurs riil periode laporan
+	UPDATE #Data SET
+		MiddleRate	= CASE WHEN #Data.CurrencyID = 'JPY' THEN K.KursTengah * 100 ELSE K.KursTengah END,
+		RateSource	= 'RIIL'
+	FROM #KursRiil K
+	INNER JOIN #Data ON #Data.IDX_M_Currency = K.IDX_M_Currency
+	WHERE #Data.RateSource <> 'BI' AND K.Periode = @ReportPeriod AND K.KursTengah > 0
+
+	-- (2b) belum ada transaksi di periode laporan: pakai periode terakhir yang ada
+	UPDATE #Data SET
+		MiddleRate	= CASE WHEN #Data.CurrencyID = 'JPY' THEN K.KursTengah * 100 ELSE K.KursTengah END,
+		RateSource	= 'RIIL'
+	FROM (
+		SELECT R.IDX_M_Currency, R.KursTengah
+		FROM #KursRiil R
+			INNER JOIN (SELECT IDX_M_Currency, Periode = MAX(Periode) FROM #KursRiil
+						WHERE KursTengah > 0 AND Periode <= @ReportPeriod
+						GROUP BY IDX_M_Currency) L
+				ON L.IDX_M_Currency = R.IDX_M_Currency AND L.Periode = R.Periode
+	) K
+	INNER JOIN #Data ON #Data.IDX_M_Currency = K.IDX_M_Currency
+	WHERE #Data.RateSource NOT IN ('BI','RIIL') AND K.KursTengah > 0
 
 	IF @HasCOGS = 1
 	BEGIN
