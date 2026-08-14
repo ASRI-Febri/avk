@@ -12,24 +12,9 @@
      *  - garis pemisah memakai garis tipis, bukan blok tebal
      */
 
+    // Angka totalnya dihitung di SalesOrderController::nota_data() supaya
+    // Nota Kasir dan Nota PDF memakai perhitungan yang sama persis.
     $baris = $records_detail ?? [];
-
-    $total_valas = 0;
-    $total_beli  = 0;   // valas dibeli dari nasabah -> perusahaan membayar
-    $total_jual  = 0;   // valas dijual ke nasabah   -> perusahaan menerima
-
-    foreach ($baris as $b) {
-        $total_valas += (float) $b->ForeignAmount;
-
-        if ((int) $b->IDX_M_TransactionType === 1) {
-            $total_beli += (float) $b->BaseCurrencyAmount;
-        } else {
-            $total_jual += (float) $b->BaseCurrencyAmount;
-        }
-    }
-
-    // Positif: nasabah membayar. Negatif: nasabah menerima uang.
-    $total_net = $total_jual - $total_beli;
 
     $rp = function ($nilai, $desimal = 2) {
         return number_format((float) $nilai, $desimal, '.', ',');

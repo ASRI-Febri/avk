@@ -521,18 +521,48 @@ class SalesOrderController extends MyController
     // =========================================================================================
     public function print_nota_kasir($id)
     {
+        $this->data = array_merge($this->data, $this->nota_data($id));
+
+        return view('money_changer/sales_order_nota_kasir', $this->data);
+    }
+
+    /**
+     * Data nota: dipakai bersama oleh Nota Kasir (HTML, cetak dot matrix) dan
+     * Nota PDF, supaya isi keduanya tidak pernah berbeda.
+     */
+    private function nota_data($id)
+    {
         $param['IDX_T_SalesOrder'] = $id;
 
-        $this->data['header'] = $this->exec_sp('USP_MC_SalesOrder_NotaKasir', $param, 'list', 'sqlsrv');
+        $header = $this->exec_sp('USP_MC_SalesOrder_NotaKasir', $param, 'list', 'sqlsrv');
 
-        if (!$this->data['header']) {
+        if (!$header) {
             abort(404, 'Transaksi penjualan tidak ditemukan.');
         }
 
-        $this->data['header'] = $this->data['header'][0];
-        $this->data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetail_List', $param, 'list', 'sqlsrv');
+        $records_detail = $this->exec_sp('USP_MC_SalesOrderDetail_List', $param, 'list', 'sqlsrv');
 
-        return view('money_changer/sales_order_nota_kasir', $this->data);
+        $total_valas = 0;
+        $total_beli  = 0;   // valas dibeli dari nasabah -> perusahaan membayar
+        $total_jual  = 0;   // valas dijual ke nasabah   -> perusahaan menerima
+
+        foreach ($records_detail as $baris) {
+            $total_valas += (float) $baris->ForeignAmount;
+
+            if ((int) $baris->IDX_M_TransactionType === 1) {
+                $total_beli += (float) $baris->BaseCurrencyAmount;
+            } else {
+                $total_jual += (float) $baris->BaseCurrencyAmount;
+            }
+        }
+
+        return [
+            'header'         => $header[0],
+            'records_detail' => $records_detail,
+            'total_valas'    => $total_valas,
+            // Positif: nasabah membayar. Negatif: nasabah menerima uang.
+            'total_net'      => $total_jual - $total_beli,
+        ];
     }
 
     public function download_pdf($id,Request $request)
@@ -546,22 +576,16 @@ class SalesOrderController extends MyController
     
     public function generate_pdf($data = array(), $return_type = 'stream')
     {
-        $data['img_logo_w'] = '142';
-        $data['img_logo_h'] = '60';
-        $data['img_logo'] = url('public/logo-quality.jpeg');
+        // Isi dan tata letaknya sama dengan Nota Kasir, hanya keluarannya PDF
+        $data = array_merge($data, $this->nota_data($data['IDX_T_SalesOrder']));
 
-        $this->sp_getdata = '[dbo].[USP_MC_SalesOrder_Info]';
-        $data['fields'] = $this->get_detail_by_id($data['IDX_T_SalesOrder'])[0];
-        
+        $data['fields'] = $data['header'];
         $data['show_action'] = FALSE;
 
-        // GET NUP RECORDS        
-        $param['IDX_T_SalesOrder'] = $data['IDX_T_SalesOrder'];
-        $data['records_detail'] = $this->exec_sp('USP_MC_SalesOrderDetail_List',$param,'list','sqlsrv');              
-
         $pdf = PDF::loadView('money_changer/sales_order_pdf', $data);
-        //$pdf->setPaper('A5','landscape');
-        $pdf->setPaper('A4','portrait');
+
+        // 1/2 A4 mendatar = 210 x 148 mm, sama dengan kertas nota kasir
+        $pdf->setPaper('A5', 'landscape');
 
         //return $pdf->download('test.pdf');        
 

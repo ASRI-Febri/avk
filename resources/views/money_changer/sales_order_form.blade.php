@@ -41,7 +41,7 @@
             <div class="dropdown-icon">
                 <i class="fa fa-file-pdf"></i>
             </div> 
-            <span class="dropdown-content">Print Nota</span>            
+            <span class="dropdown-content">Print Nota (PDF)</span>            
         </a>        
 
         {{-- Nota kasir dibuka di tab baru sebagai HTML, bukan PDF, supaya tercetak
