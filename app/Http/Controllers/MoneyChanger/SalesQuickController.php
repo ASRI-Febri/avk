@@ -124,14 +124,21 @@ class SalesQuickController extends MyController
      */
     private function akun_bawaan($jenis)
     {
-        $sql = "SELECT TOP 1 IDX_M_FinancialAccount
+        // Untuk transfer, Bank Mandiri didahulukan sesuai kebiasaan kasir; bank
+        // lain hanya dipakai kalau akun Mandiri tidak ada.
+        $sql = $jenis === 'CASH'
+            ? "SELECT TOP 1 IDX_M_FinancialAccount
                 FROM CM_M_FinancialAccount WITH(NOLOCK)
                 WHERE RTRIM(ISNULL(RecordStatus,'')) = 'A'
-                    AND " . ($jenis === 'CASH'
-                        ? "(FinancialAccountID LIKE 'CASH%' OR FinancialAccountDesc LIKE '%Kas%')"
-                        : "(FinancialAccountID LIKE 'BCA%' OR FinancialAccountID LIKE 'MAN%'
-                            OR FinancialAccountDesc LIKE 'Bank%')") . "
-                ORDER BY IDX_M_FinancialAccount";
+                    AND (FinancialAccountID LIKE 'CASH%' OR FinancialAccountDesc LIKE '%Kas%')
+                ORDER BY IDX_M_FinancialAccount"
+            : "SELECT TOP 1 IDX_M_FinancialAccount
+                FROM CM_M_FinancialAccount WITH(NOLOCK)
+                WHERE RTRIM(ISNULL(RecordStatus,'')) = 'A'
+                    AND (FinancialAccountID LIKE 'MAN%' OR FinancialAccountID LIKE 'BCA%'
+                        OR FinancialAccountDesc LIKE 'Bank%')
+                ORDER BY CASE WHEN FinancialAccountID LIKE 'MAN%' THEN 0 ELSE 1 END,
+                    IDX_M_FinancialAccount";
 
         $rows = DB::connection('sqlsrv')->select($sql);
 
