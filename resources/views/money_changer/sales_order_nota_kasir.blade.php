@@ -70,6 +70,10 @@
         }
 
         .angka { text-align: right; white-space: nowrap; }
+        /* Judul kolom angka ikut rata kanan; tanpa ini .rinci th yang
+           lebih spesifik menahannya tetap rata kiri sehingga judulnya tidak
+           sejajar dengan angkanya. */
+        .rinci th.angka { text-align: right; }
         .tebal { font-weight: bold; }
         .ttd { margin-top: 8mm; }
         .ttd td { text-align: center; }
