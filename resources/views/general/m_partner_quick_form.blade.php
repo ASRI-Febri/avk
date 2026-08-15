@@ -33,8 +33,10 @@
         <div class="col-md-6">
             <label class="form-label text-secondary">NIK <span class="text-danger">*</span></label>
             <input type="text" id="qp-SingleIdentityNumber" class="form-control"
-                placeholder="16 digit NIK" maxlength="64" inputmode="numeric" autocomplete="off">
-            <div class="form-text">NIK yang sudah terdaftar akan dipakai ulang, bukan dibuat kembar.</div>
+                placeholder="16 digit NIK, atau nomor paspor" maxlength="64" autocomplete="off">
+            <div class="form-text" id="qp-nik-info">
+                NIK harus 16 digit angka. NIK yang sudah terdaftar dipakai ulang, bukan dibuat kembar.
+            </div>
         </div>
 
         <div class="col-md-6">
@@ -118,6 +120,30 @@ $(function () {
             $tombol.prop('disabled', false).html('<i class="fas fa-save me-1"></i> Simpan &amp; Pakai');
         });
     }
+
+    // Hitungan digit tampil sambil mengetik: salah ketik NIK paling sering
+    // ketahuan dari jumlah digitnya, jauh sebelum tombol simpan ditekan.
+    $('#qp-SingleIdentityNumber').on('input', function () {
+        var isi   = $.trim(this.value);
+        var angka = /^[0-9]+$/.test(isi);
+        var $info = $('#qp-nik-info');
+
+        if (isi === '') {
+            $(this).removeClass('is-invalid is-valid');
+            $info.removeClass('text-danger').html(
+                'NIK harus 16 digit angka. NIK yang sudah terdaftar dipakai ulang, bukan dibuat kembar.');
+            return;
+        }
+
+        if (angka && isi.length !== 16) {
+            $(this).addClass('is-invalid').removeClass('is-valid');
+            $info.addClass('text-danger').text('Baru ' + isi.length + ' dari 16 digit.');
+            return;
+        }
+
+        $(this).removeClass('is-invalid').addClass('is-valid');
+        $info.removeClass('text-danger').text(angka ? 'NIK lengkap 16 digit.' : 'Diperlakukan sebagai nomor paspor.');
+    });
 
     $tombol.on('click', simpan);
 

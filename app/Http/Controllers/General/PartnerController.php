@@ -362,6 +362,25 @@ class PartnerController extends MyController
 
         $nama  = trim($request->input('PartnerName'));
         $nik   = trim($request->input('SingleIdentityNumber'));
+
+        // Bentuk nomor identitas diperiksa lebih dulu supaya salah ketik tidak
+        // lolos jadi data konsumen. NIK Indonesia selalu 16 digit angka; nomor
+        // berhuruf diperlakukan sebagai paspor dan hanya dibatasi panjangnya.
+        $pesan_nik = '';
+
+        if (ctype_digit($nik)) {
+            if (strlen($nik) !== 16) {
+                $pesan_nik = 'NIK harus 16 digit angka. Yang diisi ' . strlen($nik)
+                    . ' digit. Untuk paspor, ketik nomornya beserta hurufnya.';
+            }
+        } elseif (!preg_match('/^[A-Za-z0-9]{6,}$/', $nik)) {
+            $pesan_nik = 'Nomor identitas hanya boleh berisi huruf dan angka, minimal 6 karakter.';
+        }
+
+        if ($pesan_nik !== '') {
+            return response()->json(['flag' => 'error', 'message' => $pesan_nik]);
+        }
+
         $alamat = trim($request->input('Street'));
         $hp    = trim($request->input('MobilePhone'));
 
