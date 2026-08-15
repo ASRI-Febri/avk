@@ -26,12 +26,40 @@
     <meta charset="utf-8" />
     <title>Nota {{ $header->SONumber }}</title>
     <style>
+        /*
+         * Font nota: DejaVu Sans Mono, dimuat dari server sendiri.
+         *
+         * Courier New yang dipakai sebelumnya bergaris terlalu tipis. Diukur
+         * pada ukuran cetak yang sama, tintanya hanya sekitar separuh: 309
+         * piksel pekat berbanding 600. Di printer 9 jarum seperti LX-310,
+         * goresan setipis itu kehilangan titik sehingga huruf tampak pudar
+         * dan patah, terutama pada angka.
+         *
+         * Fontnya dimuat dari server, bukan mengandalkan yang terpasang di
+         * komputer kasir, supaya hasil cetak setiap unit sama persis. Lebar
+         * karakternya hampir identik dengan Courier (8.83 vs 8.80 piksel),
+         * jadi susunan kolom nota tidak bergeser.
+         */
+        @font-face {
+            font-family: 'NotaMono';
+            src: url('{{ URL::asset('assets/fonts/DejaVuSansMono.ttf') }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'NotaMono';
+            src: url('{{ URL::asset('assets/fonts/DejaVuSansMono-Bold.ttf') }}') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
             background: #fff;
             color: #000;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'NotaMono', 'Lucida Console', Consolas, 'Courier New', monospace;
             font-size: 11pt;
             line-height: 1.35;
         }
@@ -52,7 +80,7 @@
         td, th { padding: 0; vertical-align: top; }
 
         .kop td { padding-bottom: 0; }
-        .kop .kanan { padding-left: 8mm; }
+        .kop .kanan { padding-left: 6mm; }
 
         .rinci { margin-top: 2mm; }
         .rinci th {
@@ -139,7 +167,8 @@
     {{-- KOP: perusahaan di kiri, nasabah di kanan --}}
     <table class="kop">
         <tr>
-            <td style="width:112mm">
+            {{-- 116mm: alamat perusahaan 48 karakter butuh 110mm, sisanya jarak aman --}}
+            <td style="width:116mm">
                 <div class="tebal">INVOICE</div>
                 <div class="tebal">{{ $header->CompanyName }}</div>
                 <div>{{ $header->CompanyAddress }}</div>

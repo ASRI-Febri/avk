@@ -30,7 +30,13 @@
             margin: 0;
             padding: 0;
             color: #000;
-            font-family: "Courier", "Courier New", monospace;
+            /*
+             * DejaVu Sans Mono ikut disertakan dompdf dan ditanam ke dalam PDF,
+             * jadi hasilnya sama di komputer mana pun. Courier yang dipakai
+             * sebelumnya bergaris tipis dan pudar bila dicetak ke printer 9
+             * jarum. Lebar karakternya praktis sama sehingga kolom tidak bergeser.
+             */
+            font-family: "DejaVu Sans Mono", "Courier New", monospace;
             font-size: 9.5pt;
             line-height: 1.3;
         }
