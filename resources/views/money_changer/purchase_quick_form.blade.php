@@ -21,6 +21,8 @@
     <input type="hidden" id="POStatus"            name="POStatus"            value="{{ $fields->POStatus }}"/>
     <input type="hidden" id="PONumber"            name="PONumber"            value="{{ $fields->PONumber }}"/>
     <input type="hidden" id="detail_json"         name="detail_json"         value="[]"/>
+    <input type="hidden" id="payment_json"        name="payment_json"        value="[]"/>
+    <input type="hidden" id="confirm"             name="confirm"             value="0"/>
     <input type="hidden" id="deleted_ids_json"    name="deleted_ids_json"    value="[]"/>
 
     @if($state !== 'create')
@@ -134,9 +136,106 @@
         </div>
     </div>
 
+    {{-- ======================================================
+         BAGIAN 3 : Pembayaran
+         Satu nota boleh dibayar lebih dari satu cara, mis. sebagian tunai
+         sebagian transfer. Baris CASH dan TRANSFER sudah disiapkan, kasir
+         tinggal mengisi nominalnya. Pembayaran baru diposting saat nota
+         dikonfirmasi, karena penerimaan hanya boleh untuk nota Approved.
+    ====================================================== --}}
+    @php
+        $sudah_approved = trim($fields->POStatus ?? 'D') === 'A';
+        $sudah_dibayar  = count($records_payment ?? []) > 0;
+    @endphp
+
+    <div class="card border mb-3">
+        <div class="card-header card-header-bordered">
+            <h3 class="card-title"><i class="fas fa-money-bill-wave me-2"></i> Pembayaran</h3>
+            @if(!$sudah_dibayar)
+                <div class="card-addon">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="btn-add-payment">
+                        <i class="fas fa-plus me-1"></i> Tambah Cara Bayar
+                    </button>
+                </div>
+            @endif
+        </div>
+        <div class="card-body">
+
+            @if($sudah_dibayar)
+                {{-- Nota sudah dibayar: tampilkan apa adanya, ubahnya lewat menu penjualan --}}
+                <table class="table table-sm table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th>Kode Pembayaran</th>
+                            <th>Tanggal</th>
+                            <th>Cara Bayar</th>
+                            <th>Status</th>
+                            <th class="text-end">Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $total_bayar = 0; @endphp
+                        @foreach($records_payment as $bayar)
+                            @php $total_bayar += (float) $bayar->PaymentAmount; @endphp
+                            <tr>
+                                <td>
+                                    <a href="{{ url('fm-financial-payment/update').'/'.$bayar->IDX_T_FinancialPaymentHeader }}" target="_blank">
+                                        {{ $bayar->PaymentID }}
+                                    </a>
+                                </td>
+                                <td>{{ date('d M Y', strtotime($bayar->PaymentDate)) }}</td>
+                                <td>{{ $bayar->FinancialAccountDesc }}</td>
+                                <td>{{ $bayar->StatusDesc }}</td>
+                                <td class="text-end">{{ number_format($bayar->PaymentAmount, 2, '.', ',') }}</td>
+                            </tr>
+                        @endforeach
+                        <tr class="table-light fw-bold">
+                            <td colspan="4" class="text-end">TOTAL</td>
+                            <td class="text-end">{{ number_format($total_bayar, 2, '.', ',') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-2" id="tbl-payment">
+                        <thead>
+                            <tr>
+                                <th style="width:45%">Cara Bayar</th>
+                                <th style="width:35%" class="text-end">Jumlah (IDR)</th>
+                                <th style="width:20%" class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-payment">
+                            {{-- Diisi JS: baris CASH dan TRANSFER --}}
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light fw-bold">
+                                <td class="text-end pe-3">TOTAL PEMBAYARAN</td>
+                                <td class="text-end" id="td-total-payment">0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div id="info-payment" class="alert alert-label-info mb-0">
+                    Total pembayaran kepada nasabah harus sama dengan nilai transaksi.
+                </div>
+            @endif
+
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-12">
             @include('form_helper.btn_save_header')
+
+            @if(!$sudah_dibayar)
+                <button type="button" id="btn-save-confirm" class="btn btn-primary">
+                    <i class="fas fa-check-double me-1"></i> Save &amp; Konfirmasi
+                </button>
+            @endif
+
             <a href="{{ url('mc-purchase-order') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-times"></i> Batal
             </a>
@@ -155,6 +254,10 @@
 <script>
 var ddValas       = @json($dd_valas);
 var ddValasOption = @json($dd_valas_option ?? []);
+var ddAkun        = @json($dd_financial_account ?? []);
+var akunCash      = @json($akun_cash ?? 0);
+var akunTransfer  = @json($akun_transfer ?? 0);
+var sudahBayar    = @json(count($records_payment ?? []) > 0);
 var existingRow = @json($records_detail ?? []);
 
 $(document).ready(function () {
@@ -225,10 +328,71 @@ $(document).ready(function () {
         serializeDetail();
     });
 
+    // ---------- Pembayaran ----------
+    if (!sudahBayar) {
+        // Dua baris bawaan sesuai permintaan: CASH dan TRANSFER
+        appendPaymentRow({ idx_akun: akunCash });
+        appendPaymentRow({ idx_akun: akunTransfer });
+
+        $('#btn-add-payment').on('click', function () {
+            appendPaymentRow({});
+        });
+
+        $(document).on('click', '.btn-del-payment', function () {
+            $(this).closest('tr').remove();
+            recalcPayment();
+        });
+
+        $(document).on('input', '.inp-bayar', function () {
+            recalcPayment();
+        });
+
+        // Nilai transaksi berubah -> selisihnya ikut dihitung ulang
+        $('#tbl-detail').on('input change', 'input, select', function () {
+            window.setTimeout(recalcPayment, 0);
+        });
+    }
+
     // ---------- Serialize sebelum save ----------
     $('#btn-save-header').on('click', function () {
+        $('#confirm').val('0');
         serializeDetail();
+        serializePayment();
     });
+
+    // ---------- Save & Konfirmasi ----------
+    $('#btn-save-confirm').on('click', function () {
+        serializeDetail();
+        serializePayment();
+
+        var selisih = totalPembayaran() - totalTransaksi();
+
+        if (Math.abs(selisih) > 0.01) {
+            Swal.fire({
+                title: 'Pembayaran belum pas',
+                html: 'Total pembayaran <b>' + formatNumber(totalPembayaran(), 2) + '</b> tidak sama dengan ' +
+                      'nilai transaksi <b>' + formatNumber(totalTransaksi(), 2) + '</b>.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Konfirmasi transaksi?',
+            html: 'Nota akan di-approve dan pembayaran sebesar <b>' + formatNumber(totalPembayaran(), 2) +
+                  '</b> langsung dicatat.<br>Setelah dikonfirmasi, perubahan harus lewat menu penjualan.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Konfirmasi',
+            cancelButtonText: 'Batal'
+        }).then(function (hasil) {
+            if (hasil.isConfirmed) {
+                $('#confirm').val('1');
+                saveHeader('{{ $url_save_header }}');
+            }
+        });
+    });
+
 
     // ---------- Shortcut: Enter di baris terakhir -> tambah baris ----------
     $(document).on('keydown', '#tbl-detail input, #tbl-detail select', function (e) {
@@ -458,6 +622,92 @@ function serializeDetail() {
         });
     });
     $('#detail_json').val(JSON.stringify(rows));
+}
+
+// =========================================================
+// PEMBAYARAN
+// =========================================================
+function buildAkunOptions(selected) {
+    var html = '';
+    Object.keys(ddAkun).forEach(function (key) {
+        var sel = (String(selected) === String(key)) ? ' selected' : '';
+        html += '<option value="' + key + '"' + sel + '>' + escapeHtml(ddAkun[key]) + '</option>';
+    });
+    return html;
+}
+
+function appendPaymentRow(row) {
+    var idxAkun = row.idx_akun || '';
+    var jumlah  = parseFloat(row.jumlah) || 0;
+
+    var html = '<tr>' +
+        '<td><select class="form-control form-control-sm inp-akun">' + buildAkunOptions(idxAkun) + '</select></td>' +
+        '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-bayar" inputmode="decimal" data-decimal="2" value="' +
+            (jumlah ? formatNumber(jumlah, 2) : '') + '" placeholder="0.00"></td>' +
+        '<td class="text-center">' +
+            '<button type="button" class="btn btn-sm btn-outline-danger btn-del-payment"><i class="fas fa-trash"></i></button>' +
+        '</td>' +
+    '</tr>';
+
+    $('#tbody-payment').append(html);
+    recalcPayment();
+}
+
+function totalTransaksi() {
+    var total = 0;
+    $('#tbody-detail tr').each(function () {
+        total += parseFloat(cleanNumber($(this).find('.inp-total').val())) || 0;
+    });
+    return total;
+}
+
+function totalPembayaran() {
+    var total = 0;
+    $('#tbody-payment tr').each(function () {
+        total += parseFloat(cleanNumber($(this).find('.inp-bayar').val())) || 0;
+    });
+    return total;
+}
+
+function recalcPayment() {
+    var bayar = totalPembayaran();
+    var nilai = totalTransaksi();
+    var selisih = bayar - nilai;
+
+    $('#td-total-payment').text(formatNumber(bayar, 2));
+
+    var $info = $('#info-payment');
+    if (!$info.length) return;
+
+    if (nilai === 0) {
+        $info.attr('class', 'alert alert-label-info mb-0')
+             .html('Total pembayaran harus sama dengan nilai transaksi.');
+    } else if (Math.abs(selisih) <= 0.01) {
+        $info.attr('class', 'alert alert-label-success mb-0')
+             .html('Pembayaran sudah pas dengan nilai transaksi <b>' + formatNumber(nilai, 2) + '</b>.');
+    } else if (selisih < 0) {
+        $info.attr('class', 'alert alert-label-warning mb-0')
+             .html('Kurang <b>' + formatNumber(Math.abs(selisih), 2) + '</b> dari nilai transaksi <b>' +
+                   formatNumber(nilai, 2) + '</b>.');
+    } else {
+        $info.attr('class', 'alert alert-label-danger mb-0')
+             .html('Lebih <b>' + formatNumber(selisih, 2) + '</b> dari nilai transaksi <b>' +
+                   formatNumber(nilai, 2) + '</b>.');
+    }
+}
+
+function serializePayment() {
+    var rows = [];
+    $('#tbody-payment tr').each(function () {
+        var $r = $(this);
+        var idxAkun = parseInt($r.find('.inp-akun').val()) || 0;
+        var jumlah  = parseFloat(cleanNumber($r.find('.inp-bayar').val())) || 0;
+
+        if (!idxAkun || jumlah <= 0) return; // baris kosong dilewati
+
+        rows.push({ idx_m_financialaccount: idxAkun, amount: jumlah });
+    });
+    $('#payment_json').val(JSON.stringify(rows));
 }
 
 function cleanNumber(val) {
