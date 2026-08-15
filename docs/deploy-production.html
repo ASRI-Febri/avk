@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tarik Rilis AVK</title>
+<style>
+  :root {
+    color-scheme: light dark;
+
+    --ground:      #f4f6f8;
+    --surface:     #ffffff;
+    --surface-alt: #eef1f4;
+    --ink:         #111820;
+    --ink-soft:    #414d5a;
+    --ink-faint:   #6b7885;
+    --rule:        #d8dee4;
+    --accent:      #0e6b70;
+    --accent-soft: #e0eeee;
+    --warn:        #8a5200;
+    --warn-soft:   #faf0dd;
+    --stop:        #94282a;
+    --stop-soft:   #fbe9e8;
+    --konsol-bg:   #131a22;
+    --konsol-ink:  #dbe4ec;
+    --konsol-dim:  #7f8f9f;
+    --konsol-hi:   #6fd2c6;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0e141b;
+      --surface:     #161e27;
+      --surface-alt: #1c2630;
+      --ink:         #e6ecf2;
+      --ink-soft:    #b3c0cd;
+      --ink-faint:   #8493a2;
+      --rule:        #2a3641;
+      --accent:      #5cc9c0;
+      --accent-soft: #16302f;
+      --warn:        #e0aa5a;
+      --warn-soft:   #2e2415;
+      --stop:        #ef8f8c;
+      --stop-soft:   #331d1d;
+      --konsol-bg:   #0a0f15;
+      --konsol-ink:  #dbe4ec;
+      --konsol-dim:  #6d7d8d;
+      --konsol-hi:   #6fd2c6;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0e141b;
+    --surface:     #161e27;
+    --surface-alt: #1c2630;
+    --ink:         #e6ecf2;
+    --ink-soft:    #b3c0cd;
+    --ink-faint:   #8493a2;
+    --rule:        #2a3641;
+    --accent:      #5cc9c0;
+    --accent-soft: #16302f;
+    --warn:        #e0aa5a;
+    --warn-soft:   #2e2415;
+    --stop:        #ef8f8c;
+    --stop-soft:   #331d1d;
+    --konsol-bg:   #0a0f15;
+    --konsol-ink:  #dbe4ec;
+    --konsol-dim:  #6d7d8d;
+    --konsol-hi:   #6fd2c6;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .bungkus {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) 5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 1000px) {
+    .bungkus { grid-template-columns: 15rem 1fr; align-items: start; }
+    .rel { position: sticky; top: 2rem; }
+  }
+
+  /* ---------- kepala ---------- */
+  .kepala { grid-column: 1 / -1; border-bottom: 2px solid var(--ink); padding-bottom: 1.5rem; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin: 0 0 0.7rem;
+  }
+
+  .intro { max-width: 62ch; color: var(--ink-soft); margin: 0; }
+
+  .fakta {
+    list-style: none;
+    margin: 1.6rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  }
+
+  .fakta dt {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .fakta dd { margin: 0.15rem 0 0; font-family: var(--mono); font-size: 0.86rem; color: var(--ink); }
+
+  /* ---------- rel daftar isi ---------- */
+  .rel nav { display: grid; gap: 0.15rem; }
+
+  .rel .judul-rel {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 0.7rem;
+  }
+
+  .rel a {
+    display: grid;
+    grid-template-columns: 1.6rem 1fr;
+    gap: 0.4rem;
+    padding: 0.3rem 0;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-bottom: 1px solid transparent;
+  }
+
+  .rel a span { font-family: var(--mono); color: var(--ink-faint); font-size: 0.8rem; }
+  .rel a:hover { color: var(--accent); }
+  .rel a:hover span { color: var(--accent); }
+  .rel a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- langkah ---------- */
+  .isi { display: grid; gap: 2.5rem; min-width: 0; }
+
+  .langkah { display: grid; grid-template-columns: 3rem 1fr; gap: 0 1.25rem; min-width: 0; }
+
+  @media (max-width: 620px) {
+    .langkah { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
+
+  .nomor {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent);
+    padding-top: 0.35rem;
+    border-top: 2px solid var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .badan { min-width: 0; border-top: 2px solid var(--rule); padding-top: 0.35rem; }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 1.45rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0 0 0.5rem;
+  }
+
+  h3 {
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 1.6rem 0 0.5rem;
+  }
+
+  p, li { max-width: 68ch; }
+  p { margin: 0 0 0.9rem; color: var(--ink-soft); }
+  .badan > p:first-of-type { color: var(--ink); }
+
+  ul, ol { margin: 0 0 1rem; padding-left: 1.15rem; color: var(--ink-soft); }
+  li { margin-bottom: 0.35rem; }
+  li::marker { color: var(--ink-faint); }
+
+  strong { color: var(--ink); font-weight: 650; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.87em;
+    background: var(--surface-alt);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.08em 0.34em;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  /* ---------- konsol ---------- */
+  .konsol {
+    background: var(--konsol-bg);
+    border-radius: 5px;
+    margin: 0.9rem 0 1.1rem;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--konsol-bg) 70%, var(--rule));
+  }
+
+  .konsol .label {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--konsol-dim);
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px solid #26313d;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .konsol pre {
+    margin: 0;
+    padding: 0.9rem;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.83rem;
+    line-height: 1.65;
+    color: var(--konsol-ink);
+    tab-size: 4;
+  }
+
+  .konsol .prompt { color: var(--konsol-hi); user-select: none; }
+  .konsol .komentar { color: var(--konsol-dim); }
+  .konsol code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
+
+  /* ---------- catatan ---------- */
+  .catatan {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 0.85rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .catatan.awas { border-left-color: var(--warn); background: var(--warn-soft); }
+  .catatan.stop { border-left-color: var(--stop); background: var(--stop-soft); }
+  .catatan p { margin: 0; color: var(--ink); }
+  .catatan p + p { margin-top: 0.6rem; }
+
+  .catatan .tanda {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--accent);
+  }
+
+  .catatan.awas .tanda { color: var(--warn); }
+  .catatan.stop .tanda { color: var(--stop); }
+
+  /* ---------- tabel ---------- */
+  .gulir { overflow-x: auto; margin: 1rem 0 1.2rem; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 34rem;
+    font-size: 0.9rem;
+    background: var(--surface);
+  }
+
+  th, td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+  thead th {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  td { color: var(--ink-soft); }
+  td strong { color: var(--ink); }
+  tbody tr:last-child td { border-bottom: 0; }
+
+  /* ---------- centang ---------- */
+  .centang { list-style: none; padding: 0; margin: 0.6rem 0 1rem; display: grid; gap: 0.55rem; }
+
+  .centang li {
+    display: grid;
+    grid-template-columns: 1.1rem 1fr;
+    gap: 0.6rem;
+    align-items: start;
+    max-width: 68ch;
+    margin: 0;
+  }
+
+  .centang li::before {
+    content: "";
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.32rem;
+    border: 1.5px solid var(--accent);
+    border-radius: 2px;
+  }
+
+  /* ---------- kaki ---------- */
+  .kaki {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.2rem;
+    color: var(--ink-faint);
+    font-size: 0.84rem;
+  }
+
+  .kaki p { color: var(--ink-faint); max-width: 70ch; }
+
+  a { color: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+
+<div class="bungkus">
+
+  <header class="kepala">
+    <p class="eyebrow">Runbook Operasional · AVK</p>
+    <h1>Tarik Rilis AVK ke Server Produksi</h1>
+    <p class="intro">
+      Deployment AVK berjalan satu arah: kode di-<em>push</em> dari komputer developer ke GitHub,
+      lalu server menariknya. Server tidak pernah dipakai mengedit kode — apa pun yang diubah
+      langsung di sana akan hilang saat langkah 3. Ikuti urutan di bawah dari atas ke bawah;
+      tiap langkah menyebutkan tanda berhasilnya.
+    </p>
+    <dl class="fakta">
+      <div><dt>Folder aplikasi</dt><dd>C:\xampp7\htdocs\avk</dd></div>
+      <div><dt>PHP yang benar</dt><dd>C:\xampp7\php\php.exe</dd></div>
+      <div><dt>Sumber kode</dt><dd>origin/main</dd></div>
+      <div><dt>Basis data</dt><dd>AVKDB · 157.66.34.36</dd></div>
+    </dl>
+  </header>
+
+  <aside class="rel">
+    <nav aria-label="Daftar langkah">
+      <p class="judul-rel">Langkah</p>
+      <a href="#l1"><span>1</span> Siapkan sebelum masuk</a>
+      <a href="#l2"><span>2</span> RDP ke server</a>
+      <a href="#l3"><span>3</span> Jalankan deploy.ps1</a>
+      <a href="#l4"><span>4</span> Terapkan SQL baru</a>
+      <a href="#l5"><span>5</span> Verifikasi hasilnya</a>
+      <a href="#l6"><span>6</span> Rollback bila gagal</a>
+      <a href="#manual"><span>·</span> Cara manual tanpa script</a>
+      <a href="#gagal"><span>·</span> Kegagalan yang pernah terjadi</a>
+      <a href="#pertama"><span>·</span> Setup pertama kali</a>
+    </nav>
+  </aside>
+
+  <main class="isi">
+
+    <!-- ============ 1 ============ -->
+    <section class="langkah" id="l1">
+      <div class="nomor">1</div>
+      <div class="badan">
+        <h2>Siapkan sebelum masuk ke server</h2>
+        <p>Kerjakan bagian ini dari komputer developer. Tujuannya memastikan yang akan ditarik
+          server memang sudah lengkap di GitHub.</p>
+
+        <h3>Pastikan sudah ter-push</h3>
+        <div class="konsol">
+          <div class="label"><span>Terminal — komputer developer</span><span>bash</span></div>
+<pre><span class="prompt">$</span> git status --short          <span class="komentar"># harus bersih</span>
+<span class="prompt">$</span> git fetch -q origin
+<span class="prompt">$</span> git log --oneline -1
+<span class="prompt">$</span> git log --oneline -1 origin/main</pre>
+        </div>
+        <p>Dua baris <code>git log</code> terakhir harus menunjuk commit yang sama. Kalau berbeda,
+          berarti masih ada yang belum di-push dan server akan menarik versi lama.</p>
+
+        <h3>Bila mengubah resources/js atau resources/sass</h3>
+        <p>Aset hasil build ikut di-commit supaya server tidak perlu Node. Jadi build-nya
+          dilakukan di lokal, bukan di server:</p>
+        <div class="konsol">
+          <div class="label"><span>Terminal — komputer developer</span><span>bash</span></div>
+<pre><span class="prompt">$</span> npm run production
+<span class="prompt">$</span> git add -A &amp;&amp; git commit -m "Build aset" &amp;&amp; git push</pre>
+        </div>
+        <p>Perubahan yang hanya menyentuh Blade, controller, atau route <strong>tidak perlu</strong>
+          langkah ini.</p>
+
+        <h3>Catat commit yang sedang berjalan</h3>
+        <p>Berguna untuk rollback. Setelah masuk server nanti, jalankan <code>git rev-parse --short HEAD</code>
+          sebelum menarik, lalu simpan angkanya.</p>
+      </div>
+    </section>
+
+    <!-- ============ 2 ============ -->
+    <section class="langkah" id="l2">
+      <div class="nomor">2</div>
+      <div class="badan">
+        <h2>RDP ke server</h2>
+        <p>Masuk ke Windows Server lewat Remote Desktop, lalu buka <strong>PowerShell</strong>.
+          Deployment tidak bisa dijalankan dari luar — hanya port RDP yang terbuka ke server ini.</p>
+
+        <div class="catatan awas">
+          <span class="tanda">Server punya dua XAMPP</span>
+          <p><code>C:\xampp</code> berisi PHP 5 untuk aplikasi lama, <code>C:\xampp7</code> berisi PHP 7
+            untuk AVK. Karena itu <strong>jangan pernah memanggil <code>php</code> polos</strong> —
+            bisa mengarah ke PHP 5 dan gagal. Selalu pakai path lengkap.</p>
+        </div>
+
+        <div class="konsol">
+          <div class="label"><span>PowerShell — server</span><span>pemeriksaan awal</span></div>
+<pre><span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe --version     <span class="komentar"># harus 7.x</span>
+<span class="prompt">PS&gt;</span> cd C:\xampp7\htdocs\avk
+<span class="prompt">PS&gt;</span> git rev-parse --short HEAD          <span class="komentar"># catat untuk rollback</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3 ============ -->
+    <section class="langkah" id="l3">
+      <div class="nomor">3</div>
+      <div class="badan">
+        <h2>Jalankan deploy.ps1</h2>
+        <p>Satu perintah ini mengerjakan seluruh urutannya: aplikasi masuk mode perbaikan,
+          kode ditarik, dependency dipasang, cache dibersihkan, lalu aplikasi kembali online.</p>
+
+        <div class="konsol">
+          <div class="label"><span>PowerShell — server</span><span>deploy</span></div>
+<pre><span class="prompt">PS&gt;</span> powershell -ExecutionPolicy Bypass -File C:\xampp7\htdocs\avk\deploy.ps1</pre>
+        </div>
+
+        <h3>Yang dikerjakan script, berurutan</h3>
+        <ol>
+          <li>Memastikan <code>php.exe</code> yang dipakai benar-benar PHP 7, berhenti bila bukan.</li>
+          <li><code>php artisan down</code> — pengguna melihat halaman perbaikan.</li>
+          <li><code>git fetch</code> lalu <code>git reset --hard origin/main</code>.</li>
+          <li><code>composer install --no-dev --optimize-autoloader</code>.</li>
+          <li><code>config:clear</code>, <code>route:clear</code>, <code>view:clear</code>, <code>cache:clear</code>.</li>
+          <li><code>php artisan up</code> — selalu dijalankan, bahkan bila ada langkah yang gagal.</li>
+          <li>Menampilkan daftar file <code>.sql</code> yang berubah sebagai pengingat langkah 4.</li>
+        </ol>
+
+        <div class="catatan stop">
+          <span class="tanda">reset --hard membuang perubahan lokal</span>
+          <p>Semua file ter-track yang diedit langsung di server akan hilang tanpa konfirmasi.
+            <code>.env</code>, <code>vendor/</code>, dan <code>node_modules/</code> aman karena
+            di-gitignore.</p>
+        </div>
+
+        <p>Tanda berhasil: baris <strong>DEPLOY SELESAI</strong> berwarna cyan, dan sebelumnya
+          muncul perpindahan commit seperti <code>d9af9a1 -&gt; e6a64f2</code>.</p>
+      </div>
+    </section>
+
+    <!-- ============ 4 ============ -->
+    <section class="langkah" id="l4">
+      <div class="nomor">4</div>
+      <div class="badan">
+        <h2>Terapkan stored procedure yang berubah</h2>
+        <p>Basis data terpisah dari repo, jadi <code>deploy.ps1</code> <strong>tidak</strong>
+          menyentuhnya. Di akhir jalannya, script menampilkan daftar file SQL yang berubah:</p>
+
+        <div class="konsol">
+          <div class="label"><span>PowerShell — server</span><span>keluaran deploy.ps1</span></div>
+<pre>!!  ADA PERUBAHAN SQL - terapkan manual ke SQL Server (SSMS):
+      SQLStoredProcedure/USP_MC_ValasStock_List.sql</pre>
+        </div>
+
+        <p>Buka tiap file itu di SSMS, sambungkan ke <code>AVKDB</code>, lalu jalankan isinya.
+          File di repo sudah memakai pola <code>DROP</code> lalu <code>CREATE</code>, jadi aman
+          dijalankan ulang.</p>
+
+        <p>Cara memastikan sebuah stored procedure sudah terpasang:</p>
+        <div class="konsol">
+          <div class="label"><span>SSMS — AVKDB</span><span>sql</span></div>
+<pre>SELECT name, modify_date
+FROM sys.objects
+WHERE name = 'USP_MC_ValasStock_List';</pre>
+        </div>
+
+        <div class="catatan">
+          <span class="tanda">Untuk rilis e6a64f2</span>
+          <p>Stored procedure <code>USP_MC_ValasStock_List</code> <strong>sudah diterapkan</strong>
+            ke AVKDB pada 15 Agustus 2026. Pengingat SQL dari script boleh diabaikan untuk rilis ini.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5 ============ -->
+    <section class="langkah" id="l5">
+      <div class="nomor">5</div>
+      <div class="badan">
+        <h2>Verifikasi hasilnya</h2>
+        <p>Jangan tutup RDP sebelum empat hal ini terlihat benar dari browser.</p>
+
+        <ul class="centang">
+          <li>Halaman <code>/login</code> terbuka normal, bukan halaman perbaikan.
+            Bila masih tertahan, jalankan <code>C:\xampp7\php\php.exe artisan up</code>.</li>
+          <li>Commit di server sama dengan di GitHub — bandingkan keluaran
+            <code>git rev-parse --short HEAD</code> di server dengan commit terakhir di repo.</li>
+          <li>Fitur baru rilis ini muncul: buka <code>mc-sales-quick/create</code>, kolom
+            <strong>Sisa Stok</strong> harus ada di tabel detail dan terisi begitu valas dipilih.</li>
+          <li>Satu transaksi lama masih bisa dibuka tanpa error, misalnya lewat menu
+            <code>mc-sales-order</code>.</li>
+        </ul>
+
+        <p>Bila ada halaman yang menampilkan error setelah deploy, bersihkan cache sekali lagi
+          sebelum menyimpulkan rilisnya bermasalah:</p>
+        <div class="konsol">
+          <div class="label"><span>PowerShell — server</span><span>bersihkan cache</span></div>
+<pre><span class="prompt">PS&gt;</span> cd C:\xampp7\htdocs\avk
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan view:clear
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan config:clear</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6 ============ -->
+    <section class="langkah" id="l6">
+      <div class="nomor">6</div>
+      <div class="badan">
+        <h2>Rollback bila rilis bermasalah</h2>
+        <p>Kembalikan ke commit yang dicatat di langkah 2. Kode kembali seperti semula dalam
+          hitungan detik.</p>
+
+        <div class="konsol">
+          <div class="label"><span>PowerShell — server</span><span>rollback</span></div>
+<pre><span class="prompt">PS&gt;</span> cd C:\xampp7\htdocs\avk
+<span class="prompt">PS&gt;</span> git reset --hard &lt;commit-lama&gt;
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan view:clear
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan up</pre>
+        </div>
+
+        <div class="catatan awas">
+          <span class="tanda">Basis data tidak ikut mundur</span>
+          <p>Stored procedure yang sudah diterapkan tetap versi baru. Umumnya aman karena SP baru
+            dirancang tetap melayani kode lama, tapi bila sebuah SP diubah bentuk hasilnya,
+            jalankan ulang versi lamanya dari riwayat git file <code>.sql</code> tersebut.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ manual ============ -->
+    <section class="langkah" id="manual">
+      <div class="nomor">·</div>
+      <div class="badan">
+        <h2>Cara manual, bila deploy.ps1 tidak bisa dipakai</h2>
+        <p>Urutan yang sama, diketik satu per satu. Pakai ini hanya saat script gagal jalan
+          — misalnya ExecutionPolicy diblokir kebijakan domain.</p>
+
+        <div class="konsol">
+          <div class="label"><span>PowerShell — server</span><span>manual</span></div>
+<pre><span class="prompt">PS&gt;</span> cd C:\xampp7\htdocs\avk
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan down --retry=15
+<span class="prompt">PS&gt;</span> git fetch --all --prune
+<span class="prompt">PS&gt;</span> git reset --hard origin/main
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe composer.phar install --no-dev --optimize-autoloader
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan config:clear
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan route:clear
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan view:clear
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan cache:clear
+<span class="prompt">PS&gt;</span> C:\xampp7\php\php.exe artisan up</pre>
+        </div>
+
+        <p><code>route:cache</code> sengaja tidak dipakai: sebagian route memakai closure, dan
+          Laravel 7 gagal men-cache route bila ada closure.</p>
+      </div>
+    </section>
+
+    <!-- ============ gagal ============ -->
+    <section class="langkah" id="gagal">
+      <div class="nomor">·</div>
+      <div class="badan">
+        <h2>Kegagalan yang pernah terjadi di server ini</h2>
+        <p>Semua baris di bawah pernah benar-benar muncul, bukan daftar kemungkinan.</p>
+
+        <div class="gulir">
+          <table>
+            <thead>
+              <tr><th>Pesan</th><th>Sebabnya</th><th>Perbaikan</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>PHP yang terpakai versi 5.x</strong></td>
+                <td>Perintah <code>php</code> polos mengarah ke <code>C:\xampp</code> (PHP 5).</td>
+                <td>Pakai <code>C:\xampp7\php\php.exe</code>. Di <code>deploy.ps1</code>, periksa
+                  variabel <code>$Php</code> menunjuk file <code>php.exe</code>, bukan foldernya.</td>
+              </tr>
+              <tr>
+                <td><strong>error: invalid path …</strong><br><code>fatal: Could not reset index file</code></td>
+                <td>Ada file yang di-commit dari mac dengan karakter ilegal di Windows
+                  (<code>\ : * ? " &lt; &gt; |</code>).</td>
+                <td>Perbaiki nama file di lokal lalu push ulang. Cek sebelum commit dengan
+                  <code>git ls-files | grep '\\'</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>composer.phar tidak ditemukan</strong></td>
+                <td>Composer tidak ada di lokasi yang dicari script.</td>
+                <td>Script tetap lanjut memakai <code>vendor/</code> yang ada. Bila
+                  <code>composer.lock</code> berubah, pasang composer lalu isi variabel
+                  <code>$Composer</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Diminta login GitHub berulang</strong></td>
+                <td>Personal Access Token belum tersimpan di Credential Manager.</td>
+                <td>Saat diminta, isi username GitHub dan tempel token sebagai password —
+                  setelah itu tersimpan.</td>
+              </tr>
+              <tr>
+                <td><strong>Halaman perbaikan tidak hilang</strong></td>
+                <td><code>artisan up</code> gagal karena error sebelumnya.</td>
+                <td><code>C:\xampp7\php\php.exe artisan up</code>, atau hapus
+                  <code>storage\framework\down</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Tampilan lama masih muncul</strong></td>
+                <td>Blade yang ter-compile masih versi lama, atau cache browser.</td>
+                <td><code>artisan view:clear</code> di server, lalu muat ulang keras
+                  (<code>Ctrl</code>+<code>F5</code>) di browser.</td>
+              </tr>
+              <tr>
+                <td><strong>Permission denied pada storage\</strong></td>
+                <td>User Apache tidak punya akses tulis.</td>
+                <td>Beri akses tulis ke <code>storage\</code> dan <code>bootstrap\cache\</code>.
+                  Cukup sekali, tidak berubah oleh pull.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ pertama ============ -->
+    <section class="langkah" id="pertama">
+      <div class="nomor">·</div>
+      <div class="badan">
+        <h2>Setup pertama kali</h2>
+        <p>Hanya dijalankan bila folder aplikasi di server belum terhubung ke GitHub — misalnya
+          hasil copy-paste manual. Sesudah ini, deployment berikutnya cukup langkah 1–5.</p>
+
+        <div class="catatan stop">
+          <span class="tanda">Backup dulu</span>
+          <p><code>git reset --hard</code> di bawah menimpa file yang ter-track. Pastikan seluruh
+            perubahan yang ada di server sudah lebih dulu masuk repo.</p>
+        </div>
+
+        <div class="konsol">
+          <div class="label"><span>PowerShell — server</span><span>satu kali saja</span></div>
+<pre><span class="prompt">PS&gt;</span> Compress-Archive C:\xampp7\htdocs\avk C:\backup\avk-sebelum-git.zip
+<span class="prompt">PS&gt;</span> cd C:\xampp7\htdocs\avk
+<span class="prompt">PS&gt;</span> git init
+<span class="prompt">PS&gt;</span> git remote add origin https://github.com/ASRI-Febri/avk.git
+<span class="prompt">PS&gt;</span> git fetch origin        <span class="komentar"># isi username + PAT saat diminta</span>
+<span class="prompt">PS&gt;</span> git reset --hard origin/main
+<span class="prompt">PS&gt;</span> git remote -v           <span class="komentar"># pastikan menunjuk repo avk</span></pre>
+        </div>
+
+        <p>Token GitHub dibuat di <strong>Settings → Developer settings → Fine-grained tokens</strong>
+          dengan akses <strong>Contents: Read-only</strong> untuk repo <code>avk</code>.
+          Alternatif yang lebih aman: deploy key SSH khusus server.</p>
+
+        <h3>Yang tidak pernah ikut tertarik</h3>
+        <div class="gulir">
+          <table>
+            <thead>
+              <tr><th>Item</th><th>Alasan</th><th>Penanganan</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>.env</code></td><td>di-gitignore</td><td>Diatur sekali di server, tidak tersentuh pull</td></tr>
+              <tr><td><code>vendor/</code></td><td>di-gitignore</td><td><code>composer install</code>, sudah ada di script</td></tr>
+              <tr><td>Stored procedure &amp; tabel</td><td>basis data terpisah</td><td>Terapkan manual lewat SSMS (langkah 4)</td></tr>
+              <tr><td><code>storage/</code> berkas unggahan</td><td>di-gitignore</td><td>Tetap di server, tidak terhapus pull</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="kaki">
+    <p>Dokumen ini melengkapi <code>DEPLOYMENT.md</code> di repo dengan urutan yang siap
+      diikuti sambil menjalankan. Bila alur deployment berubah — path server, versi PHP,
+      atau isi <code>deploy.ps1</code> — perbarui keduanya agar tidak saling bertentangan.</p>
+    <p>Terakhir diperbarui 15 Agustus 2026 · rilis acuan <code>e6a64f2</code></p>
+  </footer>
+
+</div>
+
+</body>
+</html>

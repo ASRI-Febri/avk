@@ -4,6 +4,14 @@ Aplikasi ter-deploy di Windows Server dengan XAMPP di `C:\xampp7\htdocs\avk`.
 Dokumen ini menjelaskan cara menghubungkan folder server ke repo GitHub
 (`origin/main`) dan alur deployment: **push dari lokal → pull di server**.
 
+> **Panduan langkah demi langkah untuk dibaca di browser:**
+> [`docs/deploy-production.html`](docs/deploy-production.html) — buka dengan
+> klik ganda dari Windows Explorer di server, atau dari komputer mana pun setelah
+> `git pull`. Isinya urutan siap ikut sambil menjalankan: persiapan, RDP,
+> `deploy.ps1`, penerapan SQL, verifikasi, rollback, dan daftar kegagalan yang
+> pernah terjadi di server ini. Dokumen `DEPLOYMENT.md` ini tetap jadi acuan
+> rinci dan setup awal.
+
 Kunci yang membuat ini sederhana:
 
 - Aset hasil build (`public/js`, `public/css`, `public/assets`) **ikut di-commit**,
