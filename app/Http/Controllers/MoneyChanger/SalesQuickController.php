@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\MoneyChanger;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\MyController;
 use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\DropdownFinanceController;
@@ -56,8 +57,9 @@ class SalesQuickController extends MyController
             'RecordStatus'       => 'A',
         ];
 
-        $this->data['fields']         = $fields;
-        $this->data['records_detail'] = [];
+        $this->data['fields']            = $fields;
+        $this->data['records_detail']    = [];
+        $this->data['records_payment']   = [];
 
         return $this->show_form();
     }
@@ -84,8 +86,9 @@ class SalesQuickController extends MyController
         $param_detail['IDX_T_SalesOrder'] = $id;
         $records_detail = $this->exec_sp('USP_MC_SalesOrderDetail_List', $param_detail, 'list', 'sqlsrv');
 
-        $this->data['fields']         = $fields;
-        $this->data['records_detail'] = $records_detail;
+        $this->data['fields']          = $fields;
+        $this->data['records_detail']  = $records_detail;
+        $this->data['records_payment'] = $this->pembayaran_tersimpan($id);
 
         return $this->show_form();
     }
@@ -102,10 +105,48 @@ class SalesQuickController extends MyController
         $this->data['dd_company'] = (array) $dd->company($this->data['user_id']);
         $this->data['dd_branch']  = (array) $dd->branch($this->data['user_id']);
 
+        // CARA BAYAR: dipakai baris pembayaran. Baris pertama diarahkan ke akun
+        // kas dan baris kedua ke akun bank, sesuai permintaan "CASH dan TRANSFER".
+        $this->data['dd_financial_account'] = (array) $dd->financial_account($this->data['user_id']);
+        $this->data['akun_cash']            = $this->akun_bawaan('CASH');
+        $this->data['akun_transfer']        = $this->akun_bawaan('TRANSFER');
+
         $this->data['url_save_header'] = url('mc-sales-quick/save');
         $this->data['view']            = 'money_changer.sales_quick_form';
 
         return view($this->data['view'], $this->data);
+    }
+
+    /**
+     * Akun bawaan untuk baris pembayaran. CASH memakai akun kas, TRANSFER
+     * memakai akun bank pertama. Kalau tidak ketemu, dikembalikan kosong supaya
+     * kasir memilih sendiri di dropdown.
+     */
+    private function akun_bawaan($jenis)
+    {
+        $sql = "SELECT TOP 1 IDX_M_FinancialAccount
+                FROM CM_M_FinancialAccount WITH(NOLOCK)
+                WHERE RTRIM(ISNULL(RecordStatus,'')) = 'A'
+                    AND " . ($jenis === 'CASH'
+                        ? "(FinancialAccountID LIKE 'CASH%' OR FinancialAccountDesc LIKE '%Kas%')"
+                        : "(FinancialAccountID LIKE 'BCA%' OR FinancialAccountID LIKE 'MAN%'
+                            OR FinancialAccountDesc LIKE 'Bank%')") . "
+                ORDER BY IDX_M_FinancialAccount";
+
+        $rows = DB::connection('sqlsrv')->select($sql);
+
+        return $rows ? (int) $rows[0]->IDX_M_FinancialAccount : 0;
+    }
+
+    /** Pembayaran yang sudah tercatat untuk nota ini */
+    private function pembayaran_tersimpan($id)
+    {
+        if ((int) $id === 0) {
+            return [];
+        }
+
+        return $this->exec_sp('USP_MC_SalesOrderPayment_List',
+            ['IDX_T_SalesOrder' => (int) $id], 'list', 'sqlsrv');
     }
 
     // =========================================================================================
@@ -244,6 +285,36 @@ class SalesQuickController extends MyController
             return;
         }
 
+        // ---------- KONFIRMASI + PEMBAYARAN ----------
+        // Nota harus Approved dulu sebelum pembayaran boleh dicatat, jadi
+        // urutannya: approve nota, baru posting tiap baris pembayaran lewat
+        // stored procedure yang sama dengan menu penjualan penuh.
+        if ((int) $request->input('confirm', 0) === 1) {
+            $hasil = $this->konfirmasi_dan_bayar($request, $new_idx, $details, $userId);
+
+            if ($hasil !== true) {
+                $obj = [
+                    'flag'    => 'error',
+                    'message' => $hasil,
+                    'id'      => $new_idx,
+                    'url'     => url('mc-sales-quick/update') . '/' . $new_idx,
+                ];
+                echo json_encode($obj);
+                return;
+            }
+
+            $obj = [
+                'flag'        => 'success',
+                'message'     => '<span>Transaksi dikonfirmasi dan pembayaran tercatat.</span>',
+                'id'          => $new_idx,
+                'next_action' => 'reload',
+                'url'         => url('mc-sales-quick/update') . '/' . $new_idx,
+            ];
+
+            echo json_encode($obj);
+            return;
+        }
+
         $obj = [
             'flag'        => 'success',
             'message'     => '<span>Transaksi penjualan valas berhasil disimpan.</span>',
@@ -253,5 +324,102 @@ class SalesQuickController extends MyController
         ];
 
         echo json_encode($obj);
+    }
+
+    /**
+     * Approve nota lalu catat pembayarannya.
+     *
+     * Mengembalikan TRUE bila berhasil, atau pesan kesalahan siap tampil.
+     */
+    private function konfirmasi_dan_bayar(Request $request, $idx_so, $details, $userId)
+    {
+        // Nilai transaksi dihitung dari detail yang baru saja disimpan, bukan
+        // dari angka yang dikirim layar, supaya tidak bisa dimanipulasi.
+        $total_transaksi = 0;
+        foreach ($details as $d) {
+            $total_transaksi += (float) $d['foreign_amount'] * (float) $d['exchange_rate'];
+        }
+
+        $payments = json_decode($request->input('payment_json', '[]'), true) ?: [];
+        $payments = array_values(array_filter($payments, function ($p) {
+            return (float) ($p['amount'] ?? 0) > 0;
+        }));
+
+        if (count($payments) === 0) {
+            return '<span>Pembayaran belum diisi. Isi minimal satu cara bayar dengan nominalnya.</span>';
+        }
+
+        $total_bayar = 0;
+        foreach ($payments as $p) {
+            if ((int) ($p['idx_m_financialaccount'] ?? 0) === 0) {
+                return '<span>Cara bayar belum dipilih pada salah satu baris pembayaran.</span>';
+            }
+
+            $total_bayar += (float) $p['amount'];
+        }
+
+        if (abs($total_bayar - $total_transaksi) > 0.01) {
+            return '<span>Total pembayaran <b>' . number_format($total_bayar, 2, '.', ',')
+                . '</b> tidak sama dengan nilai transaksi <b>' . number_format($total_transaksi, 2, '.', ',')
+                . '</b>.</span>';
+        }
+
+        // Jangan mencatat pembayaran dua kali untuk nota yang sama
+        if (count($this->pembayaran_tersimpan($idx_so)) > 0) {
+            return '<span>Nota ini sudah punya pembayaran. Buka menu penjualan untuk mengubahnya.</span>';
+        }
+
+        $tanggal = $request->input('SODate', date('Y-m-d'));
+
+        // 1. APPROVE, hanya bila notanya memang belum approved
+        $info = $this->exec_sp('[dbo].[USP_MC_SalesOrder_Info]', ['IDX' => $idx_so], 'list');
+        $status = $info ? trim($info[0]->SOStatus ?? '') : '';
+
+        if ($status !== 'A') {
+            $hasil_approve = $this->exec_sp('[dbo].[USP_MC_SalesOrder_Approve]', [
+                    'IDX_T_SalesOrder' => $idx_so,
+                    'ApprovalDate'     => 'XXX' . $tanggal,
+                    'ApprovalRemark'   => 'XXX' . 'Konfirmasi dari input cepat',
+                    'UserID'           => $userId,
+                ], 'list');
+
+            $flag = '';
+            foreach ($hasil_approve as $row) {
+                $flag = $row->Result ?? '';
+            }
+
+            if (strtolower($flag) !== 'success') {
+                return $this->sweet_alert_message($hasil_approve);
+            }
+        }
+
+        // 2. PEMBAYARAN, satu baris satu penerimaan
+        $keterangan = trim($request->input('SONotes', '')) !== ''
+            ? trim($request->input('SONotes'))
+            : 'Penerimaan pembayaran penjualan valas';
+
+        $gagal = [];
+
+        foreach ($payments as $i => $p) {
+            $hasil_bayar = $this->exec_sp('[dbo].[USP_MC_SalesOrder_Payment]', [
+                'IDX_T_SalesOrder'       => $idx_so,
+                'IDX_M_FinancialAccount' => (int) $p['idx_m_financialaccount'],
+                'ReceiveAmount'          => (float) $p['amount'],
+                'RemarkHeader'           => 'XXX' . $keterangan,
+                'ReceiveDate'            => 'XXX' . $tanggal,
+                'UserID'                 => $userId,
+            ], 'list');
+
+            $flag = '';
+            foreach ($hasil_bayar as $row) {
+                $flag = $row->Result ?? '';
+            }
+
+            if (strtolower($flag) !== 'success') {
+                $gagal[] = 'Pembayaran baris ' . ($i + 1) . ': ' . $this->sweet_alert_message($hasil_bayar);
+            }
+        }
+
+        return empty($gagal) ? true : implode('<br>', $gagal);
     }
 }
