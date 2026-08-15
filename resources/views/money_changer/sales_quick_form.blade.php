@@ -245,6 +245,8 @@
 @endsection
 
 @section('script')
+{{-- Masking angka: hanya digit, ribuan koma, desimal titik --}}
+<script src="{{ URL::asset('public/js/money-mask.js') }}"></script>
 <script>
 var ddValas     = @json($dd_valas);
 var ddAkun      = @json($dd_financial_account ?? []);
@@ -434,11 +436,11 @@ function appendDetailRow(row) {
                 '</select>' +
                 '<input type="hidden" class="inp-txtype" value="' + idxType + '">' +
             '</td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-foreign" ' +
+            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-foreign" inputmode="decimal" data-decimal="2" ' +
                 'value="' + formatNumber(foreign, 2) + '" placeholder="0"></td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-rate" ' +
+            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-rate" inputmode="decimal" data-decimal="4" ' +
                 'value="' + formatNumber(rate, 4) + '" placeholder="0"></td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-qty" ' +
+            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-qty" inputmode="decimal" data-decimal="2" ' +
                 'value="' + formatNumber(qty, 2) + '" placeholder="0"></td>' +
             '<td><input type="text" class="form-control form-control-sm text-end inp-total" ' +
                 'value="' + formatNumber(total, 2) + '" readonly></td>' +
@@ -518,7 +520,7 @@ function appendPaymentRow(row) {
 
     var html = '<tr>' +
         '<td><select class="form-control form-control-sm inp-akun">' + buildAkunOptions(idxAkun) + '</select></td>' +
-        '<td><input type="text" class="form-control form-control-sm text-end inp-bayar" value="' +
+        '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-bayar" inputmode="decimal" data-decimal="2" value="' +
             (jumlah ? formatNumber(jumlah, 2) : '') + '" placeholder="0.00"></td>' +
         '<td class="text-center">' +
             '<button type="button" class="btn btn-sm btn-outline-danger btn-del-payment"><i class="fas fa-trash"></i></button>' +

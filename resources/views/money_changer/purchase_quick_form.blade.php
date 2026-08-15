@@ -146,6 +146,8 @@
 @endsection
 
 @section('script')
+{{-- Masking angka: hanya digit, ribuan koma, desimal titik --}}
+<script src="{{ URL::asset('public/js/money-mask.js') }}"></script>
 <script>
 var ddValas     = @json($dd_valas);
 var existingRow = @json($records_detail ?? []);
@@ -268,11 +270,11 @@ function appendDetailRow(row) {
                     buildValasOptions(idxValas) +
                 '</select>' +
             '</td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-foreign" ' +
+            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-foreign" inputmode="decimal" data-decimal="2" ' +
                 'value="' + formatNumber(foreign, 2) + '" placeholder="0"></td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-rate" ' +
+            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-rate" inputmode="decimal" data-decimal="4" ' +
                 'value="' + formatNumber(rate, 4) + '" placeholder="0"></td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-qty" ' +
+            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-qty" inputmode="decimal" data-decimal="2" ' +
                 'value="' + formatNumber(qty, 2) + '" placeholder="0"></td>' +
             '<td><input type="text" class="form-control form-control-sm text-end inp-total" ' +
                 'value="' + formatNumber(total, 2) + '" readonly></td>' +
