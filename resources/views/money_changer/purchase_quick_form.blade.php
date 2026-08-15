@@ -74,6 +74,20 @@
                         value="{{ $fields->PONotes }}">
                 </div>
 
+                <div class="col-md-6">
+                    <label class="form-label text-secondary">Sumber Dana</label>
+                    <input type="text" id="FundSource" name="FundSource"
+                        class="form-control" placeholder="Pribadi / Perusahaan / lainnya"
+                        value="{{ $fields->FundSource ?? '' }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-secondary">Tujuan Transaksi</label>
+                    <input type="text" id="TransactionPurpose" name="TransactionPurpose"
+                        class="form-control" placeholder="Traveling / Medical / Education / lainnya"
+                        value="{{ $fields->TransactionPurpose ?? '' }}">
+                </div>
+
             </div>
         </div>
     </div>

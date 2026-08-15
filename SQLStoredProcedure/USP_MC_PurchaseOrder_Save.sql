@@ -33,7 +33,13 @@ CREATE PROCEDURE [dbo].[USP_MC_PurchaseOrder_Save]
 	@POStatus					CHAR(1),
 	------------------------------------------------
 	@UserID						VARCHAR(50),
-	@RecordStatus				CHAR(1)		
+	@RecordStatus				CHAR(1),
+	------------------------------------------------
+	-- Sengaja di akhir dan boleh kosong: pemanggil lama hanya mengirim 11
+	-- parameter. NULL berarti "jangan ubah", supaya menyimpan dari form
+	-- pembelian penuh tidak menghapus isian dari input cepat.
+	@FundSource					VARCHAR(250) = NULL,
+	@TransactionPurpose			VARCHAR(250) = NULL
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -105,6 +111,8 @@ BEGIN
 				   ,[PODate]
 				   ,[PONotes]
 				   ,[POStatus]                   
+				   ,[FundSource]
+				   ,[TransactionPurpose]
 				   ,[UCreate]
 				   ,[DCreate]				   
 				   ,[RecordStatus])
@@ -117,6 +125,8 @@ BEGIN
 				   ,@PODate
                    ,@PONotes
 				   ,@POStatus
+				   ,ISNULL(@FundSource,'')
+				   ,ISNULL(@TransactionPurpose,'')
 				   ,@UserID
 				   ,GETDATE()			  
 				   ,@RecordStatus)
@@ -146,6 +156,8 @@ BEGIN
                     ,[ReferenceNo] = @ReferenceNo
 					,[PODate] = @PODate	
 					,[PONotes] = @PONotes		
+					,[FundSource] = ISNULL(@FundSource, [FundSource])
+					,[TransactionPurpose] = ISNULL(@TransactionPurpose, [TransactionPurpose])
 					,[UModified] = @UserID
 					,[DModified] = GETDATE()
 					,[RecordStatus] = @RecordStatus

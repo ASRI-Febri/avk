@@ -49,6 +49,8 @@ class PurchaseQuickController extends MyController
             'ReferenceNo'         => '',
             'PODate'              => date('Y-m-d'),
             'PONotes'             => '',
+            'FundSource'          => '',
+            'TransactionPurpose'  => '',
             'PartnerDesc'         => '',
             'POStatus'            => 'D',
             'RecordStatus'        => 'A',
@@ -165,6 +167,11 @@ class PurchaseQuickController extends MyController
             'POStatus'            => $request->input('POStatus', 'D'),
             'UserID'              => $userId,
             'RecordStatus'        => 'A',
+            // Dua parameter terakhir di [USP_MC_PurchaseOrder_Save], urutannya
+            // harus tetap di belakang karena exec_sp mengirim parameter secara
+            // posisional.
+            'FundSource'          => 'XXX' . $request->input('FundSource', ''),
+            'TransactionPurpose'  => 'XXX' . $request->input('TransactionPurpose', ''),
         ];
 
         $result_header = $this->exec_sp('[dbo].[USP_MC_PurchaseOrder_Save]', $param_header, 'list');
