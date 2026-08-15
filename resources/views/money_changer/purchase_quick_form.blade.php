@@ -65,6 +65,11 @@
                         <button type="button" class="btn btn-outline-primary" id="btn-find-partner">
                             <i class="fas fa-search"></i> Cari
                         </button>
+                        {{-- Penjual valas baru didaftarkan tanpa meninggalkan layar transaksi --}}
+                        <button type="button" class="btn btn-outline-success" id="btn-new-partner"
+                            title="Tambah konsumen baru">
+                            <i class="fas fa-user-plus"></i> Baru
+                        </button>
                     </div>
                 </div>
 
@@ -270,6 +275,15 @@ $(document).ready(function () {
             target_name:  'PartnerDesc'
         };
         callAjaxModalView('{{ url('/gn-select-partner') }}', data);
+    });
+
+    // ---------- Konsumen baru ----------
+    $('#btn-new-partner').on('click', function () {
+        callAjaxModalView('{{ url('/gn-partner-quick') }}', {
+            _token:       $('#_token').val(),
+            target_index: 'IDX_M_Partner',
+            target_name:  'PartnerDesc'
+        });
     });
 
     // ---------- Load baris existing (mode update) ----------

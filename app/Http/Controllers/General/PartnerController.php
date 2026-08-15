@@ -252,7 +252,16 @@ class PartnerController extends MyController
             $param['IsSupplier'] = isset($_POST['IsSupplier']) ? 'Y' : 'N'; 
             $param['IsCustomer'] = isset($_POST['IsCustomer']) ? 'Y' : 'N'; 
             $param['IsCompany'] = isset($_POST['IsCompany']) ? 'Y' : 'N'; 
-            $param['IsMember'] = isset($_POST['IsMember']) ? 'Y' : 'N'; 
+            $param['IsMember'] = isset($_POST['IsMember']) ? 'Y' : 'N';
+
+            // @IsDTTOT ditambahkan di stored procedure saat screening DTTOT dibuat.
+            // Parameter dikirim posisional, jadi tanpa baris ini seluruh parameter
+            // sesudahnya bergeser dan penyimpanan gagal.
+            //
+            // Form ini belum punya kolomnya sementara SP menimpa nilainya setiap
+            // simpan, jadi tanda hasil screening dibaca dulu agar tidak terhapus
+            // hanya karena data lain diubah.
+            $param['IsDTTOT'] = $this->tanda_dttot($data['IDX_M_Partner']);
 
             $param['StartDate'] = isset($_POST['StartDate']) ? $_POST['StartDate'] : '';
             $param['EndDate'] = isset($_POST['StartDate']) ? $_POST['StartDate'] : '';
@@ -267,6 +276,22 @@ class PartnerController extends MyController
 
             return $this->store($state, $param);
         }
+    }
+
+    /**
+     * Tanda hasil screening DTTOT yang tersimpan. Konsumen baru selalu 'N'.
+     */
+    private function tanda_dttot($idx_partner)
+    {
+        if ((int) $idx_partner === 0) {
+            return 'N';
+        }
+
+        $rows = DB::connection('sqlsrv')->select(
+            "SELECT IsDTTOT FROM GN_M_Partner WITH(NOLOCK) WHERE IDX_M_Partner = ?",
+            [(int) $idx_partner]);
+
+        return ($rows && trim($rows[0]->IsDTTOT ?? '') === 'Y') ? 'Y' : 'N';
     }
 
     // =========================================================================================
@@ -296,5 +321,151 @@ class PartnerController extends MyController
         $this->data['target_name'] = $request->target_name;
 
         return view('general/m_select_partner_list', $this->data);
+    }
+
+    // =========================================================================================
+    // INPUT CEPAT KONSUMEN
+    // Dipakai form input cepat penjualan/pembelian valas supaya kasir tidak perlu
+    // pindah menu hanya untuk mendaftarkan konsumen baru. Yang diminta hanya data
+    // wajib; kelengkapan lain diisi belakangan lewat menu Business Partner.
+    // =========================================================================================
+    public function quick_form(Request $request)
+    {
+        $this->data['form_desc']    = 'Tambah konsumen baru';
+        $this->data['target_index'] = $request->input('target_index', '');
+        $this->data['target_name']  = $request->input('target_name', '');
+        $this->data['url_save']     = url('/gn-partner-quick-save');
+
+        return view('general/m_partner_quick_form', $this->data);
+    }
+
+    public function quick_save(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'PartnerName'          => 'required',
+            'SingleIdentityNumber' => 'required',
+            'Street'               => 'required',
+            'MobilePhone'          => 'required',
+        ], [
+            'PartnerName.required'          => 'Nama konsumen belum diisi!',
+            'SingleIdentityNumber.required' => 'NIK belum diisi!',
+            'Street.required'               => 'Alamat belum diisi!',
+            'MobilePhone.required'          => 'No handphone belum diisi!',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'flag'    => 'error',
+                'message' => implode('<br>', $validator->errors()->all()),
+            ]);
+        }
+
+        $nama  = trim($request->input('PartnerName'));
+        $nik   = trim($request->input('SingleIdentityNumber'));
+        $alamat = trim($request->input('Street'));
+        $hp    = trim($request->input('MobilePhone'));
+
+        // NIK yang sama berarti orangnya sudah terdaftar. Daripada membuat data
+        // kembar, konsumen yang ada langsung dipakai dan kasir diberi tahu.
+        $sudah_ada = DB::connection('sqlsrv')->select(
+            "SELECT TOP 1 IDX_M_Partner, PartnerID, PartnerName
+             FROM GN_M_Partner WITH(NOLOCK)
+             WHERE RTRIM(ISNULL(SingleIdentityNumber,'')) = ?
+                 AND RTRIM(ISNULL(RecordStatus,'A')) = 'A'
+             ORDER BY IDX_M_Partner", [$nik]);
+
+        if ($sudah_ada) {
+            return response()->json([
+                'flag'         => 'success',
+                'sudah_ada'    => true,
+                'idx'          => (int) $sudah_ada[0]->IDX_M_Partner,
+                'partner_id'   => trim($sudah_ada[0]->PartnerID),
+                'partner_name' => trim($sudah_ada[0]->PartnerName),
+                'message'      => 'NIK ini sudah terdaftar atas nama <b>'
+                    . e(trim($sudah_ada[0]->PartnerName)) . '</b>. Konsumen tersebut yang dipakai.',
+            ]);
+        }
+
+        // Urutan parameter mengikuti USP_GN_Partner_Save persis, termasuk
+        // @IsDTTOT yang berada di antara IsMember dan StartDate.
+        $hasil = DB::connection('sqlsrv')->select(
+            "EXEC [dbo].[USP_GN_Partner_Save]
+                @IDX_M_Partner = 0,
+                @PartnerID = '',
+                @BarcodeMember = '',
+                @Prefix = '',
+                @PartnerName = ?,
+                @PartnerAlias = '',
+                @Gender = '',
+                @SingleIdentityNumber = ?,
+                @TaxIdentityNumber = '',
+                @DateOfBirth = NULL,
+                @PlaceOfBirth = '',
+                @Email = '',
+                @Phone1 = '',
+                @Phone2 = '',
+                @FaxNo = '',
+                @MobilePhone = ?,
+                @Remarks = ?,
+                @IsSupplier = 'N',
+                @IsCustomer = 'Y',
+                @IsCompany = 'N',
+                @IsMember = 'N',
+                @IsDTTOT = 'N',
+                @StartDate = NULL,
+                @EndDate = NULL,
+                @ARAccount = 5,
+                @APAccount = 12,
+                @ActiveStatus = 'A',
+                @CreditLimit = 0,
+                @DiscountMember = 0,
+                @UserID = ?,
+                @RecordStatus = 'A'",
+            [$nama, $nik, $hp, 'Input cepat transaksi valas', $this->data['user_id']]);
+
+        $flag = '';
+        $idx  = 0;
+        foreach ($hasil as $row) {
+            $flag = strtolower(trim($row->Result ?? ''));
+            $idx  = (int) ($row->ID ?? 0);
+        }
+
+        if ($flag !== 'success' || $idx === 0) {
+            return response()->json([
+                'flag'    => 'error',
+                'message' => $this->sweet_alert_message($hasil),
+            ]);
+        }
+
+        // Alamat disimpan sebagai Alamat KTP dan jadi alamat utama. SP khusus
+        // dipakai karena USP_CM_PartnerAddress_Create mewajibkan kode pos,
+        // sedangkan input cepat hanya meminta data wajib.
+        $hasil_alamat = DB::connection('sqlsrv')->select(
+            "EXEC [dbo].[USP_GN_PartnerQuickAddress_Create]
+                @IDX_M_Partner = ?, @Street = ?, @Zip = ?, @UserID = ?",
+            [$idx, $alamat, trim($request->input('Zip', '')), $this->data['user_id']]);
+
+        // Konsumennya sudah terbentuk, jadi transaksi tetap bisa jalan walau
+        // alamatnya gagal tersimpan. Kasir diberi tahu agar bisa melengkapinya.
+        $catatan_alamat = '';
+        foreach ($hasil_alamat as $row) {
+            if (strtolower(trim($row->Result ?? '')) !== 'success') {
+                $catatan_alamat = '<br><span class="text-danger">Alamat gagal disimpan ('
+                    . e(trim($row->LogDesc ?? '')) . '). Lengkapi lewat menu Business Partner.</span>';
+            }
+        }
+
+        $baru = DB::connection('sqlsrv')->select(
+            "SELECT PartnerID, PartnerName FROM GN_M_Partner WITH(NOLOCK)
+             WHERE IDX_M_Partner = ?", [$idx]);
+
+        return response()->json([
+            'flag'         => 'success',
+            'sudah_ada'    => false,
+            'idx'          => $idx,
+            'partner_id'   => $baru ? trim($baru[0]->PartnerID) : '',
+            'partner_name' => $baru ? trim($baru[0]->PartnerName) : $nama,
+            'message'      => 'Konsumen <b>' . e($nama) . '</b> berhasil ditambahkan.' . $catatan_alamat,
+        ]);
     }
 }

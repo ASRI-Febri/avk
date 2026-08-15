@@ -63,6 +63,10 @@ Route::post('/gn-partner/save', 'General\PartnerController@save');
 // LOOKUP VENDOR
 Route::post('/gn-select-partner', 'General\PartnerController@show_lookup');
 
+// INPUT CEPAT KONSUMEN (dipakai form input cepat valas)
+Route::post('/gn-partner-quick', 'General\PartnerController@quick_form');
+Route::post('/gn-partner-quick-save', 'General\PartnerController@quick_save');
+
 // BUSINESS PARTNER ADDRESS
 Route::post('/gn-partner-address/create', 'General\PartnerAddressController@create');
 Route::post('/gn-partner-address/update/{id}', 'General\PartnerAddressController@update');
