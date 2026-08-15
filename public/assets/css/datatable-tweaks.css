@@ -16,6 +16,12 @@
  * ikut dimuat di halaman aplikasi, jadi aturannya ditulis ulang seperlunya.
  */
 
+/* Jarak ke tabel di bawahnya: tema hanya memberi 0.5rem, terlalu rapat
+   sejak kendalinya menyusut jadi satu baris. */
+div.dataTables_wrapper div.dataTables_length {
+    margin-bottom: 1rem;
+}
+
 /* Satu baris: Show [10] entries */
 div.dataTables_wrapper div.dataTables_length label {
     display: inline-flex;
