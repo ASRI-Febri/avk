@@ -98,7 +98,8 @@
                     <div class="d-grid gap-3">
                         <x-textbox-horizontal label="No System" id="SONumber" :value="$fields->SONumber" placeholder="(Auto)" class="readonly" />
                         <x-textbox-horizontal label="Tanggal Transaksi" id="SODate" :value="$fields->SODate" placeholder="" class="required datepicker2" />
-                        <x-lookup-horizontal label="Konsumen" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
+                        <x-lookup-horizontal label="Konsumen" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"
+                            button="btn-find-partner" button-add="btn-new-partner" add-title="Tambah konsumen baru"/>
                         <x-textbox-horizontal label="Keterangan" id="SONotes" :value="$fields->SONotes" placeholder="" class="required" />
 
                         @if($state != 'create')
@@ -315,6 +316,16 @@
                 }
 
                 callAjaxModalView('{{ url('/gn-select-partner') }}',data);
+            });
+
+            // Konsumen baru didaftarkan tanpa meninggalkan layar transaksi
+            $('#btn-new-partner').click(function(){
+
+                callAjaxModalView('{{ url('/gn-partner-quick') }}', {
+                    _token: $("#_token").val(),
+                    target_index: 'IDX_M_Partner',
+                    target_name: 'PartnerDesc'
+                });
             });
 
             $('#btn-find-coa').click(function(){

@@ -13,17 +13,29 @@ class LookupHorizontal extends Component
     public $button;
 
     /**
+     * Tombol tambah data baru di samping tombol cari. Kosong berarti tidak
+     * ditampilkan, jadi lookup lain yang tidak punya form input cepat tetap
+     * seperti sebelumnya.
+     */
+    public $buttonAdd;
+
+    /** Keterangan tombol tambah, tampil sebagai tooltip */
+    public $addTitle;
+
+    /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($label, $id, $class, $value, $button)
+    public function __construct($label, $id, $class, $value, $button, $buttonAdd = '', $addTitle = 'Tambah data baru')
     {
         $this->label = $label;
         $this->id = $id;
         $this->class = $class;
         $this->value = $value;
         $this->button = $button;
+        $this->buttonAdd = $buttonAdd;
+        $this->addTitle = $addTitle;
     }
 
     /**

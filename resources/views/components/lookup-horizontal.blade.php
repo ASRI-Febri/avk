@@ -9,8 +9,14 @@
                 </button>
                 <button id="{{ $button }}" class="btn btn-icon btn-outline-success" type="button" title="Search">
                     <i class="fa fa-search"></i>
-                </button>                        
-            </div> 
+                </button>
+                @if(!empty($buttonAdd))
+                    <button id="{{ $buttonAdd }}" class="btn btn-icon btn-outline-primary" type="button"
+                        title="{{ $addTitle }}">
+                        <i class="fa fa-user-plus"></i>
+                    </button>
+                @endif
+            </div>
         </div>
     </div>
 </div>

@@ -104,7 +104,8 @@
                     <div class="d-grid gap-3">
                         <x-textbox-horizontal label="No System" id="PONumber" :value="$fields->PONumber" placeholder="(Auto)" class="readonly" />
                         <x-textbox-horizontal label="Tanggal Pembelian" id="PODate" :value="$fields->PODate" placeholder="" class="required datepicker2" />
-                        <x-lookup-horizontal label="Beli Dari" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"  button="btn-find-partner"/>                        
+                        <x-lookup-horizontal label="Beli Dari" id="PartnerDesc" :value="$fields->PartnerDesc" class="required"
+                            button="btn-find-partner" button-add="btn-new-partner" add-title="Tambah konsumen baru"/>
                         <x-textbox-horizontal label="Keterangan" id="PONotes" :value="$fields->PONotes" placeholder="" class="required" />
                     </div>
                 </div>
@@ -371,6 +372,16 @@
                 }
 
                 callAjaxModalView('{{ url('/gn-select-partner') }}',data);
+            });
+
+            // Konsumen baru didaftarkan tanpa meninggalkan layar transaksi
+            $('#btn-new-partner').click(function(){
+
+                callAjaxModalView('{{ url('/gn-partner-quick') }}', {
+                    _token: $("#_token").val(),
+                    target_index: 'IDX_M_Partner',
+                    target_name: 'PartnerDesc'
+                });
             });
 
             $('#btn-find-coa').click(function(){
