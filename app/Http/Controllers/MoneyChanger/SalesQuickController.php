@@ -344,10 +344,14 @@ class SalesQuickController extends MyController
     {
         // Nilai transaksi dihitung dari detail yang baru saja disimpan, bukan
         // dari angka yang dikirim layar, supaya tidak bisa dimanipulasi.
-        $total_transaksi = 0;
-        foreach ($details as $d) {
-            $total_transaksi += (float) $d['foreign_amount'] * (float) $d['exchange_rate'];
-        }
+        // Nilai transaksi diambil dari detail yang sudah tersimpan, bukan dari
+        // angka kiriman layar. Stored procedure penyimpanan menghitung ulang
+        // ForeignAmount = pecahan x Qty, jadi hanya angka di tabel ini yang
+        // benar benar mewakili nilai notanya.
+        $total_transaksi = (float) DB::connection('sqlsrv')->select(
+            "SELECT ISNULL(SUM(BaseCurrencyAmount), 0) AS Total
+             FROM MC_T_SalesOrderDetail WITH(NOLOCK)
+             WHERE IDX_T_SalesOrder = ?", [$idx_so])[0]->Total;
 
         $payments = json_decode($request->input('payment_json', '[]'), true) ?: [];
         $payments = array_values(array_filter($payments, function ($p) {

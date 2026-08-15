@@ -113,9 +113,9 @@
                         <tr>
                             <th style="width:40px;" class="text-center">No</th>
                             <th style="min-width:220px;">Valas <span class="text-danger">*</span></th>
-                            <th style="width:130px;" class="text-end">Jumlah Valas <span class="text-danger">*</span></th>
+                            <th style="width:110px;" class="text-end">Qty (Lembar) <span class="text-danger">*</span></th>
                             <th style="width:130px;" class="text-end">Nilai Tukar <span class="text-danger">*</span></th>
-                            <th style="width:100px;" class="text-end">Qty</th>
+                            <th style="width:140px;" class="text-end">Jumlah Valas</th>
                             <th style="width:160px;" class="text-end">Total (IDR)</th>
                             <th style="min-width:160px;">Catatan</th>
                             <th style="width:50px;" class="text-center">Hapus</th>
@@ -551,14 +551,18 @@ function appendDetailRow(row) {
                     buildValasOptionsBaru(idxValas) +
                 '</select>' +
             '</td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-foreign" inputmode="decimal" data-decimal="2" ' +
-                'value="' + formatNumber(foreign, 2) + '" placeholder="0"></td>' +
+            // Qty berisi jumlah lembar/koin dan disimpan sebagai bilangan bulat,
+            // jadi tidak ada angka desimal di sini.
+            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-qty" inputmode="numeric" data-decimal="0" ' +
+                'value="' + (qty ? formatNumber(qty, 0) : '') + '" placeholder="0"></td>' +
             '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-rate" inputmode="decimal" data-decimal="4" ' +
                 'value="' + formatNumber(rate, 4) + '" placeholder="0"></td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-qty" inputmode="decimal" data-decimal="2" ' +
-                'value="' + formatNumber(qty, 2) + '" placeholder="0"></td>' +
-            '<td><input type="text" class="form-control form-control-sm text-end inp-total" ' +
-                'value="' + formatNumber(total, 2) + '" readonly></td>' +
+            // Jumlah Valas dan Total dihitung dengan rumus yang sama dengan
+            // stored procedure penyimpanan, jadi angkanya tidak bisa berbeda.
+            '<td><input type="text" class="form-control form-control-sm text-end inp-foreign bg-light" ' +
+                'value="' + formatNumber(foreign, 2) + '" readonly tabindex="-1"></td>' +
+            '<td><input type="text" class="form-control form-control-sm text-end inp-total bg-light" ' +
+                'value="' + formatNumber(total, 2) + '" readonly tabindex="-1"></td>' +
             '<td><input type="text" class="form-control form-control-sm inp-notes" ' +
                 'value="' + escapeHtml(notes) + '" placeholder="Catatan"></td>' +
             '<td class="text-center">' +
@@ -581,9 +585,29 @@ function appendDetailRow(row) {
 }
 
 function recalcRow($row) {
-    var foreign = parseFloat(cleanNumber($row.find('.inp-foreign').val())) || 0;
-    var rate    = parseFloat(cleanNumber($row.find('.inp-rate').val()))    || 0;
+    // Rumusnya menyalin USP_MC_*OrderDetail_Save:
+    //   ForeignAmount = ValasChangeNumber x Quantity
+    //   BaseCurrency  = ForeignAmount x ExchangeRate
+    var qty     = parseFloat(cleanNumber($row.find('.inp-qty').val()))  || 0;
+    var rate    = parseFloat(cleanNumber($row.find('.inp-rate').val())) || 0;
+    var pecahan = nilaiPecahan($row.find('.inp-valas').val());
+    var foreign = qty * pecahan;
+
+    $row.find('.inp-foreign').val(formatNumber(foreign, 2));
     $row.find('.inp-total').val(formatNumber(foreign * rate, 2));
+}
+
+/** Nilai pecahan (ValasChangeNumber) dari valas yang dipilih */
+function nilaiPecahan(idxValas) {
+    if (!idxValas) { return 0; }
+
+    for (var i = 0; i < ddValasOption.length; i++) {
+        if (String(ddValasOption[i].id) === String(idxValas)) {
+            return parseFloat(ddValasOption[i].angka) || 0;
+        }
+    }
+
+    return 0;
 }
 
 function recalcAll() {
@@ -616,6 +640,7 @@ function serializeDetail() {
             idx_t_purchaseorderdetail: parseInt($r.data('detail-id')) || 0,
             idx_m_valas:               idxValas,
             quantity:                  parseFloat(cleanNumber($r.find('.inp-qty').val()))      || 0,
+            // Nilainya hasil hitung, bukan ketikan; server tetap menghitung ulang
             foreign_amount:            parseFloat(cleanNumber($r.find('.inp-foreign').val())) || 0,
             exchange_rate:             parseFloat(cleanNumber($r.find('.inp-rate').val()))    || 0,
             detail_notes:              $r.find('.inp-notes').val() || ''

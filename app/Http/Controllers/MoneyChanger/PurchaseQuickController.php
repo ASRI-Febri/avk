@@ -166,10 +166,14 @@ class PurchaseQuickController extends MyController
      */
     private function konfirmasi_dan_bayar(Request $request, $idx_po, $details, $userId)
     {
-        $total_transaksi = 0;
-        foreach ($details as $d) {
-            $total_transaksi += (float) $d['foreign_amount'] * (float) $d['exchange_rate'];
-        }
+        // Nilai transaksi diambil dari detail yang sudah tersimpan, bukan dari
+        // angka kiriman layar. Stored procedure penyimpanan menghitung ulang
+        // ForeignAmount = pecahan x Qty, jadi hanya angka di tabel ini yang
+        // benar benar mewakili nilai notanya.
+        $total_transaksi = (float) DB::connection('sqlsrv')->select(
+            "SELECT ISNULL(SUM(BaseCurrencyAmount), 0) AS Total
+             FROM MC_T_PurchaseOrderDetail WITH(NOLOCK)
+             WHERE IDX_T_PurchaseOrder = ?", [$idx_po])[0]->Total;
 
         $payments = json_decode($request->input('payment_json', '[]'), true) ?: [];
         $payments = array_values(array_filter($payments, function ($p) {
