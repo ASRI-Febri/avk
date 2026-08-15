@@ -1,0 +1,109 @@
+/*
+ * valas-select.css
+ *
+ * Tampilan dropdown pilih valas di form input cepat.
+ *
+ * Daftarnya panjang (130 pecahan dari 25 mata uang), jadi yang dikejar di sini
+ * keterbacaan sekali lihat: kode mata uang dibuat menonjol dan lebarnya tetap
+ * supaya sejajar ke bawah, nama mata uang jadi keterangan, dan pecahan berdiri
+ * sendiri di kanan sebagai angka. Nama mata uang dipakai sebagai judul grup,
+ * jadi tidak perlu diulang di tiap baris.
+ */
+
+/* Kotak select saat tertutup */
+.select2-container--default .select2-selection--single.valas-terpilih,
+.select2-container--default .valas-dropdown + .select2-container .select2-selection--single {
+    height: calc(1.5em + 0.5rem + 2px);
+}
+
+.pilih-valas__kode {
+    display: inline-block;
+    min-width: 3.4em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.pilih-valas__isi {
+    color: #212529;
+}
+
+.pilih-valas__mata {
+    color: #6c757d;
+}
+
+/* SKU ditaruh di kanan sebagai rujukan ke kartu stok dan laporan */
+.pilih-valas__sku {
+    float: right;
+    font-variant-numeric: tabular-nums;
+    color: #868e96;
+    font-size: 0.85em;
+    margin-left: 0.75em;
+}
+
+/* Baris terpilih / disorot: badge pecahan ikut kontras */
+.select2-container--default .select2-results__option--highlighted .pilih-valas__isi,
+.select2-container--default .select2-results__option--highlighted .pilih-valas__sku,
+.select2-container--default .select2-results__option--highlighted .pilih-valas__mata {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Judul grup mata uang */
+.select2-container--default .select2-results__group {
+    padding: 0.35rem 0.6rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    color: #495057;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Daftar dibuat lebih longgar dan tidak terlalu tinggi */
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 320px;
+}
+
+.select2-container--default .select2-results__option {
+    padding: 0.32rem 0.6rem;
+}
+
+/* Kotak pencarian */
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    padding: 0.3rem 0.5rem;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.2);
+}
+
+/* Dropdown mengambang di atas tabel */
+.select2-container--open .select2-dropdown {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    border-color: #ced4da;
+}
+
+/* Ukuran di dalam tabel detail supaya tidak melebihi tinggi baris */
+#tbl-detail .select2-container--default .select2-selection--single {
+    height: calc(1.5em + 0.5rem + 2px);
+    border-color: #ced4da;
+}
+
+#tbl-detail .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: calc(1.5em + 0.5rem);
+    padding-left: 0.5rem;
+    padding-right: 1.6rem;
+    font-size: 0.875rem;
+}
+
+#tbl-detail .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: calc(1.5em + 0.5rem);
+}
+
+#tbl-detail .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #adb5bd;
+}

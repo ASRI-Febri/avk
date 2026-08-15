@@ -102,6 +102,8 @@ class SalesQuickController extends MyController
         $ddf = new DropdownFinanceController;
 
         $this->data['dd_valas']   = (array) $ddf->valas();
+        // Sumber terstruktur untuk dropdown valas yang bisa dicari
+        $this->data['dd_valas_option'] = (array) $ddf->valas_option();
         $this->data['dd_company'] = (array) $dd->company($this->data['user_id']);
         $this->data['dd_branch']  = (array) $dd->branch($this->data['user_id']);
 

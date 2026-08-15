@@ -145,11 +145,16 @@
 
 @endsection
 
+@section('css')
+    <link href="{{ URL::asset('public/css/valas-select.css') }}" rel="stylesheet" type="text/css" />
+@endsection
+
 @section('script')
 {{-- Masking angka: hanya digit, ribuan koma, desimal titik --}}
 <script src="{{ URL::asset('public/js/money-mask.js') }}"></script>
 <script>
-var ddValas     = @json($dd_valas);
+var ddValas       = @json($dd_valas);
+var ddValasOption = @json($dd_valas_option ?? []);
 var existingRow = @json($records_detail ?? []);
 
 $(document).ready(function () {
@@ -185,7 +190,8 @@ $(document).ready(function () {
 
     // ---------- Tambah baris ----------
     $('#btn-add-row').on('click', function () {
-        appendDetailRow({});
+        // fokus: pencarian valas langsung terbuka supaya kasir tinggal mengetik
+        appendDetailRow({ fokus: true });
         serializeDetail();
     });
 
@@ -251,6 +257,117 @@ function buildValasOptions(selected) {
     return html;
 }
 
+// =========================================================
+// DROPDOWN VALAS
+// Daftarnya panjang, jadi dipakai Select2: ada kotak pencarian, dikelompokkan
+// per mata uang, dan bisa dicari lewat kode, nama, maupun SKU pecahan.
+// =========================================================
+function buildValasOptionsBaru(selected) {
+    var html = '<option value=""></option>';
+    var grupSekarang = '';
+
+    ddValasOption.forEach(function (v) {
+        var grup = v.kode + ' - ' + v.mata;
+
+        if (grup !== grupSekarang) {
+            if (grupSekarang !== '') { html += '</optgroup>'; }
+            html += '<optgroup label="' + escapeHtml(grup) + '">';
+            grupSekarang = grup;
+        }
+
+        // Teks option dipakai Select2 untuk pencarian, jadi kode, nama, dan SKU
+        // semuanya disertakan walau yang tampil nanti dirapikan templateResult.
+        var teksCari = v.kode + ' ' + v.mata + ' ' + v.pecahan + ' ' + v.sku;
+        var sel = (String(selected) === String(v.id)) ? ' selected' : '';
+
+        html += '<option value="' + v.id + '"' + sel +
+                ' data-kode="' + escapeHtml(v.kode) + '"' +
+                ' data-mata="' + escapeHtml(v.mata) + '"' +
+                ' data-sku="' + escapeHtml(v.sku) + '"' +
+                ' data-pecahan="' + escapeHtml(v.pecahan) + '">' +
+                escapeHtml(teksCari) + '</option>';
+    });
+
+    if (grupSekarang !== '') { html += '</optgroup>'; }
+
+    return html;
+}
+
+function tampilkanBarisValas(state) {
+    if (!state.id) { return state.text; }
+
+    var $opt = $(state.element);
+    var kode = $opt.data('kode') || '';
+    var sku = $opt.data('sku') || '';
+    var pecahan = $opt.data('pecahan') || '';
+
+    // Nama mata uang tidak diulang di sini karena sudah jadi judul grup.
+    // Yang tersisa: kode sebagai penanda, pecahan sebagai isi, SKU sebagai
+    // rujukan ke kartu stok dan laporan.
+    return $(
+        '<span>' +
+            '<span class="pilih-valas__sku">' + escapeHtml(sku) + '</span>' +
+            '<span class="pilih-valas__kode">' + escapeHtml(kode) + '</span>' +
+            '<span class="pilih-valas__isi">' + escapeHtml(pecahan) + '</span>' +
+        '</span>'
+    );
+}
+
+function tampilkanValasTerpilih(state) {
+    if (!state.id) { return state.text; }
+
+    var $opt = $(state.element);
+    var kode = $opt.data('kode') || '';
+    var pecahan = $opt.data('pecahan') || '';
+
+    return $('<span><span class="pilih-valas__kode">' + escapeHtml(kode) + '</span>' +
+             escapeHtml(pecahan) + '</span>');
+}
+
+/**
+ * Pencocokan kata kunci: semua kata harus ada, urutannya bebas.
+ * Bawaan Select2 hanya mencocokkan potongan teks berurutan, sehingga ketikan
+ * lazim seperti "usd 100" tidak ketemu padahal keduanya ada di baris yang sama.
+ */
+function cocokSemuaKata(kataKunci, teks) {
+    var kata = String(kataKunci).toLowerCase().split(/\s+/).filter(function (k) { return k !== ''; });
+    var isi = String(teks).toLowerCase();
+
+    return kata.every(function (k) { return isi.indexOf(k) !== -1; });
+}
+
+function cocokkanValas(params, data) {
+    if ($.trim(params.term || '') === '') { return data; }
+    if (typeof data.text === 'undefined') { return null; }
+
+    // Grup mata uang: tampilkan grupnya kalau ada anak yang cocok
+    if (data.children && data.children.length) {
+        var anak = data.children.filter(function (c) {
+            return cocokSemuaKata(params.term, data.text + ' ' + c.text);
+        });
+
+        if (anak.length === 0) { return null; }
+
+        var salinan = $.extend({}, data, true);
+        salinan.children = anak;
+        return salinan;
+    }
+
+    return cocokSemuaKata(params.term, data.text) ? data : null;
+}
+
+function pasangSelect2Valas($select) {
+    $select.select2({
+        width: '100%',
+        placeholder: 'Cari valas / pecahan...',
+        allowClear: false,
+        dropdownAutoWidth: true,
+        matcher: cocokkanValas,
+        templateResult: tampilkanBarisValas,
+        templateSelection: tampilkanValasTerpilih
+    });
+}
+
 function appendDetailRow(row) {
     var idxDetail = row.idx_t_purchaseorderdetail || 0;
     var idxValas  = row.idx_m_valas               || '';
@@ -267,7 +384,7 @@ function appendDetailRow(row) {
             '<td class="text-center td-nomor">' + nomor + '</td>' +
             '<td>' +
                 '<select class="form-control form-control-sm inp-valas">' +
-                    buildValasOptions(idxValas) +
+                    buildValasOptionsBaru(idxValas) +
                 '</select>' +
             '</td>' +
             '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-foreign" inputmode="decimal" data-decimal="2" ' +
@@ -289,6 +406,14 @@ function appendDetailRow(row) {
     );
 
     $('#tbody-detail').append($tr);
+
+    // Select2 harus dipasang setelah baris masuk ke DOM
+    pasangSelect2Valas($tr.find('.inp-valas'));
+
+    // Fokuskan pencarian begitu baris baru ditambahkan lewat tombol
+    if (row.fokus) {
+        $tr.find('.inp-valas').select2('open');
+    }
 }
 
 function recalcRow($row) {
