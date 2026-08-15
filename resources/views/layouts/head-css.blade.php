@@ -14,3 +14,5 @@
 <link href="{{ URL::asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <!-- Sweetalert -->
 <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+<!-- Perbaikan tampilan DataTables; dimuat terakhir agar menimpa app.min.css -->
+<link href="{{ URL::asset('assets/css/datatable-tweaks.css') }}" rel="stylesheet" type="text/css" />

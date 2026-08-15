@@ -1,0 +1,49 @@
+/*
+ * datatable-tweaks.css
+ *
+ * Perbaikan tampilan bawaan DataTables di tema ini.
+ *
+ * Masalahnya: tema memberi .form-select display:block dan width:100%, padahal
+ * DataTables menaruh select "Show ... entries" di dalam satu <label>. Elemen
+ * block di dalam label memaksa teksnya patah, sehingga satu kendali sederhana
+ * memakan tiga baris:
+ *
+ *      Show
+ *      [ 10 v ]
+ *      entries
+ *
+ * File dataTables.bootstrap5.css sebenarnya sudah menangani ini, tapi tidak
+ * ikut dimuat di halaman aplikasi, jadi aturannya ditulis ulang seperlunya.
+ */
+
+/* Satu baris: Show [10] entries */
+div.dataTables_wrapper div.dataTables_length label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+div.dataTables_wrapper div.dataTables_length select {
+    display: inline-block;
+    width: auto;
+    /* Ruang untuk panah dropdown supaya angkanya tidak tertutup */
+    padding-right: 1.9rem;
+}
+
+/* Kotak pencarian bawaan mengalami hal yang sama */
+div.dataTables_wrapper div.dataTables_filter label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+div.dataTables_wrapper div.dataTables_filter input {
+    display: inline-block;
+    width: auto;
+}
