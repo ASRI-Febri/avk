@@ -188,7 +188,7 @@
             </td>
         </tr>
         <tr>
-            <td>No. Faktur / Referensi : {{ $header->ReferenceNo !== '' ? $header->ReferenceNo : $header->PONumber }}</td>
+            <td>No. Invoice : {{ $header->PONumber }}</td>
             <td class="kanan">
                 @if($header->PartnerNIK !== '')
                     NIK : {{ $header->PartnerNIK }}
@@ -196,7 +196,7 @@
             </td>
         </tr>
         <tr>
-            <td>No. Nota Sistem : {{ $header->PONumber }}</td>
+            <td>No. Referensi : {{ $header->ReferenceNo !== '' ? $header->ReferenceNo : '-' }}</td>
             <td class="kanan angka">Admin : {{ $header->AdminName }}</td>
         </tr>
     </table>
