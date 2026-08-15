@@ -24,7 +24,9 @@
     <meta charset="utf-8" />
     <title>Nota {{ $header->SONumber }}</title>
     <style>
-        @page { margin: 6mm 7mm; }
+        /* Batas atas dilebihkan seperti nota kasir: baris teratas tidak
+           terjangkau kepala cetak printer 9 jarum. */
+        @page { margin: 14mm 7mm 6mm; }
 
         body {
             margin: 0;

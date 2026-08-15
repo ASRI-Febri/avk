@@ -126,7 +126,14 @@
             .toolbar { display: none; }
 
             /* 1/2 A4 mendatar: 210 x 148 mm */
-            @page { size: 210mm 148mm; margin: 5mm 7mm; }
+            /*
+             * Batas atas 14mm, bukan 5mm. Kepala cetak LX-310 tidak bisa
+             * menjangkau beberapa milimeter teratas kertas, dan posisi
+             * awal kertas tidak pernah persis sama tiap kali dipasang,
+             * sehingga baris INVOICE terpotong. Isi nota hanya memakai
+             * sekitar 107mm dari 148mm, jadi ruang bawahnya masih cukup.
+             */
+            @page { size: 210mm 148mm; margin: 14mm 7mm 5mm; }
 
             html, body { font-size: 10pt; line-height: 1.25; }
             .lembar { width: auto; margin: 0; padding: 0; }
