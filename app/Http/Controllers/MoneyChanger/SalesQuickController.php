@@ -113,10 +113,118 @@ class SalesQuickController extends MyController
         $this->data['akun_cash']            = $this->akun_bawaan('CASH');
         $this->data['akun_transfer']        = $this->akun_bawaan('TRANSFER');
 
+        // Sisa stok per pecahan, dipakai layar untuk menahan penjualan yang
+        // melebihi stok sebelum datanya dikirim.
+        $this->data['dd_valas_stok'] = $this->stok_valas(
+            $this->data['fields']->IDX_M_Branch ?? 1,
+            $this->data['fields']->SODate ?? date('Y-m-d')
+        );
+
+        $this->data['url_stok']        = url('mc-sales-quick/stok');
         $this->data['url_save_header'] = url('mc-sales-quick/save');
         $this->data['view']            = 'money_changer.sales_quick_form';
 
         return view($this->data['view'], $this->data);
+    }
+
+    /**
+     * Sisa stok tiap pecahan valas di satu cabang sampai tanggal nota.
+     *
+     * Angkanya berasal dari stored procedure yang memakai rumus sama dengan
+     * validasi saat simpan, jadi yang tampil di layar sama dengan yang menolak
+     * di database.
+     *
+     * @return array [IDX_M_Valas => ['sku' => 'USD-100', 'sisa' => 11.0]]
+     */
+    private function stok_valas($branch, $tanggal)
+    {
+        $tanggal = substr((string) $tanggal, 0, 10);
+
+        if ($tanggal === '' || strtotime($tanggal) === false) {
+            $tanggal = date('Y-m-d');
+        }
+
+        $rows = DB::connection('sqlsrv')->select(
+            "EXEC [dbo].[USP_MC_ValasStock_List] ?, ?", [(int) $branch, $tanggal]);
+
+        $stok = [];
+        foreach ($rows as $row) {
+            $stok[(int) $row->IDX_M_Valas] = [
+                'sku'  => trim($row->ValasSKU),
+                'sisa' => (float) $row->StockQty,
+            ];
+        }
+
+        return $stok;
+    }
+
+    /**
+     * Sisa stok untuk layar, dipanggil ulang saat kasir mengubah tanggal atau
+     * cabang. Stok dihitung sampai tanggal nota, jadi angkanya ikut berubah.
+     */
+    public function stok(Request $request)
+    {
+        // Dicetak sebagai object supaya indeks valas tetap jadi kunci di layar,
+        // bukan berubah menjadi array kalau kebetulan berurutan dari nol.
+        return response()->json((object) $this->stok_valas(
+            $request->input('branch', 1),
+            $request->input('date', date('Y-m-d'))
+        ));
+    }
+
+    /**
+     * Periksa stok seluruh baris jual sebelum detailnya disimpan.
+     *
+     * Validasi di USP_MC_SalesOrderDetail_Save memeriksa satu baris satu kali,
+     * jadi qty dijumlahkan dulu per pecahan di sini. Pecahan kembar sebenarnya
+     * sudah ditolak SP dengan pesan "This item already exists!", tapi
+     * penjumlahan ini membuat pesannya lebih jelas dan tidak bergantung pada
+     * aturan itu.
+     *
+     * Nota yang sudah approved dilewati: stoknya sudah tercatat keluar di kartu
+     * stok, jadi memeriksanya lagi akan menghitung dua kali.
+     *
+     * @return string Pesan kesalahan siap tampil, kosong bila stok mencukupi.
+     */
+    private function periksa_stok($details, $branch, $tanggal, $idx_so, $state)
+    {
+        if ($state === 'update' && (int) $idx_so > 0) {
+            $info = $this->exec_sp('[dbo].[USP_MC_SalesOrder_Info]', ['IDX' => (int) $idx_so], 'list');
+
+            if ($info && trim($info[0]->SOStatus ?? '') === 'A') {
+                return '';
+            }
+        }
+
+        $diminta = [];
+        foreach ($details as $d) {
+            // Hanya transaksi jual yang mengurangi stok
+            if ((int) ($d['idx_m_transactiontype'] ?? 2) !== 2) {
+                continue;
+            }
+
+            $idx = (int) $d['idx_m_valas'];
+            $diminta[$idx] = ($diminta[$idx] ?? 0) + (float) ($d['quantity'] ?? 0);
+        }
+
+        $stok  = $this->stok_valas($branch, $tanggal);
+        $pesan = [];
+
+        foreach ($diminta as $idx => $qty) {
+            $sisa = $stok[$idx]['sisa'] ?? 0;
+
+            if ($qty > $sisa) {
+                $pesan[] = '<b>' . ($stok[$idx]['sku'] ?? ('Valas #' . $idx)) . '</b>: diminta '
+                    . rtrim(rtrim(number_format($qty, 2, '.', ','), '0'), '.') . ' lembar, sisa stok '
+                    . rtrim(rtrim(number_format($sisa, 2, '.', ','), '0'), '.') . ' lembar';
+            }
+        }
+
+        if (empty($pesan)) {
+            return '';
+        }
+
+        return '<span>Stok valas tidak mencukupi:<br>' . implode('<br>', $pesan) . '</span>';
     }
 
     /**
@@ -201,6 +309,28 @@ class SalesQuickController extends MyController
 
         $state  = $request->input('state', 'create');
         $userId = 'XXX' . $this->data['user_id'];
+
+        // ---------- STOK ----------
+        // Diperiksa sebelum apapun disimpan supaya nota tidak terlanjur dibuat
+        // dengan sebagian barisnya ditolak database.
+        $pesan_stok = $this->periksa_stok(
+            $details,
+            $request->input('IDX_M_Branch', 1),
+            $request->input('SODate'),
+            $request->input('IDX_T_SalesOrder', 0),
+            $state
+        );
+
+        if ($pesan_stok !== '') {
+            $obj = [
+                'flag'    => 'error',
+                'message' => $pesan_stok,
+                'id'      => $request->input('IDX_T_SalesOrder', 0),
+                'url'     => '',
+            ];
+            echo json_encode($obj);
+            return;
+        }
 
         // ---------- HEADER ----------
         $param_header = [

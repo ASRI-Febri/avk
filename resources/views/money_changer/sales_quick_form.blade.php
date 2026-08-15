@@ -114,6 +114,7 @@
                             <th style="width:40px;" class="text-center">No</th>
                             <th style="min-width:220px;">Valas <span class="text-danger">*</span></th>
                             <th style="width:110px;" class="text-end">Qty (Lembar) <span class="text-danger">*</span></th>
+                            <th style="width:95px;" class="text-end">Sisa Stok</th>
                             <th style="width:130px;" class="text-end">Nilai Tukar <span class="text-danger">*</span></th>
                             <th style="width:140px;" class="text-end">Jumlah Valas</th>
                             <th style="width:160px;" class="text-end">Total (IDR)</th>
@@ -126,7 +127,7 @@
                     </tbody>
                     <tfoot>
                         <tr class="table-light fw-bold">
-                            <td colspan="5" class="text-end pe-3">TOTAL</td>
+                            <td colspan="6" class="text-end pe-3">TOTAL</td>
                             <td class="text-end" id="td-grand-total">IDR 0</td>
                             <td colspan="2"></td>
                         </tr>
@@ -260,6 +261,13 @@ var akunTransfer= @json($akun_transfer ?? 0);
 var sudahBayar  = @json(count($records_payment ?? []) > 0);
 var existingRow = @json($records_detail ?? []);
 
+// Sisa stok tiap pecahan sampai tanggal nota: { idx: {sku, sisa} }.
+// Nota yang sudah approved stoknya sudah keluar di kartu stok, jadi
+// pemeriksaan dilewati supaya tidak terhitung dua kali.
+var stokValas      = @json((object) ($dd_valas_stok ?? []));
+var lewatiCekStok  = @json(trim($fields->SOStatus ?? 'D') === 'A');
+var urlStok        = '{{ $url_stok }}';
+
 $(document).ready(function () {
 
     // ---------- Lookup Konsumen ----------
@@ -290,6 +298,7 @@ $(document).ready(function () {
     }
 
     recalcAll();
+    tampilkanStok();
     serializeDetail();
 
     // ---------- Tambah baris ----------
@@ -304,7 +313,15 @@ $(document).ready(function () {
         var $row = $(this).closest('tr');
         recalcRow($row);
         recalcGrandTotal();
+        tampilkanStok();
         serializeDetail();
+    });
+
+    // ---------- Stok mengikuti tanggal nota ----------
+    // Stok dihitung sampai tanggal transaksi, jadi nota mundur punya sisa yang
+    // berbeda dengan hari ini.
+    $('#SODate').on('change', function () {
+        muatStok($(this).val());
     });
 
     // ---------- Hapus baris ----------
@@ -326,6 +343,7 @@ $(document).ready(function () {
 
         renumberRows();
         recalcGrandTotal();
+        tampilkanStok();
         serializeDetail();
     });
 
@@ -355,16 +373,25 @@ $(document).ready(function () {
     }
 
     // ---------- Serialize sebelum save ----------
-    $('#btn-save-header').on('click', function () {
+    // Tombolnya membawa onclick bawaan komponen yang langsung memanggil
+    // saveHeader. Handler itu dilepas supaya urutannya pasti: periksa stok
+    // dulu, baru kirim.
+    $('#btn-save-header').removeAttr('onclick').on('click', function () {
         $('#confirm').val('0');
         serializeDetail();
         serializePayment();
+
+        if (!stokMencukupi()) { return; }
+
+        saveHeader('{{ $url_save_header }}');
     });
 
     // ---------- Save & Konfirmasi ----------
     $('#btn-save-confirm').on('click', function () {
         serializeDetail();
         serializePayment();
+
+        if (!stokMencukupi()) { return; }
 
         var selisih = totalPembayaran() - totalTransaksi();
 
@@ -557,6 +584,9 @@ function appendDetailRow(row) {
             // jadi tidak ada angka desimal di sini.
             '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-qty" inputmode="numeric" data-decimal="0" ' +
                 'value="' + (qty ? formatNumber(qty, 0) : '') + '" placeholder="0"></td>' +
+            // Sisa stok pecahan yang dipilih, ikut berubah begitu valas atau
+            // qty diubah, supaya kasir tahu sebelum notanya dikirim.
+            '<td class="text-end td-stok text-muted">-</td>' +
             '<td><input type="text" class="form-control form-control-sm text-end inp-money inp-rate" inputmode="decimal" data-decimal="4" ' +
                 'value="' + formatNumber(rate, 4) + '" placeholder="0"></td>' +
             // Jumlah Valas dan Total dihitung dengan rumus yang sama dengan
@@ -597,6 +627,115 @@ function recalcRow($row) {
 
     $row.find('.inp-foreign').val(formatNumber(foreign, 2));
     $row.find('.inp-total').val(formatNumber(foreign * rate, 2));
+}
+
+// =========================================================
+// STOK VALAS
+// Sisa stok = SUM(StockInQty) - SUM(StockOutQty) per cabang dan pecahan sampai
+// tanggal nota, rumus yang sama dengan validasi di stored procedure. Layar
+// hanya memberi peringatan lebih awal; penolakan sebenarnya tetap di database.
+// =========================================================
+function sisaStok(idxValas) {
+    var s = stokValas[String(idxValas)];
+    return s ? (parseFloat(s.sisa) || 0) : 0;
+}
+
+function skuValas(idxValas) {
+    var s = stokValas[String(idxValas)];
+    return s ? s.sku : ('Valas #' + idxValas);
+}
+
+/**
+ * Jumlah lembar yang diminta per pecahan di seluruh baris.
+ * Dijumlahkan karena satu nota boleh punya dua baris pecahan yang sama, dan
+ * yang menentukan cukup atau tidak adalah totalnya.
+ */
+function permintaanPerValas() {
+    var permintaan = {};
+
+    $('#tbody-detail tr').each(function () {
+        var $r = $(this);
+        var idx = parseInt($r.find('.inp-valas').val()) || 0;
+        if (idx === 0) { return; }
+
+        var qty = parseFloat(cleanNumber($r.find('.inp-qty').val())) || 0;
+        permintaan[idx] = (permintaan[idx] || 0) + qty;
+    });
+
+    return permintaan;
+}
+
+/** Isi kolom Sisa Stok dan tandai merah baris yang melebihi stok */
+function tampilkanStok() {
+    var permintaan = permintaanPerValas();
+
+    $('#tbody-detail tr').each(function () {
+        var $r = $(this);
+        var $sel = $r.find('.td-stok');
+        var idx = parseInt($r.find('.inp-valas').val()) || 0;
+
+        if (idx === 0) {
+            $sel.text('-').removeClass('text-danger fw-bold').addClass('text-muted');
+            $r.find('.inp-qty').removeClass('is-invalid');
+            return;
+        }
+
+        var sisa = sisaStok(idx);
+        var kurang = !lewatiCekStok && (permintaan[idx] || 0) > sisa;
+
+        $sel.text(formatNumber(sisa, 0))
+            .toggleClass('text-danger fw-bold', kurang)
+            .toggleClass('text-muted', !kurang);
+
+        $r.find('.inp-qty').toggleClass('is-invalid', kurang);
+    });
+}
+
+/** Ambil ulang sisa stok saat tanggal nota berubah */
+function muatStok(tanggal) {
+    $.getJSON(urlStok, { date: tanggal, branch: $('#IDX_M_Branch').val() })
+        .done(function (data) {
+            stokValas = data || {};
+            tampilkanStok();
+        });
+}
+
+/**
+ * Pesan kekurangan stok, kosong bila semuanya cukup.
+ * Dipakai menahan tombol simpan sebelum data dikirim.
+ */
+function pesanStokKurang() {
+    if (lewatiCekStok) { return ''; }
+
+    var permintaan = permintaanPerValas();
+    var pesan = [];
+
+    Object.keys(permintaan).forEach(function (idx) {
+        var sisa = sisaStok(idx);
+
+        if (permintaan[idx] > sisa) {
+            pesan.push('<b>' + escapeHtml(skuValas(idx)) + '</b>: diminta ' +
+                formatNumber(permintaan[idx], 0) + ' lembar, sisa stok ' +
+                formatNumber(sisa, 0) + ' lembar');
+        }
+    });
+
+    return pesan.join('<br>');
+}
+
+/** TRUE bila stok cukup; bila kurang, tampilkan peringatannya */
+function stokMencukupi() {
+    var pesan = pesanStokKurang();
+
+    if (pesan === '') { return true; }
+
+    Swal.fire({
+        title: 'Stok valas tidak mencukupi',
+        html: pesan,
+        icon: 'warning'
+    });
+
+    return false;
 }
 
 /** Nilai pecahan (ValasChangeNumber) dari valas yang dipilih */

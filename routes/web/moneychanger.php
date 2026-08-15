@@ -121,6 +121,7 @@ Route::get('/mc-sales-order-delete-file', 'MoneyChanger\SalesOrderController@del
 Route::get('/mc-sales-quick/create',     'MoneyChanger\SalesQuickController@create');
 Route::get('/mc-sales-quick/update/{id}','MoneyChanger\SalesQuickController@update');
 Route::post('/mc-sales-quick/save',      'MoneyChanger\SalesQuickController@save');
+Route::get('/mc-sales-quick/stok',       'MoneyChanger\SalesQuickController@stok');
 
 // PURCHASE QUICK (input cepat header + detail dalam 1 form)
 Route::get('/mc-purchase-quick/create',     'MoneyChanger\PurchaseQuickController@create');
