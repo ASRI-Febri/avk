@@ -212,13 +212,24 @@
     <table class="rinci">
         <thead>
             <tr>
+                {{--
+                    Lebar kolom dihitung dari lebar karakter font nota (10pt
+                    DejaVu Sans Mono = 2.12mm) ditambah padding sel 2mm:
+
+                      Description  nama valas terpanjang 29 karakter -> 64mm
+                      Forex/Local  judulnya 12 karakter -> 27mm, angka lebih pendek
+                      Rate         angka terpanjang 9 karakter -> 21mm
+
+                    Sisanya diberikan ke Description supaya nama valas tidak
+                    pernah patah ke baris kedua.
+                --}}
                 <th style="width:9mm">No.</th>
-                <th style="width:21mm">Currency</th>
-                <th style="width:44mm">Description</th>
-                <th style="width:12mm">Trx.</th>
-                <th style="width:30mm" class="angka">Forex Amount</th>
-                <th style="width:28mm" class="angka">Rate</th>
-                <th style="width:38mm" class="angka">Local Amount</th>
+                <th style="width:20mm">Currency</th>
+                <th style="width:70mm">Description</th>
+                <th style="width:11mm">Trx.</th>
+                <th style="width:28mm" class="angka">Forex Amount</th>
+                <th style="width:22mm" class="angka">Rate</th>
+                <th style="width:36mm" class="angka">Local Amount</th>
             </tr>
         </thead>
         <tbody>

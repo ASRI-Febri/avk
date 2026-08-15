@@ -26,7 +26,7 @@
     <style>
         /* Batas atas dilebihkan seperti nota kasir: baris teratas tidak
            terjangkau kepala cetak printer 9 jarum. */
-        @page { margin: 14mm 7mm 6mm; }
+        @page { margin: 14mm 7mm 5mm; }
 
         body {
             margin: 0;
@@ -40,7 +40,14 @@
              */
             font-family: "DejaVu Sans Mono", "Courier New", monospace;
             font-size: 9.5pt;
-            line-height: 1.3;
+            /*
+             * Tanpa satuan. dompdf salah menafsirkan line-height bersatuan
+             * pt: diberi 12pt jaraknya justru menjadi 15.4pt, lebih renggang
+             * daripada bawaannya yang 13.8pt. Nilai 1.0 menghasilkan 12.2pt,
+             * cukup rapat agar nota berisi 8 baris tetap satu halaman dan
+             * masih longgar untuk dibaca.
+             */
+            line-height: 1.0;
         }
 
         table { width: 100%; border-collapse: collapse; }
@@ -57,12 +64,21 @@
             text-align: left;
             font-weight: bold;
         }
-        .rinci td { padding: 0.6mm 1mm; }
+        .rinci td { padding: 0.5mm 1mm; }
         .rinci .total td {
             border-top: 1.5px solid #000;
             border-bottom: 1.5px solid #000;
             padding: 1mm;
         }
+
+        /*
+         * Nota berisi 9 baris atau lebih: ruang paraf dirapatkan supaya nama
+         * penanda tangan tidak tertinggal sendirian di halaman kedua. Nota
+         * sepanjang itu hanya sekitar 0.4% dari seluruh nota, jadi ruang paraf
+         * nota biasa tidak ikut dikorbankan.
+         */
+        .padat .ttd { margin-top: 4mm; }
+        .padat .ttd .garis { padding-top: 7mm; }
 
         .angka { text-align: right; }
         /* Judul kolom angka ikut rata kanan; tanpa ini .rinci th yang
@@ -71,12 +87,17 @@
         .rinci th.angka { text-align: right; }
         .tebal { font-weight: bold; }
 
-        .ttd { margin-top: 10mm; }
+        /* Jarak tanda tangan dirapatkan: dengan batas atas 14mm, nota
+           berisi 4 baris atau lebih tadinya mendorong nama penanda tangan
+           ke halaman kedua. Ruang tanda tangannya tetap 12mm, cukup untuk
+           paraf. */
+        .ttd { margin-top: 8mm; }
         .ttd td { text-align: center; }
-        .ttd .garis { padding-top: 16mm; }
+        .ttd .garis { padding-top: 12mm; }
     </style>
 </head>
-<body>
+@php $padat = count($records_detail ?? []) >= 9; @endphp
+<body class="{{ $padat ? 'padat' : '' }}">
 
     {{-- KOP: perusahaan di kiri, nasabah di kanan --}}
     <table class="kop">
@@ -118,13 +139,16 @@
     <table class="rinci">
         <thead>
             <tr>
-                <th width="5%">No.</th>
-                <th width="11%">Currency</th>
-                <th width="22%">Description</th>
+                {{-- Description dilebarkan agar nama valas terpanjang (29
+                     karakter) muat satu baris; Rate dikecilkan karena angkanya
+                     paling pendek. --}}
+                <th width="4%">No.</th>
+                <th width="10%">Currency</th>
+                <th width="33%">Description</th>
                 <th width="6%">Trx.</th>
-                <th width="16%" class="angka">Forex Amount</th>
-                <th width="15%" class="angka">Rate</th>
-                <th width="25%" class="angka">Local Amount</th>
+                <th width="14%" class="angka">Forex Amount</th>
+                <th width="11%" class="angka">Rate</th>
+                <th width="22%" class="angka">Local Amount</th>
             </tr>
         </thead>
         <tbody>
