@@ -9,14 +9,28 @@ GO
 
 
 /*		
-	EXEC [dbo].[USP_MC_SalesOrderDetail_Save] 3,1,3,0,2,5,100,16450,'Test stok minus','it_febry','A'
+	SELECT * FROM MC_T_PurchaseOrderDetail
+
+	EXEC [dbo].[USP_PR_PurchaseOrderDetail_Save] 
+					 13
+					 ,20
+					 ,1
+					 ,1
+					 ,1
+					 ,8
+					 ,10000
+					 ,'50000'
+					 ,'20000'
+					 ,'10000'
+					 ,'RemarkDetail'
+					 ,'Deva'
+					 ,'A'
 */
-ALTER PROCEDURE [dbo].[USP_MC_SalesOrderDetail_Save] 
-	@IDX_T_SalesOrderDetail		BIGINT,
-	@IDX_T_SalesOrder			BIGINT, 
+ALTER PROCEDURE [dbo].[USP_MC_PurchaseOrderDetail_Save] 
+	@IDX_T_PurchaseOrderDetail	BIGINT,
+	@IDX_T_PurchaseOrder		BIGINT, 
 	@IDX_M_Valas				BIGINT, 
 	@IDX_M_Tax					INT,	
-	@IDX_M_TransactionType		INT,
 	@Quantity					INT,
 	@ForeignAmount				DECIMAL(22, 4),	
 	@ExchangeRate				DECIMAL(22, 4),	
@@ -46,12 +60,12 @@ BEGIN
 		/** 
 		IF @IDX_M_COA = 0
 		BEGIN
-			INSERT INTO @TableLog VALUES ('error', @IDX_T_SalesOrderDetail, 'Invalid Chart of Account')
+			INSERT INTO @TableLog VALUES ('error', @IDX_T_PurchaseOrderDetail, 'Invalid Chart of Account')
 		END
 
 		IF @IncludeTax = 1 AND @IDX_M_Tax = 0
 		BEGIN 
-			INSERT INTO @TableLog VALUES ('error', @IDX_T_SalesOrderDetail, 'Invalid Tax')
+			INSERT INTO @TableLog VALUES ('error', @IDX_T_PurchaseOrderDetail, 'Invalid Tax')
 		END
 		**/
 
@@ -66,80 +80,22 @@ BEGIN
 		-- Check Unit Price Can't 0.00
 		-- =======================================
 		--IF EXISTS(	SELECT ForeignAmount
-		--			FROM MC_T_SalesOrderDetail WITH(NOLOCK)
-		--			WHERE IDX_T_SalesOrder = @IDX_T_SalesOrder AND @ForeignAmount = 0.00 )
+		--			FROM MC_T_PurchaseOrderDetail WITH(NOLOCK)
+		--			WHERE IDX_T_PurchaseOrder = @IDX_T_PurchaseOrder AND @ForeignAmount = 0.00 )
 		--BEGIN
-		--	INSERT INTO @TableLog VALUES ('error',@IDX_T_SalesOrderDetail,'Unit price must be > 0!')
+		--	INSERT INTO @TableLog VALUES ('error',@IDX_T_PurchaseOrderDetail,'Unit price must be > 0!')
 		--END		
 
 		IF @Quantity = 0
 		BEGIN
-			INSERT INTO @TableLog VALUES ('error',@IDX_T_SalesOrderDetail,'Quantity pembelian harus lebih dari 0!')
+			INSERT INTO @TableLog VALUES ('error',@IDX_T_PurchaseOrderDetail,'Quantity pembelian harus lebih dari 0!')
 		END
 
 		IF @ExchangeRate = 0
 		BEGIN
-			INSERT INTO @TableLog VALUES ('error',@IDX_T_SalesOrderDetail,'Exchange rate must be > 0!')
+			INSERT INTO @TableLog VALUES ('error',@IDX_T_PurchaseOrderDetail,'Exchange rate must be > 0!')
 		END	
 
-		IF @IDX_M_TransactionType = 0
-		BEGIN
-			INSERT INTO @TableLog VALUES ('error',@IDX_T_SalesOrderDetail,'Jenis transaksi belum diisi!')
-		END
-
-
-		-- VALIDASI STOK
-		DECLARE @_SODate			DATE
-		DECLARE @_IDX_M_Branch		INT
-		DECLARE @_CurrentStock		DECIMAL(18,4)
-
-		DECLARE @_SOStatus			CHAR(1)
-		DECLARE @_QtyBarisLain		DECIMAL(18,4)
-
-		SELECT @_IDX_M_Branch = IDX_M_Branch, @_SODate = SODate, @_SOStatus = RTRIM(ISNULL(SOStatus,'D'))
-		FROM MC_T_SalesOrder 
-		WHERE IDX_T_SalesOrder = @IDX_T_SalesOrder
-
-		SELECT @_CurrentStock = SUM(StockInQty) - SUM(StockOutQty) 
-		FROM MC_T_StockCardValas 
-		WHERE IDX_M_Branch = @_IDX_M_Branch AND IDX_M_Valas = @IDX_M_Valas
-			AND CONVERT(DATE, TransactionDate) <= @_SODate
-			--AND YEAR(TransactionDate) = YEAR(@_SODate)
-			--AND MONTH(TransactionDate) = MONTH(@_SODate)
-		GROUP BY IDX_M_Branch, IDX_M_Valas
-
-		
-		IF @_CurrentStock IS NULL	
-			SET @_CurrentStock = 0
-
-		--PRINT 'Stok ' + CONVERT(VARCHAR, @_CurrentStock)
-		--PRINT 'Quantity ' + CONVERT(VARCHAR, @Quantity)
-
-		-- Sejak satu nota boleh memuat pecahan yang sama lebih dari sekali,
-		-- baris lain di nota ini ikut mengurangi stok yang tersedia. Tanpa ini
-		-- dua baris bisa lolos sendiri sendiri padahal jumlahnya melebihi stok.
-		--
-		-- Hanya untuk nota yang belum approved: begitu approved, barisnya sudah
-		-- tercatat keluar di kartu stok sehingga menghitungnya lagi berarti
-		-- mengurangi dua kali.
-		SET @_QtyBarisLain = 0
-
-		IF @_SOStatus <> 'A'
-		BEGIN
-			SELECT @_QtyBarisLain = ISNULL(SUM(Quantity), 0)
-			FROM MC_T_SalesOrderDetail WITH(NOLOCK)
-			WHERE IDX_T_SalesOrder = @IDX_T_SalesOrder
-				AND IDX_M_Valas = @IDX_M_Valas
-				AND IDX_T_SalesOrderDetail <> @IDX_T_SalesOrderDetail
-				AND IDX_M_TransactionType = 2
-				AND RTRIM(ISNULL(RecordStatus,'A')) = 'A'
-		END
-
-		-- VALIDASI UNTUK TRANSAKSI JUAL
-		IF (@_CurrentStock - @_QtyBarisLain < @Quantity) AND @IDX_M_TransactionType = 2 
-		BEGIN 
-			INSERT INTO @TableLog VALUES ('error',@IDX_T_SalesOrderDetail,'Tidak ada stok valas!')
-		END
 
 		--DECLARE @_IDX_M_Tax			INT = 14 -- DEFAULT INDEX UNTUK PPN 11%
 		DECLARE @_Prev_IDX_M_Tax	INT
@@ -154,8 +110,8 @@ BEGIN
 
 		-- Get Previous Tax ID From Purchase Order Detail
 		SELECT @_Prev_IDX_M_Tax = IDX_M_Tax 
-		FROM MC_T_SalesOrderDetail WITH(NOLOCK)
-		WHERE IDX_T_SalesOrderDetail = @IDX_T_SalesOrderDetail
+		FROM MC_T_PurchaseOrderDetail WITH(NOLOCK)
+		WHERE IDX_T_PurchaseOrderDetail = @IDX_T_PurchaseOrderDetail
 
 		-- ================================================================================================
 		-- Get data from master tax
@@ -221,14 +177,13 @@ BEGIN
 
 			SET @_BaseCurrencyAmount = CONVERT(DECIMAL(18,2), @ForeignAmount * @ExchangeRate)
 
-			IF @IDX_T_SalesOrderDetail = 0
+			IF @IDX_T_PurchaseOrderDetail = 0
 			BEGIN
 
-				INSERT INTO [dbo].[MC_T_SalesOrderDetail]
-				   ([IDX_T_SalesOrder]
+				INSERT INTO [dbo].[MC_T_PurchaseOrderDetail]
+				   ([IDX_T_PurchaseOrder]
 				   ,[IDX_M_Valas]				   
 				   ,[IDX_M_Tax]
-				   ,[IDX_M_TransactionType]
 				   ,[ForeignCurrency]
 				   ,[Quantity]
 				   ,[ForeignAmount]
@@ -240,10 +195,9 @@ BEGIN
 				   ,[DCreate]			   
 				   ,[RecordStatus])
 				VALUES
-				   (@IDX_T_SalesOrder
+				   (@IDX_T_PurchaseOrder
 				   ,@IDX_M_Valas	
-				   ,@IDX_M_Tax		
-				   ,@IDX_M_TransactionType	
+				   ,@IDX_M_Tax			
 				   ,@_ForeignCurrency	
 				   ,@Quantity	
 				   ,@ForeignAmount
@@ -255,17 +209,16 @@ BEGIN
 				   ,GETDATE()
 				   ,@RecordStatus)
 			
-				SET @IDX_T_SalesOrderDetail = (SELECT SCOPE_IDENTITY())	
+				SET @IDX_T_PurchaseOrderDetail = (SELECT SCOPE_IDENTITY())	
 
 			END
 			ELSE
 			BEGIN
 			
-				UPDATE [dbo].[MC_T_SalesOrderDetail] SET
-					 [IDX_T_SalesOrder]			= @IDX_T_SalesOrder
+				UPDATE [dbo].[MC_T_PurchaseOrderDetail] SET
+					 [IDX_T_PurchaseOrder]			= @IDX_T_PurchaseOrder
 					,[IDX_M_Valas]					= @IDX_M_Valas
 					,[IDX_M_Tax]					= @IDX_M_Tax
-					,[IDX_M_TransactionType]		= @IDX_M_TransactionType
 					,[ForeignCurrency]				= @_ForeignCurrency
 					,[Quantity]						= @Quantity
 					,[ForeignAmount]				= @ForeignAmount
@@ -277,7 +230,7 @@ BEGIN
 					,[UModified]					= @UserID
 					,[DModified]					= GETDATE()	  
 					,[RecordStatus]					= @RecordStatus
-				WHERE IDX_T_SalesOrderDetail = @IDX_T_SalesOrderDetail
+				WHERE IDX_T_PurchaseOrderDetail = @IDX_T_PurchaseOrderDetail
 			END
 
 
@@ -287,9 +240,9 @@ BEGIN
 					
 			--IF @_TaxAmount = 0
 			--BEGIN
-			--	DELETE PR_T_SalesOrderTax
-			--	WHERE IDX_T_SalesOrderHeader = @IDX_T_SalesOrder AND 
-			--		IDX_T_SalesOrderDetail = @IDX_T_SalesOrderDetail AND
+			--	DELETE PR_T_PurchaseOrderTax
+			--	WHERE IDX_T_PurchaseOrderHeader = @IDX_T_PurchaseOrder AND 
+			--		IDX_T_PurchaseOrderDetail = @IDX_T_PurchaseOrderDetail AND
 			--		IDX_M_Tax = @_Prev_IDX_M_Tax
 			--END
 
@@ -300,14 +253,14 @@ BEGIN
 			--IF @_TaxAmount <> 0
 			--BEGIN
 						
-			--	DELETE PR_T_SalesOrderTax
-			--	WHERE IDX_T_SalesOrderHeader = @IDX_T_SalesOrder AND 
-			--		IDX_T_SalesOrderDetail = @IDX_T_SalesOrderDetail AND
+			--	DELETE PR_T_PurchaseOrderTax
+			--	WHERE IDX_T_PurchaseOrderHeader = @IDX_T_PurchaseOrder AND 
+			--		IDX_T_PurchaseOrderDetail = @IDX_T_PurchaseOrderDetail AND
 			--		IDX_M_Tax = @IDX_M_Tax
 					
-			--	INSERT INTO [dbo].[PR_T_SalesOrderTax]
-			--	   ([IDX_T_SalesOrderHeader]
-			--	   ,[IDX_T_SalesOrderDetail]
+			--	INSERT INTO [dbo].[PR_T_PurchaseOrderTax]
+			--	   ([IDX_T_PurchaseOrderHeader]
+			--	   ,[IDX_T_PurchaseOrderDetail]
 			--	   ,[IDX_M_Tax]
 			--	   ,[TaxID]
 			--	   ,[TaxDesc]
@@ -318,12 +271,12 @@ BEGIN
 			--	   ,[UCreate]
 			--	   ,[DCreate]
 			--	   ,[RecordStatus])
-			--	SELECT @IDX_T_SalesOrder, @IDX_T_SalesOrderDetail, @IDX_M_Tax,
+			--	SELECT @IDX_T_PurchaseOrder, @IDX_T_PurchaseOrderDetail, @IDX_M_Tax,
 			--		@_TaxID, @_TaxDesc, @_TaxRate, @_TaxAmount, @_TaxCOA, 'N', @UserID, GETDATE(), 'A'			
 			--END
 
 			-- OUTPUT
-			INSERT INTO @TableLog VALUES ('success', @IDX_T_SalesOrder, 'Data Sudah Disimpan')
+			INSERT INTO @TableLog VALUES ('success', @IDX_T_PurchaseOrder, 'Data Sudah Disimpan')
 				
 		END
 
