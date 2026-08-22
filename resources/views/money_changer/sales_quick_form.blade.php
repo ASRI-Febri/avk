@@ -66,7 +66,7 @@
                             <i class="fas fa-search"></i> Cari
                         </button>
                         {{-- Konsumen baru didaftarkan tanpa meninggalkan layar transaksi --}}
-                        <button type="button" class="btn btn-outline-success" id="btn-new-partner"
+                        <button type="button" class="btn btn-outline-info" id="btn-new-partner"
                             title="Tambah konsumen baru">
                             <i class="fas fa-user-plus"></i> Baru
                         </button>
