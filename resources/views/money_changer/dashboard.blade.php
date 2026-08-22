@@ -95,7 +95,11 @@
                     <h3 class="card-title">Valas</h3>
 
                     <div class="card-addon">
-                        
+                        {{-- Lembar hitung fisik untuk proses open & close harian --}}
+                        <a href="{{ url('mc-dashboard-valas-pdf') }}" target="_blank"
+                            class="btn btn-sm btn-outline-danger" title="Cetak stok valas untuk open &amp; close harian">
+                            <i class="fas fa-file-pdf me-1"></i> Cetak PDF
+                        </a>
                     </div>
                 </div>
                 <div class="card-body">

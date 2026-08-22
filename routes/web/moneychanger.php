@@ -16,6 +16,9 @@ Route::get('/mc-currency/update/{id}', 'MoneyChanger\CurrencyController@update')
 Route::get('/mc-currency/duplicate/{id}', 'MoneyChanger\CurrencyController@duplicate');
 Route::post('/mc-currency/save', 'MoneyChanger\CurrencyController@save');
 
+// CETAK STOK VALAS DASHBOARD (lembar hitung fisik untuk open & close harian)
+Route::get('/mc-dashboard-valas-pdf', 'HomeController@money_changer_valas_pdf');
+
 // UPDATE KURS MANUAL (satu layar untuk semua mata uang, rate lama masuk riwayat)
 Route::get('/mc-currency-rate', 'MoneyChanger\CurrencyRateController@edit');
 Route::post('/mc-currency-rate/save', 'MoneyChanger\CurrencyRateController@save');

@@ -103,6 +103,35 @@ class HomeController extends MyController
     }
 
     // =========================================================================================
+    // CETAK STOK VALAS (dipakai saat proses open & close harian)
+    // =========================================================================================
+    // Isi PDF sama dengan kartu Valas pada dashboard, ditambah kolom kosong
+    // QTY FISIK untuk dicatat tangan saat menghitung uang di laci.
+    public function money_changer_valas_pdf(Request $request)
+    {
+        $as_of_date = $request->input('AsOfDate', date('Y-m-d'));
+
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $as_of_date)) {
+            $as_of_date = date('Y-m-d');
+        }
+
+        $param['AsOfDate'] = $as_of_date;
+
+        $data['records_stock'] = $this->exec_sp('USP_MC_R_Dashboard_Stock', $param, 'list', 'sqlsrv');
+        $data['as_of_date'] = $as_of_date;
+        $data['user_name'] = $this->data['user_name'];
+
+        $company = DB::connection('sqlsrv')->select(
+            "SELECT TOP 1 CompanyName FROM GN_M_Company WITH(NOLOCK) ORDER BY IDX_M_Company");
+        $data['company_name'] = $company ? trim($company[0]->CompanyName) : '';
+
+        $pdf = \PDF::loadView('money_changer/dashboard_valas_pdf', $data);
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('stok-valas-' . $as_of_date . '.pdf');
+    }
+
+    // =========================================================================================
     // PAWN (GADAI)
     // =========================================================================================
     public function pawn(Request $request)
