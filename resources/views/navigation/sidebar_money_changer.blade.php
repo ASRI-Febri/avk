@@ -67,6 +67,16 @@
                     </a>
                 </li>
 
+                <li id="nav-li-currency-rate">
+                    <a href="{{ url('mc-currency-rate') }}" class="">
+                        <i class="fas fa-edit"></i>
+                        <span>Update Kurs</span>
+                    </a>
+                </li>
+
+                {{-- Import kurs bank disembunyikan; kurs diperbarui lewat menu Update Kurs.
+                     Halamannya sendiri masih aktif di /mc-currency-import-kurs dan
+                     /mc-currency-import-kurs-bca bila sewaktu-waktu dibutuhkan.
                 <li>
                     <a href="{{ url('mc-currency-import-kurs') }}" class="">
                         <i class="fas fa-file-import"></i>
@@ -80,6 +90,7 @@
                         <span>Import Kurs (BCA)</span>
                     </a>
                 </li>
+                --}}
 
                 <li id="nav-li-bi-middle-rate">
                     <a href="{{ url('mc-bi-middle-rate') }}" class="">

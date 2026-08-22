@@ -16,6 +16,11 @@ Route::get('/mc-currency/update/{id}', 'MoneyChanger\CurrencyController@update')
 Route::get('/mc-currency/duplicate/{id}', 'MoneyChanger\CurrencyController@duplicate');
 Route::post('/mc-currency/save', 'MoneyChanger\CurrencyController@save');
 
+// UPDATE KURS MANUAL (satu layar untuk semua mata uang, rate lama masuk riwayat)
+Route::get('/mc-currency-rate', 'MoneyChanger\CurrencyRateController@edit');
+Route::post('/mc-currency-rate/save', 'MoneyChanger\CurrencyRateController@save');
+Route::get('/mc-currency-rate/history/{id}', 'MoneyChanger\CurrencyRateController@history');
+
 // IMPORT KURS BANK PANIN (paste tabel kurs -> preview -> update Rate Beli/Jual)
 Route::get('/mc-currency-import-kurs', 'MoneyChanger\CurrencyController@import_kurs');
 Route::post('/mc-currency-import-kurs/preview', 'MoneyChanger\CurrencyController@import_kurs_preview');

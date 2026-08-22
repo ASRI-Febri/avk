@@ -241,10 +241,13 @@ class CurrencyController extends MyController
         $notfound = [];
         foreach ($parsed as $row) {
             $param = [
-                'CurrencyID' => $row['currency'],
-                'BuyRate'    => $row['buy'],
-                'SellRate'   => $row['sell'],
-                'UserID'     => 'XXX' . $this->data['user_id'],
+                'CurrencyID'   => $row['currency'],
+                'BuyRate'      => $row['buy'],
+                'SellRate'     => $row['sell'],
+                'UserID'       => 'XXX' . $this->data['user_id'],
+                // Rate lama ikut tercatat di MC_T_CurrencyRateHistory; asal
+                // perubahan dibedakan supaya riwayat manual vs import terbaca.
+                'ChangeSource' => 'XXXIMPORT-' . strtoupper($cfg['key']),
             ];
             $res = $this->exec_sp('USP_MC_Currency_UpdateRate', $param, 'list', 'sqlsrv');
 
