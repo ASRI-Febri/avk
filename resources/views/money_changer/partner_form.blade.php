@@ -47,6 +47,8 @@
                             <i class="fas fa-book"></i> Alamat</a>
                         <a class="nav-item nav-link" id="card-bank-tab" data-bs-toggle="tab" href="#card-bank" aria-selected="true" role="tab">
                             <i class="fas fa-coins"></i> Rekening Bank</a>
+                        <a class="nav-item nav-link" id="card-ktp-tab" data-bs-toggle="tab" href="#card-ktp" aria-selected="true" role="tab">
+                            <i class="fas fa-id-card"></i> Foto KTP</a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -179,6 +181,53 @@
                             @endif
 
                         </div>
+                        <div class="tab-pane fade" id="card-ktp" role="tabpanel" aria-labelledby="#card-ktp-tab">
+
+                            @if($state == 'create')
+                                <div class="alert alert-info mb-0">
+                                    Simpan dulu data konsumen ini, baru foto KTP bisa diupload.
+                                </div>
+                            @else
+                                <p class="text-muted">
+                                    Format jpg, jpeg, png, atau webp; ukuran maksimal 5 MB.
+                                    Upload ulang akan menggantikan foto yang lama.
+                                </p>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-secondary">Pilih Berkas</label>
+                                        <input type="file" id="KTPFile" class="form-control"
+                                            accept="image/jpeg,image/png,image/webp">
+
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-primary" id="btn-ktp-upload">
+                                                <i class="fas fa-upload me-1"></i> Upload KTP
+                                            </button>
+                                            <button type="button" class="btn btn-danger {{ $url_ktp_view === '' ? 'd-none' : '' }}" id="btn-ktp-delete">
+                                                <i class="fas fa-trash me-1"></i> Hapus
+                                            </button>
+                                        </div>
+
+                                        <div id="ktp-pesan" class="alert alert-danger mt-3 mb-0 d-none"></div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label text-secondary">Foto Tersimpan</label>
+
+                                        <div id="ktp-kosong" class="alert alert-light mb-0 {{ $url_ktp_view === '' ? '' : 'd-none' }}">
+                                            Belum ada foto KTP.
+                                        </div>
+
+                                        <a href="{{ $url_ktp_view }}" target="_blank" id="ktp-link"
+                                            class="{{ $url_ktp_view === '' ? 'd-none' : '' }}">
+                                            <img src="{{ $url_ktp_view }}" id="ktp-preview" class="img-fluid border rounded"
+                                                alt="Foto KTP">
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
+
+                        </div>
                     </div>
                     
                 </div>
@@ -292,6 +341,98 @@
 
         $(document).ready(function()
         { 
+            // ---------- FOTO KTP ----------
+            // Upload lewat AJAX supaya isian form transaksi yang belum disimpan
+            // tidak ikut hilang saat halaman berpindah.
+            function ktpPesan(html)
+            {
+                $('#ktp-pesan').html(html).removeClass('d-none');
+            }
+
+            $('#btn-ktp-upload').click(function()
+            {
+                var berkas = $('#KTPFile')[0].files[0];
+
+                $('#ktp-pesan').addClass('d-none').empty();
+
+                if (!berkas)
+                {
+                    ktpPesan('Berkas KTP belum dipilih!');
+                    return;
+                }
+
+                var data = new FormData();
+                data.append('_token', $('#_token').val());
+                data.append('IDX_M_Partner', $('#IDX_M_Partner').val());
+                data.append('KTPFile', berkas);
+
+                var $tombol = $(this);
+                $tombol.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Mengupload...');
+
+                $.ajax({
+                    url: '{{ $url_ktp_upload ?? '' }}',
+                    type: 'POST',
+                    data: data,
+                    processData: false,
+                    contentType: false
+                }).done(function(hasil)
+                {
+                    if (hasil.flag !== 'success')
+                    {
+                        ktpPesan(hasil.message);
+                        return;
+                    }
+
+                    $('#ktp-preview').attr('src', hasil.url);
+                    $('#ktp-link').attr('href', hasil.url).removeClass('d-none');
+                    $('#ktp-kosong').addClass('d-none');
+                    $('#btn-ktp-delete').removeClass('d-none');
+                    $('#KTPFile').val('');
+
+                    Swal.fire({ title: 'Foto KTP tersimpan', icon: 'success', timer: 1500, showConfirmButton: false });
+                }).fail(function()
+                {
+                    ktpPesan('Upload gagal. Coba ulangi.');
+                }).always(function()
+                {
+                    $tombol.prop('disabled', false).html('<i class="fas fa-upload me-1"></i> Upload KTP');
+                });
+            });
+
+            $('#btn-ktp-delete').click(function()
+            {
+                Swal.fire({
+                    title: 'Hapus foto KTP?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal'
+                }).then(function(pilih)
+                {
+                    if (!pilih.isConfirmed) { return; }
+
+                    $.post('{{ $url_ktp_delete ?? '' }}', {
+                        _token: $('#_token').val(),
+                        IDX_M_Partner: $('#IDX_M_Partner').val()
+                    }).done(function(hasil)
+                    {
+                        if (hasil.flag !== 'success')
+                        {
+                            ktpPesan(hasil.message);
+                            return;
+                        }
+
+                        $('#ktp-link').addClass('d-none').attr('href', '');
+                        $('#ktp-preview').attr('src', '');
+                        $('#ktp-kosong').removeClass('d-none');
+                        $('#btn-ktp-delete').addClass('d-none');
+                    }).fail(function()
+                    {
+                        ktpPesan('Foto KTP gagal dihapus. Coba ulangi.');
+                    });
+                });
+            });
+
             $('#btn-add-address').click(function()
             {   
                 var data = {

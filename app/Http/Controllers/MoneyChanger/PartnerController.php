@@ -177,6 +177,112 @@ class PartnerController extends MyController
     }
 
     // =========================================================================================
+    // FOTO KTP
+    // Disimpan sebagai berkas di storage/app/public/upload-ktp, satu berkas per
+    // konsumen dengan nama ktp_{IDX_M_Partner}. Berkas tidak dilayani langsung
+    // dari folder public: KTP data pribadi, jadi diakses lewat route yang sudah
+    // ikut pemeriksaan sesi seperti halaman lainnya.
+    // =========================================================================================
+    const KTP_FOLDER = 'upload-ktp';
+
+    // Berkas KTP milik satu konsumen, apa pun ekstensinya. Null bila belum ada.
+    private function ktp_file($idx_partner)
+    {
+        $idx = (int) $idx_partner;
+
+        if ($idx === 0) {
+            return null;
+        }
+
+        $files = glob(storage_path('app/public/' . self::KTP_FOLDER) . '/ktp_' . $idx . '.*');
+
+        return $files ? $files[0] : null;
+    }
+
+    public function ktp_upload(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'IDX_M_Partner' => 'required|numeric|min:1',
+            'KTPFile'       => 'required|file|mimes:jpeg,jpg,png,webp|max:5120',
+        ], [
+            'IDX_M_Partner.required' => 'Konsumen belum tersimpan. Simpan dulu datanya, baru upload KTP.',
+            'IDX_M_Partner.min'      => 'Konsumen belum tersimpan. Simpan dulu datanya, baru upload KTP.',
+            'KTPFile.required'       => 'Berkas KTP belum dipilih!',
+            'KTPFile.mimes'          => 'Format berkas harus jpeg, jpg, png, atau webp.',
+            'KTPFile.max'            => 'Ukuran berkas maksimal 5 MB.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'flag'    => 'error',
+                'message' => implode('<br>', $validator->errors()->all()),
+            ]);
+        }
+
+        $idx = (int) $request->input('IDX_M_Partner');
+
+        // Dipakai input cepat: kalau NIK ternyata sudah terdaftar, foto KTP yang
+        // sudah ada tidak ditimpa diam-diam oleh berkas dari layar transaksi.
+        if ($request->input('SkipIfExists') === '1' && $this->ktp_file($idx) !== null) {
+            return response()->json([
+                'flag'    => 'skipped',
+                'message' => 'Konsumen ini sudah punya foto KTP, jadi berkas baru tidak disimpan. '
+                    . 'Ganti lewat menu Business Partner bila perlu.',
+            ]);
+        }
+
+        $directory = storage_path('app/public/' . self::KTP_FOLDER);
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0775, true);
+        }
+
+        // KTP lama dibuang lebih dulu supaya tidak tertinggal berkas dengan
+        // ekstensi berbeda untuk konsumen yang sama.
+        $lama = $this->ktp_file($idx);
+        if ($lama !== null) {
+            @unlink($lama);
+        }
+
+        $file = $request->file('KTPFile');
+        $nama = 'ktp_' . $idx . '.' . strtolower($file->getClientOriginalExtension());
+
+        $file->move($directory, $nama);
+
+        return response()->json([
+            'flag'     => 'success',
+            'message'  => 'Foto KTP tersimpan.',
+            'url'      => url('/mc-partner-ktp/view/' . $idx) . '?v=' . time(),
+            'filename' => $nama,
+        ]);
+    }
+
+    public function ktp_delete(Request $request)
+    {
+        $idx = (int) $request->input('IDX_M_Partner');
+        $file = $this->ktp_file($idx);
+
+        if ($file === null) {
+            return response()->json(['flag' => 'error', 'message' => 'Foto KTP tidak ditemukan.']);
+        }
+
+        @unlink($file);
+
+        return response()->json(['flag' => 'success', 'message' => 'Foto KTP dihapus.']);
+    }
+
+    public function ktp_view($id)
+    {
+        $file = $this->ktp_file($id);
+
+        if ($file === null) {
+            abort(404);
+        }
+
+        return response()->file($file);
+    }
+
+    // =========================================================================================
     // SHOW FORM
     // =========================================================================================
     function show_form($id, $state)
@@ -197,6 +303,13 @@ class PartnerController extends MyController
 
         // URL
         $this->data['url_save_header'] = url('/mc-partner/save');
+
+        // FOTO KTP
+        $this->data['url_ktp_upload'] = url('/mc-partner-ktp/upload');
+        $this->data['url_ktp_delete'] = url('/mc-partner-ktp/delete');
+        $this->data['url_ktp_view'] = ($state !== 'create' && $this->ktp_file($id) !== null)
+            ? url('/mc-partner-ktp/view/' . (int) $id)
+            : '';
        
 
         // BUTTON SAVE

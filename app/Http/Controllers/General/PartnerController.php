@@ -335,6 +335,9 @@ class PartnerController extends MyController
         $this->data['target_index'] = $request->input('target_index', '');
         $this->data['target_name']  = $request->input('target_name', '');
         $this->data['url_save']     = url('/gn-partner-quick-save');
+        // Foto KTP memakai endpoint yang sama dengan menu Business Partner:
+        // berkas baru bisa diunggah sesudah konsumennya punya IDX.
+        $this->data['url_ktp_upload'] = url('/mc-partner-ktp/upload');
 
         return view('general/m_partner_quick_form', $this->data);
     }

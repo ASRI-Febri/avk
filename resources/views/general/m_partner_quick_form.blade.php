@@ -64,6 +64,16 @@
                 placeholder="Alamat sesuai KTP" maxlength="1024"></textarea>
         </div>
 
+        <div class="col-md-12">
+            <label class="form-label text-secondary">Foto KTP</label>
+            <input type="file" id="qp-KTPFile" class="form-control"
+                accept="image/jpeg,image/png,image/webp">
+            <div class="form-text">
+                Opsional. jpg, jpeg, png, atau webp; maksimal 5 MB.
+                Diunggah otomatis sesudah konsumen tersimpan.
+            </div>
+        </div>
+
         <div class="col-md-4">
             <label class="form-label text-secondary">Kode Pos</label>
             <input type="text" id="qp-Zip" class="form-control"
@@ -104,6 +114,45 @@ $(function () {
         $pesan.html(html).removeClass('d-none');
     }
 
+    // Foto KTP baru bisa diunggah sesudah konsumennya punya IDX, jadi dikirim
+    // menyusul begitu penyimpanan berhasil. Kegagalan di sini tidak membatalkan
+    // konsumennya: transaksi tetap bisa jalan, fotonya dilengkapi belakangan.
+    function unggahKtp(hasil, selesai) {
+        var berkas = $('#qp-KTPFile')[0].files[0];
+
+        if (!berkas) {
+            selesai('');
+            return;
+        }
+
+        var data = new FormData();
+        data.append('_token', $('#_token').val());
+        data.append('IDX_M_Partner', hasil.idx);
+        data.append('KTPFile', berkas);
+
+        // Konsumen lama: foto yang sudah ada jangan ditimpa dari layar transaksi
+        if (hasil.sudah_ada) {
+            data.append('SkipIfExists', '1');
+        }
+
+        $.ajax({
+            url: '{{ $url_ktp_upload }}',
+            type: 'POST',
+            data: data,
+            processData: false,
+            contentType: false
+        }).done(function (ktp) {
+            if (ktp.flag === 'success') {
+                selesai('<br><small>Foto KTP tersimpan.</small>');
+            } else {
+                selesai('<br><small class="text-danger">Foto KTP tidak tersimpan: ' + ktp.message + '</small>');
+            }
+        }).fail(function () {
+            selesai('<br><small class="text-danger">Foto KTP gagal diunggah. '
+                + 'Silakan upload lewat menu Business Partner.</small>');
+        });
+    }
+
     function simpan() {
         $pesan.addClass('d-none').empty();
         $tombol.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Menyimpan...');
@@ -134,12 +183,14 @@ $(function () {
 
             $('#div-form-modal').modal('hide');
 
-            Swal.fire({
-                title: hasil.sudah_ada ? 'Konsumen sudah terdaftar' : 'Konsumen ditambahkan',
-                html:  hasil.message,
-                icon:  hasil.sudah_ada ? 'info' : 'success',
-                timer: hasil.sudah_ada ? undefined : 1800,
-                showConfirmButton: hasil.sudah_ada
+            unggahKtp(hasil, function (pesan_ktp) {
+                Swal.fire({
+                    title: hasil.sudah_ada ? 'Konsumen sudah terdaftar' : 'Konsumen ditambahkan',
+                    html:  hasil.message + pesan_ktp,
+                    icon:  hasil.sudah_ada ? 'info' : 'success',
+                    timer: (hasil.sudah_ada || pesan_ktp !== '') ? undefined : 1800,
+                    showConfirmButton: hasil.sudah_ada || pesan_ktp !== ''
+                });
             });
         }).fail(function () {
             tampilkanPesan('Data gagal disimpan. Coba ulangi, atau daftarkan lewat menu Business Partner.');

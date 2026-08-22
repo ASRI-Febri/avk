@@ -163,6 +163,11 @@ Route::get('/mc-partner/create', 'MoneyChanger\PartnerController@create');
 Route::get('/mc-partner/update/{id}', 'MoneyChanger\PartnerController@update');
 Route::post('/mc-partner/save', 'MoneyChanger\PartnerController@save');
 
+// FOTO KTP KONSUMEN (storage/app/public/upload-ktp, dilayani lewat route bersesi)
+Route::post('/mc-partner-ktp/upload', 'MoneyChanger\PartnerController@ktp_upload');
+Route::post('/mc-partner-ktp/delete', 'MoneyChanger\PartnerController@ktp_delete');
+Route::get('/mc-partner-ktp/view/{id}', 'MoneyChanger\PartnerController@ktp_view');
+
 // LOOKUP VENDOR
 Route::post('/mc-select-partner', 'MoneyChanger\PartnerController@show_lookup');
 
