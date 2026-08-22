@@ -384,6 +384,29 @@ class PartnerController extends MyController
         $alamat = trim($request->input('Street'));
         $hp    = trim($request->input('MobilePhone'));
 
+        // Tempat/tanggal lahir tidak wajib, tapi kalau diisi bentuk tanggalnya
+        // diperiksa supaya yang masuk ke database benar-benar tanggal.
+        $tempat_lahir  = trim($request->input('PlaceOfBirth', ''));
+        $tanggal_lahir = trim($request->input('DateOfBirth', ''));
+
+        if ($tanggal_lahir !== '') {
+            $tanggal = date_create_from_format('Y-m-d', $tanggal_lahir);
+
+            if (!$tanggal || $tanggal->format('Y-m-d') !== $tanggal_lahir) {
+                return response()->json([
+                    'flag'    => 'error',
+                    'message' => 'Tanggal lahir harus berbentuk YYYY-MM-DD, mis. 1990-05-17.',
+                ]);
+            }
+
+            if ($tanggal->format('Y-m-d') > date('Y-m-d')) {
+                return response()->json([
+                    'flag'    => 'error',
+                    'message' => 'Tanggal lahir tidak boleh melewati hari ini.',
+                ]);
+            }
+        }
+
         // NIK yang sama berarti orangnya sudah terdaftar. Daripada membuat data
         // kembar, konsumen yang ada langsung dipakai dan kasir diberi tahu.
         $sudah_ada = DB::connection('sqlsrv')->select(
@@ -418,8 +441,8 @@ class PartnerController extends MyController
                 @Gender = '',
                 @SingleIdentityNumber = ?,
                 @TaxIdentityNumber = '',
-                @DateOfBirth = NULL,
-                @PlaceOfBirth = '',
+                @DateOfBirth = ?,
+                @PlaceOfBirth = ?,
                 @Email = '',
                 @Phone1 = '',
                 @Phone2 = '',
@@ -440,7 +463,8 @@ class PartnerController extends MyController
                 @DiscountMember = 0,
                 @UserID = ?,
                 @RecordStatus = 'A'",
-            [$nama, $nik, $hp, 'Input cepat transaksi valas', $this->data['user_id']]);
+            [$nama, $nik, ($tanggal_lahir !== '' ? $tanggal_lahir : null), $tempat_lahir,
+             $hp, 'Input cepat transaksi valas', $this->data['user_id']]);
 
         $flag = '';
         $idx  = 0;

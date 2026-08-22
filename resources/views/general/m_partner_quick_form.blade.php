@@ -19,8 +19,8 @@
 
 <div class="modal-body">
     <p class="text-muted small mb-3">
-        Isi data wajib berikut. Kelengkapan lain seperti tempat/tanggal lahir dan NPWP
-        bisa dilengkapi belakangan lewat menu <b>Business Partner</b>.
+        Isi data wajib berikut. Kelengkapan lain seperti NPWP bisa dilengkapi
+        belakangan lewat menu <b>Business Partner</b>.
     </p>
 
     <div class="row g-3">
@@ -43,6 +43,19 @@
             <label class="form-label text-secondary">No Handphone <span class="text-danger">*</span></label>
             <input type="text" id="qp-MobilePhone" class="form-control"
                 placeholder="08xxxxxxxxxx" maxlength="50" inputmode="tel" autocomplete="off">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label text-secondary">Tempat Lahir</label>
+            <input type="text" id="qp-PlaceOfBirth" class="form-control"
+                placeholder="Tempat lahir sesuai KTP" maxlength="100" autocomplete="off">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label text-secondary">Tanggal Lahir</label>
+            <input type="text" id="qp-DateOfBirth" class="form-control"
+                placeholder="YYYY-MM-DD" maxlength="10" autocomplete="off">
+            <div class="form-text">Format YYYY-MM-DD, mis. 1990-05-17.</div>
         </div>
 
         <div class="col-md-8">
@@ -76,6 +89,17 @@ $(function () {
 
     $('#qp-PartnerName').focus();
 
+    // Datepicker dipasang di sini karena isi modal baru ada sesudah init global
+    $('#qp-DateOfBirth').datepicker({
+        todayHighlight: true,
+        changeMonth:    true,
+        changeYear:     true,
+        yearRange:      '1900:+0',
+        format:         'yyyy-mm-dd',
+        autoclose:      true,
+        container:      '#div-form-modal'
+    });
+
     function tampilkanPesan(html) {
         $pesan.html(html).removeClass('d-none');
     }
@@ -89,6 +113,8 @@ $(function () {
             PartnerName:          $('#qp-PartnerName').val(),
             SingleIdentityNumber: $('#qp-SingleIdentityNumber').val(),
             MobilePhone:          $('#qp-MobilePhone').val(),
+            PlaceOfBirth:         $('#qp-PlaceOfBirth').val(),
+            DateOfBirth:          $('#qp-DateOfBirth').val(),
             Street:               $('#qp-Street').val(),
             Zip:                  $('#qp-Zip').val()
         }).done(function (hasil) {
@@ -148,7 +174,7 @@ $(function () {
     $tombol.on('click', simpan);
 
     // Enter di kolom mana pun ikut menyimpan, kecuali di alamat yang butuh baris baru
-    $('#qp-PartnerName, #qp-SingleIdentityNumber, #qp-MobilePhone, #qp-Zip').on('keydown', function (e) {
+    $('#qp-PartnerName, #qp-SingleIdentityNumber, #qp-MobilePhone, #qp-PlaceOfBirth, #qp-DateOfBirth, #qp-Zip').on('keydown', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             simpan();
