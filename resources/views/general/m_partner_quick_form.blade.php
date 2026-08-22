@@ -34,7 +34,7 @@
             <label class="form-label text-secondary">Jenis Identitas</label>
             <select id="qp-IDX_M_IDType" class="form-select">
                 @foreach($dd_id_type as $nilai => $teks)
-                    <option value="{{ $nilai }}" {{ (string) $nilai === '1' ? 'selected' : '' }}>{{ $teks }}</option>
+                    <option value="{{ $nilai }}" {{ (string) $nilai === (string) $default_id_type ? 'selected' : '' }}>{{ $teks }}</option>
                 @endforeach
             </select>
         </div>

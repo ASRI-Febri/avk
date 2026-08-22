@@ -12,6 +12,7 @@ GO
 -- Mod Desc		:	Tambah @IDX_M_IDType (jenis identitas: KTP/SIM/Paspor/KITAS).
 --					Ditaruh sebagai parameter terakhir dengan default NULL supaya
 --					pemanggil lama yang mengirim parameter posisional tetap jalan.
+--					Kosong atau 0 diisi KTP.
 -- =============================================
 
 /*		
@@ -65,9 +66,16 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	-- Pemanggil mengirim parameter secara posisional dan tidak bisa mengirim
-	-- NULL, jadi 0 diperlakukan sebagai "jenis identitas belum ditentukan".
-	IF ISNULL(@IDX_M_IDType,0) = 0 SET @IDX_M_IDType = NULL
+	-- Jenis identitas yang tidak dikirim atau dikirim 0 dianggap KTP: itu yang
+	-- dipakai hampir semua konsumen, dan pemanggil posisional lama memang tidak
+	-- bisa mengirim NULL.
+	IF ISNULL(@IDX_M_IDType,0) = 0
+	BEGIN
+		SELECT TOP 1 @IDX_M_IDType = IDX_M_IDType
+		FROM GN_M_IDType WITH(NOLOCK)
+		WHERE RTRIM(ISNULL(Alias,'')) = 'KTP'
+		ORDER BY IDX_M_IDType
+	END
 
     -- Insert statements for procedure here
 	BEGIN TRY			

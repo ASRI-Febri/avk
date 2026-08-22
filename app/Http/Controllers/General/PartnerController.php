@@ -120,7 +120,7 @@ class PartnerController extends MyController
             $this->data['fields']->IDX_M_Partner = '0';    
             $this->data['fields']->ActiveStatus = 'A';        
             $this->data['fields']->RecordStatus = 'A';
-            $this->data['fields']->IDX_M_IDType = '';
+            $this->data['fields']->IDX_M_IDType = (new DropdownController)->id_type_default();
             
             return $this->show_form(0, 'create');
         } else {
@@ -174,6 +174,11 @@ class PartnerController extends MyController
         $dd = new DropdownController;        
         $this->data['dd_gender'] = (array) $dd->gender(); 
         $this->data['dd_id_type'] = (array) $dd->id_type();
+
+        if (isset($this->data['fields']->IDX_M_IDType)
+            && trim((string) $this->data['fields']->IDX_M_IDType) === '') {
+            $this->data['fields']->IDX_M_IDType = $dd->id_type_default();
+        }
         $this->data['dd_active_status'] = (array) $dd->active_status();                
                        
 
@@ -347,6 +352,7 @@ class PartnerController extends MyController
 
         $dd = new DropdownController;
         $this->data['dd_id_type'] = (array) $dd->id_type();
+        $this->data['default_id_type'] = $dd->id_type_default();
 
         return view('general/m_partner_quick_form', $this->data);
     }

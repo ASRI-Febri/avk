@@ -132,7 +132,7 @@ class PartnerController extends MyController
             $this->data['fields']->APAccount = '12'; 
             $this->data['fields']->APAccountDesc = '2110-001 - Hutang Usaha';
             $this->data['fields']->RecordStatus = 'A';
-            $this->data['fields']->IDX_M_IDType = '';
+            $this->data['fields']->IDX_M_IDType = (new DropdownController)->id_type_default();
             
             return $this->show_form(0, 'create');
         } else {
@@ -292,6 +292,11 @@ class PartnerController extends MyController
         $dd = new DropdownController;        
         $this->data['dd_gender'] = (array) $dd->gender(); 
         $this->data['dd_id_type'] = (array) $dd->id_type();
+
+        if (isset($this->data['fields']->IDX_M_IDType)
+            && trim((string) $this->data['fields']->IDX_M_IDType) === '') {
+            $this->data['fields']->IDX_M_IDType = $dd->id_type_default();
+        }
         $this->data['dd_active_status'] = (array) $dd->active_status();                
                        
 

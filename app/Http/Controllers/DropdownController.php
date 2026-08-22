@@ -177,6 +177,18 @@ class DropdownController extends Controller
         return $value;
     }
 
+    // Jenis identitas bawaan saat form dibuka. Hampir semua konsumen memakai
+    // KTP, jadi itu yang dipilihkan lebih dulu daripada membiarkan kosong.
+    public function id_type_default($connection = 'sqlsrv')
+    {
+        $rows = DB::connection($connection)->select(
+            "SELECT TOP 1 IDX_M_IDType FROM GN_M_IDType WITH(NOLOCK)
+             WHERE RTRIM(ISNULL(Alias,'')) = 'KTP' AND RTRIM(ISNULL(RecordStatus,'A')) = 'A'
+             ORDER BY IDX_M_IDType");
+
+        return $rows ? (string) $rows[0]->IDX_M_IDType : '';
+    }
+
     public function country($connection = 'sqlsrv')
     {
         $sql = "SELECT IDX_M_Country, CountryName FROM GN_M_Country WHERE RecordStatus = 'A' ORDER BY CountryName";
