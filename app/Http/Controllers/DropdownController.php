@@ -159,6 +159,24 @@ class DropdownController extends Controller
         return $value;
     }
 
+    // Jenis identitas konsumen (KTP, SIM, Paspor, KITAS, ...). Nomornya sendiri
+    // tetap disimpan di kolom SingleIdentityNumber pada GN_M_Partner.
+    public function id_type($connection = 'sqlsrv')
+    {
+        $sql = "SELECT IDX_M_IDType, Name, Alias FROM GN_M_IDType
+                WHERE RTRIM(ISNULL(RecordStatus,'A')) = 'A'
+                ORDER BY IDX_M_IDType";
+
+        $result = DB::connection($connection)->select($sql);
+
+        $value[''] = '--SELECT--';
+        foreach ($result as $row) {
+            $alias = trim($row->Alias);
+            $value[trim($row->IDX_M_IDType)] = $alias !== '' ? $alias . ' - ' . trim($row->Name) : trim($row->Name);
+        }
+        return $value;
+    }
+
     public function country($connection = 'sqlsrv')
     {
         $sql = "SELECT IDX_M_Country, CountryName FROM GN_M_Country WHERE RecordStatus = 'A' ORDER BY CountryName";

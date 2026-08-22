@@ -120,6 +120,7 @@ class PartnerController extends MyController
             $this->data['fields']->IDX_M_Partner = '0';    
             $this->data['fields']->ActiveStatus = 'A';        
             $this->data['fields']->RecordStatus = 'A';
+            $this->data['fields']->IDX_M_IDType = '';
             
             return $this->show_form(0, 'create');
         } else {
@@ -172,6 +173,7 @@ class PartnerController extends MyController
         // DROPDOWN
         $dd = new DropdownController;        
         $this->data['dd_gender'] = (array) $dd->gender(); 
+        $this->data['dd_id_type'] = (array) $dd->id_type();
         $this->data['dd_active_status'] = (array) $dd->active_status();                
                        
 
@@ -272,7 +274,11 @@ class PartnerController extends MyController
             $param['DiscountMember'] = '0.00'; //(double)str_replace(',','',$data['DiscountMember']);
             
             $param['UserID'] = 'XXX'.$this->data['user_id'];
-            $param['RecordStatus'] = 'A';            
+            $param['RecordStatus'] = 'A';
+
+            // Parameter terakhir pada USP_GN_Partner_Save. Kosong berarti jenis
+            // identitasnya belum ditentukan, bukan dianggap KTP.
+            $param['IDX_M_IDType'] = (int) $request->input('IDX_M_IDType', 0);
 
             return $this->store($state, $param);
         }
@@ -339,6 +345,9 @@ class PartnerController extends MyController
         // berkas baru bisa diunggah sesudah konsumennya punya IDX.
         $this->data['url_ktp_upload'] = url('/mc-partner-ktp/upload');
 
+        $dd = new DropdownController;
+        $this->data['dd_id_type'] = (array) $dd->id_type();
+
         return view('general/m_partner_quick_form', $this->data);
     }
 
@@ -366,18 +375,44 @@ class PartnerController extends MyController
         $nama  = trim($request->input('PartnerName'));
         $nik   = trim($request->input('SingleIdentityNumber'));
 
+        // Jenis identitas menentukan aturan nomornya: KTP wajib 16 digit angka,
+        // paspor/KITAS boleh berhuruf. Kalau tidak dipilih, bentuk nomornya
+        // yang menebak seperti sebelumnya.
+        $idx_id_type = (int) $request->input('IDX_M_IDType', 0);
+        $alias_id_type = '';
+
+        if ($idx_id_type > 0) {
+            $baris = DB::connection('sqlsrv')->select(
+                "SELECT TOP 1 Alias FROM GN_M_IDType WITH(NOLOCK) WHERE IDX_M_IDType = ?", [$idx_id_type]);
+
+            if (!$baris) {
+                return response()->json(['flag' => 'error', 'message' => 'Jenis identitas tidak dikenal.']);
+            }
+
+            $alias_id_type = strtoupper(trim($baris[0]->Alias));
+        }
+
         // Bentuk nomor identitas diperiksa lebih dulu supaya salah ketik tidak
         // lolos jadi data konsumen. NIK Indonesia selalu 16 digit angka; nomor
         // berhuruf diperlakukan sebagai paspor dan hanya dibatasi panjangnya.
         $pesan_nik = '';
 
-        if (ctype_digit($nik)) {
+        if ($alias_id_type === 'KTP') {
+            if (!ctype_digit($nik) || strlen($nik) !== 16) {
+                $pesan_nik = 'NIK harus 16 digit angka. Yang diisi ' . strlen($nik)
+                    . ' karakter. Bila memakai paspor atau KITAS, ganti dulu jenis identitasnya.';
+            }
+        } elseif ($alias_id_type !== '') {
+            if (!preg_match('/^[A-Za-z0-9]{5,}$/', $nik)) {
+                $pesan_nik = 'Nomor identitas hanya boleh berisi huruf dan angka, minimal 5 karakter.';
+            }
+        } elseif (ctype_digit($nik)) {
             if (strlen($nik) !== 16) {
                 $pesan_nik = 'NIK harus 16 digit angka. Yang diisi ' . strlen($nik)
                     . ' digit. Untuk paspor, ketik nomornya beserta hurufnya.';
             }
-        } elseif (!preg_match('/^[A-Za-z0-9]{6,}$/', $nik)) {
-            $pesan_nik = 'Nomor identitas hanya boleh berisi huruf dan angka, minimal 6 karakter.';
+        } elseif (!preg_match('/^[A-Za-z0-9]{5,}$/', $nik)) {
+            $pesan_nik = 'Nomor identitas hanya boleh berisi huruf dan angka, minimal 5 karakter.';
         }
 
         if ($pesan_nik !== '') {
@@ -465,9 +500,11 @@ class PartnerController extends MyController
                 @CreditLimit = 0,
                 @DiscountMember = 0,
                 @UserID = ?,
-                @RecordStatus = 'A'",
+                @RecordStatus = 'A',
+                @IDX_M_IDType = ?",
             [$nama, $nik, ($tanggal_lahir !== '' ? $tanggal_lahir : null), $tempat_lahir,
-             $hp, 'Input cepat transaksi valas', $this->data['user_id']]);
+             $hp, 'Input cepat transaksi valas', $this->data['user_id'],
+             ($idx_id_type > 0 ? $idx_id_type : null)]);
 
         $flag = '';
         $idx  = 0;

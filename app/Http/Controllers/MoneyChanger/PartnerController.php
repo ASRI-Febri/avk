@@ -132,6 +132,7 @@ class PartnerController extends MyController
             $this->data['fields']->APAccount = '12'; 
             $this->data['fields']->APAccountDesc = '2110-001 - Hutang Usaha';
             $this->data['fields']->RecordStatus = 'A';
+            $this->data['fields']->IDX_M_IDType = '';
             
             return $this->show_form(0, 'create');
         } else {
@@ -290,6 +291,7 @@ class PartnerController extends MyController
         // DROPDOWN
         $dd = new DropdownController;        
         $this->data['dd_gender'] = (array) $dd->gender(); 
+        $this->data['dd_id_type'] = (array) $dd->id_type();
         $this->data['dd_active_status'] = (array) $dd->active_status();                
                        
 
@@ -389,7 +391,11 @@ class PartnerController extends MyController
             $param['DiscountMember'] = '0.00'; //(double)str_replace(',','',$data['DiscountMember']);
             
             $param['UserID'] = 'XXX'.$this->data['user_id'];
-            $param['RecordStatus'] = 'A';            
+            $param['RecordStatus'] = 'A';
+
+            // Parameter terakhir pada USP_GN_Partner_Save. Kosong berarti jenis
+            // identitasnya belum ditentukan, bukan dianggap KTP.
+            $param['IDX_M_IDType'] = (int) $request->input('IDX_M_IDType', 0);
 
             return $this->store($state, $param);
         }

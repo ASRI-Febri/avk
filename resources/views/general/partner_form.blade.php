@@ -49,7 +49,8 @@
                             <x-textbox-horizontal label="Prefix" id="Prefix" :value="$fields->Prefix" placeholder="(PT atau CV)" class="required mb-2" />
                             <x-textbox-horizontal label="Nama" id="PartnerName" :value="$fields->PartnerName" placeholder="" class="required mb-2" />
                             <x-textbox-horizontal label="Alias" id="PartnerAlias" :value="$fields->PartnerAlias" placeholder="" class="required mb-2" />
-                            <x-textbox-horizontal label="KTP" id="SingleIdentityNumber" :value="$fields->SingleIdentityNumber" placeholder="" class="required mb-2" />
+                            <x-select-horizontal label="Jenis Identitas" id="IDX_M_IDType" :value="$fields->IDX_M_IDType" class="mb-2" :array="$dd_id_type"/>
+                            <x-textbox-horizontal label="No. Identitas" id="SingleIdentityNumber" :value="$fields->SingleIdentityNumber" placeholder="" class="required mt-2 mb-2" />
                             <x-textbox-horizontal label="NPWP" id="TaxIdentityNumber" :value="$fields->TaxIdentityNumber" placeholder="" class="TaxIdentityNumber mb-2" />
                             <x-select-horizontal label="Status" id="ActiveStatus" :value="$fields->ActiveStatus" class="required mb-2" :array="$dd_active_status"/>
 

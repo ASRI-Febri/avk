@@ -30,16 +30,25 @@
                 placeholder="Nama sesuai KTP" maxlength="150" autocomplete="off">
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label text-secondary">NIK <span class="text-danger">*</span></label>
+        <div class="col-md-4">
+            <label class="form-label text-secondary">Jenis Identitas</label>
+            <select id="qp-IDX_M_IDType" class="form-select">
+                @foreach($dd_id_type as $nilai => $teks)
+                    <option value="{{ $nilai }}" {{ (string) $nilai === '1' ? 'selected' : '' }}>{{ $teks }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-8">
+            <label class="form-label text-secondary">No. Identitas <span class="text-danger">*</span></label>
             <input type="text" id="qp-SingleIdentityNumber" class="form-control"
                 placeholder="16 digit NIK, atau nomor paspor" maxlength="64" autocomplete="off">
             <div class="form-text" id="qp-nik-info">
-                NIK harus 16 digit angka. NIK yang sudah terdaftar dipakai ulang, bukan dibuat kembar.
+                NIK harus 16 digit angka. Nomor yang sudah terdaftar dipakai ulang, bukan dibuat kembar.
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label text-secondary">No Handphone <span class="text-danger">*</span></label>
             <input type="text" id="qp-MobilePhone" class="form-control"
                 placeholder="08xxxxxxxxxx" maxlength="50" inputmode="tel" autocomplete="off">
@@ -161,6 +170,7 @@ $(function () {
             _token:               $('#_token').val(),
             PartnerName:          $('#qp-PartnerName').val(),
             SingleIdentityNumber: $('#qp-SingleIdentityNumber').val(),
+            IDX_M_IDType:         $('#qp-IDX_M_IDType').val(),
             MobilePhone:          $('#qp-MobilePhone').val(),
             PlaceOfBirth:         $('#qp-PlaceOfBirth').val(),
             DateOfBirth:          $('#qp-DateOfBirth').val(),
@@ -200,27 +210,45 @@ $(function () {
 
     // Hitungan digit tampil sambil mengetik: salah ketik NIK paling sering
     // ketahuan dari jumlah digitnya, jauh sebelum tombol simpan ditekan.
-    $('#qp-SingleIdentityNumber').on('input', function () {
-        var isi   = $.trim(this.value);
+    function periksaNomorIdentitas() {
+        var isi   = $.trim($('#qp-SingleIdentityNumber').val());
         var angka = /^[0-9]+$/.test(isi);
-        var $info = $('#qp-nik-info');
+        var ktp   = $('#qp-IDX_M_IDType option:selected').text().indexOf('KTP') === 0;
+        var $isian = $('#qp-SingleIdentityNumber');
+        var $info  = $('#qp-nik-info');
 
         if (isi === '') {
-            $(this).removeClass('is-invalid is-valid');
-            $info.removeClass('text-danger').html(
-                'NIK harus 16 digit angka. NIK yang sudah terdaftar dipakai ulang, bukan dibuat kembar.');
+            $isian.removeClass('is-invalid is-valid');
+            $info.removeClass('text-danger').html(ktp
+                ? 'NIK harus 16 digit angka. Nomor yang sudah terdaftar dipakai ulang, bukan dibuat kembar.'
+                : 'Nomor sesuai dokumen identitas yang dipilih.');
             return;
         }
 
-        if (angka && isi.length !== 16) {
-            $(this).addClass('is-invalid').removeClass('is-valid');
-            $info.addClass('text-danger').text('Baru ' + isi.length + ' dari 16 digit.');
+        if (ktp) {
+            if (!angka || isi.length !== 16) {
+                $isian.addClass('is-invalid').removeClass('is-valid');
+                $info.addClass('text-danger').text('Baru ' + isi.length + ' dari 16 digit angka.');
+                return;
+            }
+
+            $isian.removeClass('is-invalid').addClass('is-valid');
+            $info.removeClass('text-danger').text('NIK lengkap 16 digit.');
             return;
         }
 
-        $(this).removeClass('is-invalid').addClass('is-valid');
-        $info.removeClass('text-danger').text(angka ? 'NIK lengkap 16 digit.' : 'Diperlakukan sebagai nomor paspor.');
-    });
+        if (!/^[A-Za-z0-9]{5,}$/.test(isi)) {
+            $isian.addClass('is-invalid').removeClass('is-valid');
+            $info.addClass('text-danger').text('Minimal 5 karakter, hanya huruf dan angka.');
+            return;
+        }
+
+        $isian.removeClass('is-invalid').addClass('is-valid');
+        $info.removeClass('text-danger').text('Nomor identitas terisi.');
+    }
+
+    $('#qp-SingleIdentityNumber').on('input', periksaNomorIdentitas);
+    $('#qp-IDX_M_IDType').on('change', periksaNomorIdentitas);
 
     $tombol.on('click', simpan);
 
