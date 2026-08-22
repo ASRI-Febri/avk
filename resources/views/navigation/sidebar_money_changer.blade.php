@@ -134,6 +134,10 @@
                         <span>Transaksi Jual Beli</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false" id="nav-ul-transaction">
+                        <li id="nav-li-opening-closing"><a href="{{ url('mc-open-close') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Opening & Closing
+                            </a>
+                        </li>
                         <li id="nav-li-input-customer">
                             <a href="{{ url('mc-partner/create') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Input / Edit Konsumen
@@ -149,10 +153,6 @@
                         </li>
                         <li id="nav-li-dttot-screening"><a href="{{ url('mc-dttot/screening') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Screening DTTOT
-                            </a>
-                        </li>
-                        <li id="nav-li-opening-closing"><a href="{{ url('mc-open-close') }}">
-                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Opening & Closing
                             </a>
                         </li>
                         <li id="nav-li-input-so"><a href="{{ url('mc-sales-order/create') }}">
