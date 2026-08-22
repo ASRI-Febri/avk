@@ -64,6 +64,13 @@
                 placeholder="Alamat sesuai KTP" maxlength="1024"></textarea>
         </div>
 
+        <div class="col-md-4">
+            <label class="form-label text-secondary">Kode Pos</label>
+            <input type="text" id="qp-Zip" class="form-control"
+                placeholder="Opsional" maxlength="32" inputmode="numeric" autocomplete="off">
+            <div class="form-text">Bila diisi, alamat ikut terhubung ke master kode pos.</div>
+        </div>
+
         <div class="col-md-12">
             <label class="form-label text-secondary">Foto KTP</label>
             <input type="file" id="qp-KTPFile" class="form-control"
@@ -72,13 +79,6 @@
                 Opsional. jpg, jpeg, png, atau webp; maksimal 5 MB.
                 Diunggah otomatis sesudah konsumen tersimpan.
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label text-secondary">Kode Pos</label>
-            <input type="text" id="qp-Zip" class="form-control"
-                placeholder="Opsional" maxlength="32" inputmode="numeric" autocomplete="off">
-            <div class="form-text">Bila diisi, alamat ikut terhubung ke master kode pos.</div>
         </div>
     </div>
 
