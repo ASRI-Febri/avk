@@ -77,37 +77,107 @@
         </div>
     @endif
 
+    @php
+        $user_date = function ($name, $id, $date) {
+            if (!$date) {
+                return '-';
+            }
+            $user = trim($name ?: $id);
+            return date('d M Y H:i', strtotime($date)) . ($user ? ' oleh ' . $user . ($name && $id ? ' (' . trim($id) . ')' : '') : '');
+        };
+    @endphp
+
     <div class="row form-group">
         <div class="col-xl-6 col-md-6 col-sm-12">
-            <table class="table table-nowrap table-borderless mb-0">
+            <table class="table table-borderless mb-0">
                 <tbody>
                     <tr>
-                        <th scope="row">Journal Type :</th>
+                        <th scope="row" width="35%">Journal Type :</th>
                         <td>{{ $fields->JournalTypeDesc }}</td>
                     </tr>
                     <tr>
                         <th scope="row">Voucher No :</th>
                         <td>{{ $fields->VoucherNo }}</td>
-                    </tr>`
-                </tbody>
-            </table>
-        </div>
-        <div class="col-xl-6 col-md-6 col-sm-12">
-            <table class="table table-nowrap table-borderless mb-0">
-                <tbody>
+                    </tr>
                     <tr>
-                        <th scope="row">Journal Date :</th>
-                        <td>{{ $fields->JournalDate }}</td>
+                        <th scope="row">No Referensi :</th>
+                        <td>{{ $fields->ReferenceNo ?: '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Business Partner :</th>
+                        <td>{{ $fields->PartnerDesc ?: '-' }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        
+        <div class="col-xl-6 col-md-6 col-sm-12">
+            <table class="table table-borderless mb-0">
+                <tbody>
+                    <tr>
+                        <th scope="row" width="35%">Journal Date :</th>
+                        <td>{{ $fields->JournalDate }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Company / Branch :</th>
+                        <td>{{ $fields->CompanyName }} / {{ $fields->BranchName }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Keterangan :</th>
+                        <td style="white-space: pre-line;">{{ $fields->RemarkHeader ?: '-' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    @if($fields->PostingStatus == 'P')
+    <div class="card border mb-3">
+        <div class="card-body py-2">
+            <h6 class="text-secondary mb-2"><i class="fa fa-check-double me-1"></i> Informasi Posting</h6>
+            <div class="row">
+                <div class="col-xl-6 col-md-6 col-sm-12">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row" width="35%">Posting Date :</th>
+                                <td>{{ $fields->PostingDate ? date('d M Y', strtotime($fields->PostingDate)) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Posted By :</th>
+                                <td>{{ trim($fields->PostedByName ?: $fields->PostedBy) ?: '-' }}
+                                    @if($fields->PostedByName && $fields->PostedBy)
+                                        <small class="text-muted">({{ trim($fields->PostedBy) }})</small>
+                                    @endif
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-xl-6 col-md-6 col-sm-12">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row" width="35%">Keterangan Posting :</th>
+                                <td style="white-space: pre-line;">{{ $fields->PostingNotes ?: '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     <div id="table-journal-detail" class="table-responsive">
         @include('accounting.journal_detail_list')            
     </div> 
+
+    <div class="row mt-2">
+        <div class="col-12">
+            <small class="text-muted d-block">Dibuat: {{ $user_date($fields->CreateByName, $fields->CreateByID, $fields->CreateByDate) }}</small>
+            <small class="text-muted d-block">Terakhir diubah: {{ $user_date($fields->ModifiedByName, $fields->ModifiedByID, $fields->ModifiedByDate) }}</small>
+        </div>
+    </div>
 
 @endsection
 
