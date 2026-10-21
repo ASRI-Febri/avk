@@ -59,6 +59,16 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Petty Cash
                             </a>
                         </li>
+                        <li id="nav-li-view-bs-upload">
+                            <a href="{{ url('fm-bank-statement/upload') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Upload Rekening Koran
+                            </a>
+                        </li>
+                        <li id="nav-li-view-bs">
+                            <a href="{{ url('fm-bank-statement') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Rekening Koran
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

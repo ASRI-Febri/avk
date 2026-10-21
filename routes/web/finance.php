@@ -280,6 +280,21 @@ Route::get('/fm-petty-cash-detail/reload/{id}', 'Finance\PettyCashDetailControll
 Route::post('/fm-petty-cash-detail/delete/{id?}', 'Finance\PettyCashDetailController@delete');
 Route::post('/fm-petty-cash-detail/save-delete', 'Finance\PettyCashDetailController@save_delete');
 
+// REKENING KORAN (BANK STATEMENT)
+Route::get('/fm-bank-statement', 'Finance\BankStatementController@inquiry');
+Route::post('/fm-bank-statement-list', 'Finance\BankStatementController@inquiry_data');
+Route::get('/fm-bank-statement/upload', 'Finance\BankStatementController@upload');
+Route::post('/fm-bank-statement/preview', 'Finance\BankStatementController@preview');
+Route::post('/fm-bank-statement/save', 'Finance\BankStatementController@save');
+Route::get('/fm-bank-statement/update/{id}', 'Finance\BankStatementController@update');
+Route::get('/fm-bank-statement/download/{id}', 'Finance\BankStatementController@download');
+Route::post('/fm-bank-statement/journal', 'Finance\BankStatementController@journal');
+Route::post('/fm-bank-statement/save-journal', 'Finance\BankStatementController@save_journal');
+Route::post('/fm-bank-statement/admin-fee', 'Finance\BankStatementController@admin_fee');
+Route::post('/fm-bank-statement/save-admin-fee', 'Finance\BankStatementController@save_admin_fee');
+Route::post('/fm-bank-statement/set-admin-fee', 'Finance\BankStatementController@set_admin_fee');
+Route::post('/fm-bank-statement/delete', 'Finance\BankStatementController@delete');
+
 // FINANCIAL PAYMENT
 Route::get('/fm-financial-payment', 'Finance\FinancialPaymentController@inquiry');
 Route::post('/fm-financial-payment-list', 'Finance\FinancialPaymentController@inquiry_data');
