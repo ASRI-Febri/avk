@@ -22,6 +22,9 @@
         <div class="card-header card-header-bordered">
             <h3 class="card-title">{{ $fields->StatementNo }}</h3>
             <div class="card-addon">
+                <a href="{{ url('fm-bank-statement/reconcile/'.$fields->IDX_T_BankStatementHeader) }}" target="_blank" class="btn btn-primary me-1">
+                    <i class="fas fa-balance-scale me-1"></i> Rekonsiliasi Ledger
+                </a>
                 <a href="{{ url('fm-bank-statement/download/'.$fields->IDX_T_BankStatementHeader) }}" target="_blank" class="btn btn-info me-1">
                     <i class="fa fa-file-pdf me-1"></i> PDF Asli
                 </a>

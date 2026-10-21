@@ -288,6 +288,7 @@ Route::post('/fm-bank-statement/preview', 'Finance\BankStatementController@previ
 Route::post('/fm-bank-statement/save', 'Finance\BankStatementController@save');
 Route::get('/fm-bank-statement/update/{id}', 'Finance\BankStatementController@update');
 Route::get('/fm-bank-statement/download/{id}', 'Finance\BankStatementController@download');
+Route::get('/fm-bank-statement/reconcile/{id}', 'Finance\BankStatementController@reconcile');
 Route::post('/fm-bank-statement/journal', 'Finance\BankStatementController@journal');
 Route::post('/fm-bank-statement/save-journal', 'Finance\BankStatementController@save_journal');
 Route::post('/fm-bank-statement/admin-fee', 'Finance\BankStatementController@admin_fee');

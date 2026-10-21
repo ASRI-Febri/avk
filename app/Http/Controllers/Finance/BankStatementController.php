@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\MyController;
 use App\Http\Controllers\DropdownController;
+use App\Services\BankStatement\LedgerReconciler;
 use App\Services\BankStatement\MandiriStatementParser;
 
 use Validator;
@@ -320,6 +321,64 @@ class BankStatementController extends MyController
         }
 
         return response()->file($path);
+    }
+
+    // =========================================================================================
+    // REKONSILIASI DENGAN LEDGER BANK
+    // =========================================================================================
+    public function reconcile($id)
+    {
+        if (!$this->check_permission($this->data['user_id'], 'FM-BS-R'))
+        {
+            return $this->show_no_access($this->data);
+        }
+
+        $this->sp_getdata = '[dbo].[USP_CM_BankStatement_Info]';
+        $fields = $this->get_detail_by_id($id);
+        if (!$fields || $fields[0]->RecordStatus != 'A')
+        {
+            return redirect($this->data['url_cancel']);
+        }
+
+        $param['IDX_T_BankStatementHeader'] = $id;
+
+        $bank = array_map(function ($row) {
+            return [
+                'id'         => $row->IDX_T_BankStatementDetail,
+                'seq'        => $row->SeqNo,
+                'date'       => substr($row->PostingDate, 0, 10),
+                'datetime'   => $row->PostingDate,
+                'remark'     => $row->Remark,
+                'in'         => (float) $row->CreditAmount,
+                'out'        => (float) $row->DebitAmount,
+                'journal_id' => $row->IDX_T_JournalHeader,
+            ];
+        }, $this->exec_sp('USP_CM_BankStatementDetail_List', $param, 'list', 'sqlsrv'));
+
+        $ledger = array_map(function ($row) {
+            return [
+                'id'         => $row->IDX_T_JournalDetail,
+                'journal_id' => $row->IDX_T_JournalHeader,
+                'voucher'    => $row->VoucherNo,
+                'date'       => $row->JournalDate,
+                'remark'     => $row->Remark,
+                'partner'    => $row->PartnerDesc,
+                'in'         => (float) $row->BDebetAmount,
+                'out'        => (float) $row->BCreditAmount,
+                'posted'     => $row->PostingStatus == 'P',
+                'in_period'  => (bool) $row->InPeriod,
+            ];
+        }, $this->exec_sp('USP_CM_BankStatement_LedgerLines', $param, 'list', 'sqlsrv'));
+
+        $balance = $this->exec_sp('USP_CM_BankStatement_LedgerBalance', $param, 'list', 'sqlsrv');
+
+        $this->data['fields'] = $fields[0];
+        $this->data['balance'] = $balance[0];
+        $this->data['result'] = (new LedgerReconciler())->reconcile($bank, $ledger);
+        $this->data['form_title'] = 'Rekonsiliasi ' . $fields[0]->StatementNo;
+
+        $this->data['view'] = 'finance/bank_statement_reconcile';
+        return view($this->data['view'], $this->data);
     }
 
     // =========================================================================================
