@@ -150,7 +150,9 @@
 
                         <hr>
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ url('fm-bank-statement/upload') }}" class="btn btn-light">Upload Ulang</a>
+                            <a href="{{ url('fm-bank-statement/upload') }}" class="btn btn-secondary">
+                                <i class="fas fa-redo me-1"></i> Upload Ulang
+                            </a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="far fa-save me-1"></i> Simpan Rekening Koran
                             </button>
