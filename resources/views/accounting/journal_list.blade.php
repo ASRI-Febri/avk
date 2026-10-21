@@ -44,6 +44,16 @@
                 <input id="JournalDateTo" type="text" class="form-control datepicker2" placeholder="yyyy-mm-dd" autocomplete="off" />
             </div>
         </div>
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Journal Type</span>
+                <select id="IDX_M_JournalType" class="form-select">
+                    @foreach($dd_journal_type as $key => $label)
+                        <option value="{{ $key }}">{{ $key === '' ? '-- Semua --' : $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
     </div>
 @endsection
 

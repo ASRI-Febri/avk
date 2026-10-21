@@ -64,7 +64,10 @@ class JournalController extends MyController
             '','PartnerDesc','ReferenceNo','VoucherNo','JournalDate','RemarkHeader','','PostingStatusDesc','Action');
 
         $this->data['array_filter'] = array('IDX_M_Company','IDX_M_Branch','ReferenceNo','VoucherNo','RemarkHeader','PostingStatus','PartnerDesc',
-            'JournalDateFrom','JournalDateTo');
+            'JournalDateFrom','JournalDateTo','IDX_M_JournalType');
+
+        $dd = new DropdownController;
+        $this->data['dd_journal_type'] = (array) $dd->journal_type();
 
         // VIEW
         $this->data['view'] = 'accounting/journal_list';  
@@ -87,6 +90,7 @@ class JournalController extends MyController
         // sesuai posisi parameter di [dbo].[USP_GL_Journal_List]
         $array_filter['JournalDateFrom'] = 'XXX'.trim($request->input('JournalDateFrom', ''));
         $array_filter['JournalDateTo'] = 'XXX'.trim($request->input('JournalDateTo', ''));
+        $array_filter['IDX_M_JournalType'] = (int) $request->input('IDX_M_JournalType');
 
         // SET STORED PROCEDURE
         $this->sp_getinquiry = 'dbo.[USP_GL_Journal_List]';

@@ -31,6 +31,11 @@ GO
 --      BranchName dipetakan ke IDX_M_Company / IDX_M_Branch supaya paging tetap
 --      bisa dilayani dari tabel header saja (tanpa join master dulu).
 --
+-- Revisi 21 Oktober 2026:
+--   Tambah filter journal type (@IDX_M_JournalType). Ditaruh sebagai parameter
+--   terakhir dengan default 0 supaya pemanggil lama yang mengirim parameter
+--   posisional tetap jalan; 0 / kosong berarti semua tipe.
+--
 -- Index pendukung: SQLTable/IX_GL_T_JournalHeader_Inquiry.sql
 -- =============================================
 
@@ -60,7 +65,8 @@ CREATE PROCEDURE [dbo].[USP_GL_Journal_List]
 	@PartnerDesc		VARCHAR(50),
 	@UserID				VARCHAR(50),
 	@JournalDateFrom	VARCHAR(10) = '',
-	@JournalDateTo		VARCHAR(10) = ''
+	@JournalDateTo		VARCHAR(10) = '',
+	@IDX_M_JournalType	BIGINT = 0
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -167,6 +173,9 @@ BEGIN
 	IF LEN(@_PostingStatus) > 0
 		SET @SqlWhere = @SqlWhere + N' AND JH.PostingStatus = @p_PostingStatus '
 
+	IF ISNULL(@IDX_M_JournalType,0) > 0
+		SET @SqlWhere = @SqlWhere + N' AND JH.IDX_M_JournalType = @p_JournalType '
+
 	IF @_DateFrom IS NOT NULL
 		SET @SqlWhere = @SqlWhere + N' AND JH.JournalDate >= @p_DateFrom '
 
@@ -184,6 +193,7 @@ BEGIN
 		@p_PostingStatus	VARCHAR(1),
 		@p_DateFrom			DATETIME,
 		@p_DateTo			DATETIME,
+		@p_JournalType		BIGINT,
 		@p_UserID			VARCHAR(50),
 		@p_Offset			INT,
 		@p_Row				INT'
@@ -223,6 +233,7 @@ BEGIN
 			@p_PostingStatus	= @_PostingStatus,
 			@p_DateFrom			= @_DateFrom,
 			@p_DateTo			= @_DateTo,
+			@p_JournalType		= @IDX_M_JournalType,
 			@p_UserID			= @_UserID,
 			@p_Offset			= @Offset,
 			@p_Row				= @Row
@@ -247,6 +258,7 @@ BEGIN
 			@p_PostingStatus	= @_PostingStatus,
 			@p_DateFrom			= @_DateFrom,
 			@p_DateTo			= @_DateTo,
+			@p_JournalType		= @IDX_M_JournalType,
 			@p_UserID			= @_UserID,
 			@p_Offset			= @Offset,
 			@p_Row				= @Row
