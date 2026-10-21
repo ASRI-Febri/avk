@@ -366,6 +366,17 @@ class BankStatementController extends MyController
             'rows.required' => 'Pilih minimal satu baris rekening koran.',
         ]);
 
+        $merge = $request->input('JournalMode') == 'merge';
+        if ($merge)
+        {
+            $validator->addRules([
+                'MergeCOA' => 'required',
+                'MergeDate' => 'required|date',
+                'MergeRemark' => 'required',
+            ]);
+            $validator->setCustomMessages(['MergeCOA.required' => 'Chart of Account belum dipilih!']);
+        }
+
         if ($validator->fails())
         {
             return $this->validation_fails($validator->errors(), $request->input('IDX_T_BankStatementHeader'));
@@ -378,12 +389,24 @@ class BankStatementController extends MyController
         }
         $xml .= '</rows>';
 
-        $this->sp_approval = '[dbo].[USP_CM_BankStatement_CreateJournal]';
         $this->next_action = 'reload';
         $this->next_url = url('fm-bank-statement/update');
 
         $param['IDX_T_BankStatementHeader'] = $request->input('IDX_T_BankStatementHeader');
         $param['RowsXml'] = 'XXX'.$xml;
+
+        if ($merge)
+        {
+            $this->sp_approval = '[dbo].[USP_CM_BankStatement_CreateMergedJournal]';
+            $param['IDX_M_COA'] = (int) $request->input('MergeCOA');
+            $param['JournalDate'] = date('Y-m-d', strtotime($request->input('MergeDate')));
+            $param['JournalRemark'] = 'XXX'.$this->esc($request->input('MergeRemark'));
+        }
+        else
+        {
+            $this->sp_approval = '[dbo].[USP_CM_BankStatement_CreateJournal]';
+        }
+
         $param['UserID'] = 'XXX'.$this->data['user_id'];
 
         return $this->store('approve', $param);
