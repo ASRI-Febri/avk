@@ -167,7 +167,8 @@ class BankStatementController extends MyController
     {
         $this->data['form_sub_title'] = 'Upload Rekening Koran';
         $this->data['form_desc'] = 'Upload Rekening Koran';
-        $this->data['form_remark'] = 'Upload PDF Account Statement dari Kopra by Mandiri. Sistem menampilkan isi rekening koran'
+        $this->data['form_remark'] = 'Upload PDF rekening koran bank';
+        $this->data['upload_info'] = 'Upload PDF Account Statement dari Kopra by Mandiri. Sistem menampilkan isi rekening koran'
             . ' untuk diperiksa sebelum disimpan. Baris biaya admin ditandai otomatis dan masih bisa dikoreksi.';
         $this->data['state'] = $state;
 
@@ -279,6 +280,7 @@ class BankStatementController extends MyController
 
         $this->data['form_sub_title'] = 'Detail Rekening Koran';
         $this->data['form_desc'] = 'Detail Rekening Koran';
+        $this->data['form_remark'] = 'Buat jurnal dari baris rekening koran';
         array_push($this->data['breads'], 'Detail');
 
         $this->sp_getdata = '[dbo].[USP_CM_BankStatement_Info]';

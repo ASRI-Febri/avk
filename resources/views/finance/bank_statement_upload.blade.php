@@ -26,7 +26,7 @@
 
                 <div class="card-body">
                     <div class="alert alert-label-info">
-                        <span class="text-muted">{{ $form_remark }}</span>
+                        <span class="text-muted">{{ $upload_info }}</span>
                     </div>
 
                     @if(!empty($error))
