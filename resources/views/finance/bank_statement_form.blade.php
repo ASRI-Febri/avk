@@ -73,9 +73,12 @@
                 <button type="button" id="btn-journal" class="btn btn-primary me-1">
                     <i class="fas fa-coins me-1"></i> Buat Jurnal (<span id="selected-count">0</span> baris)
                 </button>
-                <button type="button" id="btn-admin-fee" class="btn btn-success" {{ $fields->AdminFeeCount > 0 ? '' : 'disabled' }}>
+                <button type="button" id="btn-admin-fee" class="btn btn-success me-1" {{ $fields->AdminFeeCount > 0 ? '' : 'disabled' }}>
                     <i class="fas fa-calculator me-1"></i> Jurnal Biaya Admin
                     ({{ $fields->AdminFeeCount }} baris, {{ number_format($fields->AdminFeeAmount, 0) }})
+                </button>
+                <button type="button" id="btn-month-end" class="btn btn-info" {{ $month_end_count > 0 ? '' : 'disabled' }}>
+                    <i class="fas fa-calendar-check me-1"></i> Jurnal Akhir Bulan ({{ $month_end_count }} baris)
                 </button>
             </div>
             @endif
@@ -198,6 +201,10 @@
 
             $('#btn-admin-fee').click(function () {
                 callAjaxModalView('{{ url('fm-bank-statement/admin-fee') }}', header);
+            });
+
+            $('#btn-month-end').click(function () {
+                callAjaxModalView('{{ url('fm-bank-statement/month-end') }}', header);
             });
 
             $('.chk-admin-fee').change(function () {

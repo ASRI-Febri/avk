@@ -76,7 +76,7 @@ class MandiriStatementParserTest extends TestCase
         $this->assertSame('20260902CENAIDJA010O0 224792412 CENAIDJA/SITI 437180292999102', $rows[2]['remark']);
         $this->assertSame('600 real', $rows[3]['reference_no']);
         $this->assertSame('Biaya Adm 12708', $rows[4]['remark']);
-        $this->assertSame([false, true, false, false, true], array_column($rows, 'is_admin_fee'));
+        $this->assertSame([false, true, false, false, false], array_column($rows, 'is_admin_fee'));
     }
 
     public function testWarnsWhenBalanceDoesNotMatch()

@@ -292,6 +292,8 @@ Route::post('/fm-bank-statement/journal', 'Finance\BankStatementController@journ
 Route::post('/fm-bank-statement/save-journal', 'Finance\BankStatementController@save_journal');
 Route::post('/fm-bank-statement/admin-fee', 'Finance\BankStatementController@admin_fee');
 Route::post('/fm-bank-statement/save-admin-fee', 'Finance\BankStatementController@save_admin_fee');
+Route::post('/fm-bank-statement/month-end', 'Finance\BankStatementController@month_end');
+Route::post('/fm-bank-statement/save-month-end', 'Finance\BankStatementController@save_month_end');
 Route::post('/fm-bank-statement/set-admin-fee', 'Finance\BankStatementController@set_admin_fee');
 Route::post('/fm-bank-statement/delete', 'Finance\BankStatementController@delete');
 

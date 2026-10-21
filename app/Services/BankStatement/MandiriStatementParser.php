@@ -175,17 +175,15 @@ class MandiriStatementParser
     }
 
     /**
-     * Biaya admin: baris debit berupa "Biaya Adm" / "MONTHLY CARD CHARGE", atau
-     * biaya transfer yang remark-nya hanya nomor referensi milik transaksi lain
-     * diikuti kode transaksi (mis. "20260901BMRIIDJA010O9 930716135 99102").
+     * Biaya admin: biaya transfer yang remark-nya hanya nomor referensi milik
+     * transaksi lain diikuti kode transaksi (mis. "20260901BMRIIDJA010O9 930716135 99102").
+     * "Biaya Adm" dan "MONTHLY CARD CHARGE" tidak termasuk karena dijurnal bersama
+     * bunga dan pajak lewat Jurnal Akhir Bulan.
      */
     private function isAdminFee(array $row, array $remarks): bool
     {
         if ($row['debit'] <= 0) {
             return false;
-        }
-        if (preg_match('/^(Biaya Adm|MONTHLY CARD CHARGE)/i', $row['remark'])) {
-            return true;
         }
         if (!preg_match('/^(\S+ \d+) \d{5}$/', $row['remark'], $m)) {
             return false;

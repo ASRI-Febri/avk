@@ -13,6 +13,9 @@ GO
 --				Baris dikirim sebagai XML: <rows><r id="IDX_T_BankStatementDetail"
 --				coa="IDX_M_COA" m="Keterangan jurnal"/></rows>
 --				Semua baris berhasil atau tidak sama sekali.
+-- Mod			:	Samuel Febrianto, 22 Oct 2026
+-- Mod Desc		:	Baris jurnal lewat #BankStatementJournalLine (helper kini
+--					mendukung lebih dari dua baris).
 -- =============================================
 IF OBJECT_ID('dbo.USP_CM_BankStatement_CreateJournal') IS NOT NULL
 	DROP PROCEDURE [dbo].[USP_CM_BankStatement_CreateJournal]
@@ -72,6 +75,9 @@ BEGIN
 				@Debit DECIMAL(22,4), @Credit DECIMAL(22,4), @Amount DECIMAL(22,4), @Journal BIGINT, @DebitCOA BIGINT, @CreditCOA BIGINT,
 				@Count INT = 0
 
+		CREATE TABLE #BankStatementJournalLine (SeqNo INT, IDX_M_COA BIGINT,
+			Debit DECIMAL(22,4), Credit DECIMAL(22,4), Remark VARCHAR(5000))
+
 		BEGIN TRANSACTION
 
 		DECLARE RowCursor CURSOR LOCAL FAST_FORWARD FOR
@@ -91,8 +97,11 @@ BEGIN
 				SELECT @Remark = RTRIM(Remark) FROM CM_T_BankStatementDetail WITH(NOLOCK)
 				WHERE IDX_T_BankStatementDetail = @Detail
 
-			EXEC [dbo].[USP_CM_BankStatement_InsertJournal] @IDX_T_BankStatementHeader, @Date, @Remark,
-				@DebitCOA, @CreditCOA, @Amount, @UserID, @Journal OUTPUT
+			TRUNCATE TABLE #BankStatementJournalLine
+			INSERT INTO #BankStatementJournalLine VALUES (1, @DebitCOA, @Amount, 0, NULL), (2, @CreditCOA, 0, @Amount, NULL)
+
+			EXEC [dbo].[USP_CM_BankStatement_InsertJournal] @IDX_T_BankStatementHeader, @Date, NULL, @Remark,
+				@UserID, @Journal OUTPUT
 
 			UPDATE CM_T_BankStatementDetail
 			SET IDX_T_JournalHeader = @Journal, UModified = @UserID, DModified = GETDATE()

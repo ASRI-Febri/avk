@@ -9,6 +9,8 @@ GO
 --				dijurnal pada satu rekening koran menjadi satu jurnal penyesuaian:
 --				  Dr @IDX_M_COA (mis. Biaya Admin Bank) / Cr COA Bank
 --				Semua baris yang dijumlahkan ditautkan ke jurnal tersebut.
+-- Mod			:	Samuel Febrianto, 22 Oct 2026
+-- Mod Desc		:	Baris jurnal lewat #BankStatementJournalLine.
 -- =============================================
 IF OBJECT_ID('dbo.USP_CM_BankStatement_CreateAdminFeeJournal') IS NOT NULL
 	DROP PROCEDURE [dbo].[USP_CM_BankStatement_CreateAdminFeeJournal]
@@ -61,10 +63,14 @@ BEGIN
 			RETURN
 		END
 
+		CREATE TABLE #BankStatementJournalLine (SeqNo INT, IDX_M_COA BIGINT,
+			Debit DECIMAL(22,4), Credit DECIMAL(22,4), Remark VARCHAR(5000))
+		INSERT INTO #BankStatementJournalLine VALUES (1, @IDX_M_COA, @Amount, 0, NULL), (2, @BankCOA, 0, @Amount, NULL)
+
 		BEGIN TRANSACTION
 
-		EXEC [dbo].[USP_CM_BankStatement_InsertJournal] @IDX_T_BankStatementHeader, @JournalDate, @Remark,
-			@IDX_M_COA, @BankCOA, @Amount, @UserID, @Journal OUTPUT
+		EXEC [dbo].[USP_CM_BankStatement_InsertJournal] @IDX_T_BankStatementHeader, @JournalDate, NULL, @Remark,
+			@UserID, @Journal OUTPUT
 
 		UPDATE SD
 		SET IDX_T_JournalHeader = @Journal, UModified = @UserID, DModified = GETDATE()

@@ -293,6 +293,7 @@ class BankStatementController extends MyController
 
         $param['IDX_T_BankStatementHeader'] = $id;
         $this->data['records_detail'] = $this->exec_sp('USP_CM_BankStatementDetail_List', $param, 'list', 'sqlsrv');
+        $this->data['month_end_count'] = count($this->exec_sp('USP_CM_BankStatement_MonthEndRows', $param, 'list', 'sqlsrv'));
 
         $this->data['can_journal'] = $this->check_permission($this->data['user_id'], 'FM-BS-J');
         $this->data['can_delete'] = $this->check_permission($this->data['user_id'], 'FM-BS-D');
@@ -407,13 +408,9 @@ class BankStatementController extends MyController
         $fields = $this->get_detail_by_id($request->input('IDX_T_BankStatementHeader'))[0];
 
         // DEFAULT: COA "Biaya Admin Bank", TANGGAL AKHIR PERIODE
-        $coa = DB::connection('sqlsrv')->select(
-            "SELECT TOP 1 IDX_M_COA, RTRIM(COAID) + ' - ' + RTRIM(COADesc) AS COAName FROM GL_M_COA WITH(NOLOCK)
-             WHERE RecordStatus = 'A' AND AllowJournalEntry = 'Y' AND COADesc LIKE '%Biaya Admin%Bank%'
-             ORDER BY COAID"
-        );
-        $fields->IDX_M_COA = $coa ? $coa[0]->IDX_M_COA : '';
-        $fields->COAName = $coa ? $coa[0]->COAName : '';
+        $coa = $this->default_coa('%Biaya Admin%Bank%');
+        $fields->IDX_M_COA = $coa ? $coa->IDX_M_COA : '';
+        $fields->COAName = $coa ? $coa->COAName : '';
         $fields->JournalDate = $fields->PeriodEnd;
         $fields->JournalRemark = 'Biaya admin bank ' . $fields->FinancialAccount . ' periode '
             . date('d/m/Y', strtotime($fields->PeriodStart)) . ' - ' . date('d/m/Y', strtotime($fields->PeriodEnd));
@@ -456,6 +453,89 @@ class BankStatementController extends MyController
     }
 
     // =========================================================================================
+    // JURNAL AKHIR BULAN (BIAYA ADMIN, BUNGA, PAJAK)
+    // =========================================================================================
+    public function month_end(Request $request)
+    {
+        $this->data['form_id'] = 'FM-BS-J';
+
+        if (!$this->check_permission($this->data['user_id'], $this->data['form_id']))
+        {
+            return $this->show_no_access_modal($this->data);
+        }
+
+        $this->data['form_desc'] = 'Jurnal Akhir Bulan';
+        $this->data['state'] = 'approve';
+
+        $this->sp_getdata = '[dbo].[USP_CM_BankStatement_Info]';
+        $fields = $this->get_detail_by_id($request->input('IDX_T_BankStatementHeader'))[0];
+
+        $param['IDX_T_BankStatementHeader'] = $fields->IDX_T_BankStatementHeader;
+        $this->data['records_detail'] = $this->exec_sp('USP_CM_BankStatement_MonthEndRows', $param, 'list', 'sqlsrv');
+
+        // KATEGORI YANG ADA PADA REKENING KORAN INI, BESERTA COA DEFAULT SESUAI JURNAL MANUAL SELAMA INI
+        $categories = [
+            'ADMIN'    => ['label' => 'Biaya Admin Bank', 'field' => 'COAAdmin', 'coa' => '%Biaya Admin%Bank%'],
+            'INTEREST' => ['label' => 'Bunga Bank', 'field' => 'COAInterest', 'coa' => '%Pendapatan Bunga%'],
+            'TAX'      => ['label' => 'Pajak Bunga', 'field' => 'COATax', 'coa' => '%Biaya Bunga%'],
+        ];
+        $present = array_unique(array_column($this->data['records_detail'], 'Category'));
+        foreach ($categories as $key => $category)
+        {
+            if (!in_array($key, $present))
+            {
+                unset($categories[$key]);
+                continue;
+            }
+            $categories[$key]['default'] = $this->default_coa($category['coa']);
+        }
+        $this->data['categories'] = $categories;
+
+        $months = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $period = strtotime($fields->PeriodEnd);
+        $fields->JournalDate = $fields->PeriodEnd;
+        $fields->ReferenceNo = 'Journal Biaya Bank ' . date('Y-m', $period);
+        $fields->JournalRemark = 'Rekening bank bulan ' . $months[(int) date('n', $period)] . ' ' . date('Y', $period);
+
+        $this->data['fields'] = $fields;
+        $this->data['url_save_modal'] = url('fm-bank-statement/save-month-end');
+        $this->data['show_save'] = count($this->data['records_detail']) > 0;
+
+        $this->data['view'] = 'finance/bank_statement_month_end_form';
+        return view($this->data['view'], $this->data);
+    }
+
+    public function save_month_end(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'IDX_T_BankStatementHeader' => 'required',
+            'JournalDate' => 'required|date',
+            'ReferenceNo' => 'required|max:32',
+            'JournalRemark' => 'required',
+        ]);
+
+        if ($validator->fails())
+        {
+            return $this->validation_fails($validator->errors(), $request->input('IDX_T_BankStatementHeader'));
+        }
+
+        $this->sp_approval = '[dbo].[USP_CM_BankStatement_CreateMonthEndJournal]';
+        $this->next_action = 'reload';
+        $this->next_url = url('fm-bank-statement/update');
+
+        $param['IDX_T_BankStatementHeader'] = $request->input('IDX_T_BankStatementHeader');
+        $param['COAAdmin'] = (int) $request->input('COAAdmin');
+        $param['COAInterest'] = (int) $request->input('COAInterest');
+        $param['COATax'] = (int) $request->input('COATax');
+        $param['JournalDate'] = date('Y-m-d', strtotime($request->input('JournalDate')));
+        $param['ReferenceNo'] = 'XXX'.$this->esc($request->input('ReferenceNo'));
+        $param['JournalRemark'] = 'XXX'.$this->esc($request->input('JournalRemark'));
+        $param['UserID'] = 'XXX'.$this->data['user_id'];
+
+        return $this->store('approve', $param);
+    }
+
+    // =========================================================================================
     // TANDA BIAYA ADMIN & HAPUS
     // =========================================================================================
     public function set_admin_fee(Request $request)
@@ -489,6 +569,19 @@ class BankStatementController extends MyController
         $result = end($result);
 
         return response()->json(['flag' => $result->Result, 'message' => $result->LogDesc, 'url' => $this->data['url_cancel']]);
+    }
+
+    // COA aktif yang boleh dijurnal, dicari dari nama (pola LIKE), untuk nilai default modal.
+    private function default_coa($pattern)
+    {
+        $coa = DB::connection('sqlsrv')->select(
+            "SELECT TOP 1 IDX_M_COA, RTRIM(COAID) + ' - ' + RTRIM(COADesc) AS COAName FROM GL_M_COA WITH(NOLOCK)
+             WHERE RecordStatus = 'A' AND AllowJournalEntry = 'Y' AND COADesc LIKE ?
+             ORDER BY COAID",
+            [$pattern]
+        );
+
+        return $coa ? $coa[0] : null;
     }
 
     // exec_sp menyusun EXEC dengan literal string tanpa escape.
