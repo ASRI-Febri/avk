@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-start">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-search me-1"></i> Upload &amp; Tampilkan
                             </button>
@@ -149,13 +149,13 @@
                         </div>
 
                         <hr>
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ url('fm-bank-statement/upload') }}" class="btn btn-secondary">
-                                <i class="fas fa-redo me-1"></i> Upload Ulang
-                            </a>
+                        <div class="d-flex justify-content-start gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="far fa-save me-1"></i> Simpan Rekening Koran
                             </button>
+                            <a href="{{ url('fm-bank-statement/upload') }}" class="btn btn-secondary">
+                                <i class="fas fa-redo me-1"></i> Upload Ulang
+                            </a>
                         </div>
                     </form>
                     @endif
