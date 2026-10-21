@@ -71,6 +71,12 @@
         { data: "PartnerDesc", visible: true },
         { data: "ReferenceNo", visible: true },
         { data: "VoucherNo", visible: true },
+        { data: "JournalTypeDesc", visible: true, render:
+            function( data, type, row )
+            {
+                return data ? data : '-';
+            }
+        },
         { data: "JournalDate", visible: true },
         { data: "RemarkHeader", visible: true },
 

@@ -35,6 +35,7 @@ GO
 --   Tambah filter journal type (@IDX_M_JournalType). Ditaruh sebagai parameter
 --   terakhir dengan default 0 supaya pemanggil lama yang mengirim parameter
 --   posisional tetap jalan; 0 / kosong berarti semua tipe.
+--   Hasil juga mengembalikan JournalTypeDesc untuk kolom Journal Type.
 --
 -- Index pendukung: SQLTable/IX_GL_T_JournalHeader_Inquiry.sql
 -- =============================================
@@ -126,6 +127,7 @@ BEGIN
 			WHEN 'PostingStatusDesc'	THEN N'JH.PostingStatus'
 			WHEN 'CompanyName'			THEN N'JH.IDX_M_Company'
 			WHEN 'BranchName'			THEN N'JH.IDX_M_Branch'
+			WHEN 'JournalTypeDesc'		THEN N'JH.IDX_M_JournalType'
 			ELSE N'JH.IDX_T_JournalHeader'
 		END
 
@@ -203,7 +205,7 @@ BEGIN
 		SET @Sql = N'
 		;WITH Paged AS
 		(
-			SELECT JH.IDX_T_JournalHeader, JH.IDX_M_Company, JH.IDX_M_Branch, JH.IDX_M_Partner,
+			SELECT JH.IDX_T_JournalHeader, JH.IDX_M_Company, JH.IDX_M_Branch, JH.IDX_M_Partner, JH.IDX_M_JournalType,
 				JH.PartnerDesc, JH.ReferenceNo, JH.VoucherNo, JH.JournalDate, JH.RemarkHeader, JH.PostingStatus
 			FROM GL_T_JournalHeader JH WITH(NOLOCK) '
 			+ @SqlWhere + N'
@@ -214,11 +216,12 @@ BEGIN
 			JH.IDX_M_Company, MC.CompanyName, JH.IDX_M_Branch, MB.BranchName,
 			JH.IDX_T_JournalHeader, JH.IDX_M_Partner, JH.PartnerDesc,
 			JH.ReferenceNo, JH.VoucherNo, CONVERT(VARCHAR, JH.JournalDate, 106) AS JournalDate,
-			JH.RemarkHeader, JH.PostingStatus,
+			JH.RemarkHeader, JH.PostingStatus, RTRIM(JT.JournalTypeDesc) AS JournalTypeDesc,
 			PostingStatusDesc = CASE JH.PostingStatus WHEN ''P'' THEN ''Posted'' WHEN ''U'' THEN ''Unposted'' END
 		FROM Paged JH
 			LEFT JOIN GN_M_Company MC WITH(NOLOCK) ON JH.IDX_M_Company = MC.IDX_M_Company
 			LEFT JOIN GN_M_Branch MB WITH(NOLOCK) ON JH.IDX_M_Branch = MB.IDX_M_Branch
+			LEFT JOIN GL_M_JournalType JT WITH(NOLOCK) ON JH.IDX_M_JournalType = JT.IDX_M_JournalType
 		ORDER BY ' + @Sort
 
 		--PRINT (@Sql)

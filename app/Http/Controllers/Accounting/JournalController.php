@@ -58,10 +58,10 @@ class JournalController extends MyController
 
         // TABLE HEADER & FOOTER
         $this->data['table_header'] = array('No','IDX_M_Company','Company','IDX_M_Branch','Branch','IDX_T_JournalHeader',
-            'IDX_M_Partner','Business Partner','No Referensi','No Voucher','Tgl Journal','Keterangan Journal','PostingStatus','Status','Action');         
+            'IDX_M_Partner','Business Partner','No Referensi','No Voucher','Journal Type','Tgl Journal','Keterangan Journal','PostingStatus','Status','Action');         
 
         $this->data['table_footer'] = array('','IDX_M_Company','CompanyName','IDX_M_Branch','BranchName','',
-            '','PartnerDesc','ReferenceNo','VoucherNo','JournalDate','RemarkHeader','','PostingStatusDesc','Action');
+            '','PartnerDesc','ReferenceNo','VoucherNo','JournalTypeDesc','JournalDate','RemarkHeader','','PostingStatusDesc','Action');
 
         $this->data['array_filter'] = array('IDX_M_Company','IDX_M_Branch','ReferenceNo','VoucherNo','RemarkHeader','PostingStatus','PartnerDesc',
             'JournalDateFrom','JournalDateTo','IDX_M_JournalType');
@@ -98,7 +98,7 @@ class JournalController extends MyController
         // ARRAY COLUMN AND FILTER FOR DATATABLES
         $this->array_filter = $array_filter;
         $this->array_column = array('RowNumber','IDX_M_Company','CompanyName','IDX_M_Branch','BranchName','IDX_T_JournalHeader',
-            'IDX_M_Partner','PartnerDesc','ReferenceNo','VoucherNo','JournalDate','RemarkHeader','PostingStatus','PostingStatusDesc');
+            'IDX_M_Partner','PartnerDesc','ReferenceNo','VoucherNo','JournalTypeDesc','JournalDate','RemarkHeader','PostingStatus','PostingStatusDesc');
 
         return $this->get_datatables($request); 
     }
