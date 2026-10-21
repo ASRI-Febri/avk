@@ -9,12 +9,14 @@
     <input type="hidden" name="IDX_T_BankStatementHeader" value="{{ $fields->IDX_T_BankStatementHeader }}"/>
 
     @if(count($records_detail) == 0)
-        <div class="alert alert-warning mb-0">Baris yang dipilih sudah memiliki jurnal.</div>
+        <div class="alert alert-label-warning text-dark mb-0">Baris yang dipilih sudah memiliki jurnal.</div>
     @else
         <div class="alert alert-label-info">
-            Satu jurnal (Journal Memorial, status Unposted) dibuat untuk setiap baris dengan COA bank
-            <b>{{ $fields->BankCOA }}</b>. Uang masuk: Debit Bank / Kredit COA lawan.
-            Uang keluar: Debit COA lawan / Kredit Bank.
+            <div>
+                Satu jurnal (Journal Memorial, status Unposted) dibuat untuk setiap baris dengan COA bank
+                <b>{{ $fields->BankCOA }}</b>. Uang masuk: Debit Bank / Kredit COA lawan.
+                Uang keluar: Debit COA lawan / Kredit Bank.
+            </div>
         </div>
 
         <div class="row mb-3">

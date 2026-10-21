@@ -9,11 +9,13 @@
     <input type="hidden" name="IDX_T_BankStatementHeader" value="{{ $fields->IDX_T_BankStatementHeader }}"/>
 
     @if($fields->AdminFeeCount == 0)
-        <div class="alert alert-warning mb-0">Tidak ada baris biaya admin yang belum dijurnal.</div>
+        <div class="alert alert-label-warning text-dark mb-0">Tidak ada baris biaya admin yang belum dijurnal.</div>
     @else
         <div class="alert alert-label-info">
-            <b>{{ $fields->AdminFeeCount }}</b> baris biaya admin yang belum dijurnal dijumlahkan menjadi satu jurnal
-            penyesuaian (Journal Memorial, status Unposted): Debit COA biaya / Kredit <b>{{ $fields->BankCOA }}</b>.
+            <div>
+                <b>{{ $fields->AdminFeeCount }}</b> baris biaya admin yang belum dijurnal dijumlahkan menjadi satu jurnal
+                penyesuaian (Journal Memorial, status Unposted): Debit COA biaya / Kredit <b>{{ $fields->BankCOA }}</b>.
+            </div>
         </div>
 
         <div class="d-grid gap-3">

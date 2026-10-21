@@ -83,16 +83,20 @@
                         </div>
 
                         @if(count($statement['warnings']))
-                        <div class="alert alert-warning">
-                            <b>Periksa kembali, hasil baca PDF tidak cocok dengan ringkasan rekening koran:</b>
-                            @foreach($statement['warnings'] as $warning)
-                                <span style="display:block;">{{ $warning }}</span>
-                            @endforeach
+                        <div class="alert alert-label-warning text-dark">
+                            <div>
+                                <b>Periksa kembali, hasil baca PDF tidak cocok dengan ringkasan rekening koran:</b>
+                                @foreach($statement['warnings'] as $warning)
+                                    <span style="display:block;">{{ $warning }}</span>
+                                @endforeach
+                            </div>
                         </div>
                         @else
                         <div class="alert alert-success">
-                            <b>{{ count($statement['rows']) }}</b> transaksi terbaca. Saldo setiap baris dan total debit/kredit
-                            sudah sesuai dengan ringkasan rekening koran.
+                            <div>
+                                <b>{{ count($statement['rows']) }}</b> transaksi terbaca. Saldo setiap baris dan total debit/kredit
+                                sudah sesuai dengan ringkasan rekening koran.
+                            </div>
                         </div>
                         @endif
 
@@ -101,9 +105,11 @@
                             <x-textbox-horizontal label="Catatan" id="Notes" value="" placeholder="Catatan (opsional)" class="" />
                         </div>
 
-                        <div class="alert alert-label-warning mb-2">
-                            Baris yang dicentang pada kolom <b>Biaya Admin</b> akan dijumlahkan menjadi satu jurnal biaya admin.
-                            Terpilih: <b id="admin-fee-count">0</b> baris, total <b id="admin-fee-total">0</b>.
+                        <div class="alert alert-label-warning text-dark mb-2">
+                            <div>
+                                Baris yang dicentang pada kolom <b>Biaya Admin</b> akan dijumlahkan menjadi satu jurnal biaya admin.
+                                Terpilih: <b id="admin-fee-count">0</b> baris, total <b id="admin-fee-total">0</b>.
+                            </div>
                         </div>
 
                         <div class="table-responsive" style="max-height: 600px;">
