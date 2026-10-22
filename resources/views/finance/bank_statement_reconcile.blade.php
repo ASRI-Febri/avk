@@ -5,6 +5,10 @@
 @endsection
 
 @section('content')
+<style>
+    .badge-bank-only { background-color: #f1734f; color: #fff; }
+    .badge-ledger-only { background-color: #6f42c1; color: #fff; }
+</style>
 @php
     $labels = [
         'exact'       => ['Cocok', 'bg-success'],
@@ -12,8 +16,8 @@
         'link'        => ['Dijurnal dari rekening koran', 'bg-info'],
         'combo'       => ['Cocok gabungan (periksa)', 'bg-warning text-dark'],
         'link_diff'   => ['Selisih nilai', 'bg-danger'],
-        'bank_only'   => ['Hanya di bank', 'bg-danger'],
-        'ledger_only' => ['Hanya di ledger', 'bg-danger'],
+        'bank_only'   => ['Hanya di bank', 'badge-bank-only'],
+        'ledger_only' => ['Hanya di ledger', 'badge-ledger-only'],
     ];
     $review = ['combo', 'link_diff', 'bank_only', 'ledger_only'];
     $summary = $result['summary'];
@@ -31,7 +35,7 @@
     };
 @endphp
 
-<div class="container-fluid py-3">
+<div class="container-fluid py-3 px-4 px-lg-5">
 
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
