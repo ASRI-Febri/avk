@@ -76,7 +76,12 @@ class RptInventoryController extends MyController
             $ddf = new DropdownFinanceController; 
             $this->data['dd_valas'] = (array) $ddf->valas(); 
             $this->data['dd_currency'] = (array) $ddf->currency();
-                       
+
+            // MAP VALAS -> MATA UANG UNTUK CHAINED DROPDOWN
+            $this->data['valas_currency_map'] = collect(DB::connection('sqlsrv')->select(
+                    "SELECT IDX_M_Valas, IDX_M_Currency FROM MC_M_Valas WHERE RecordStatus = 'A'"
+                ))->pluck('IDX_M_Currency', 'IDX_M_Valas');
+
             // DEFAULT PARAMETER
             $this->data['IDX_M_Currency'] = 0;
             $this->data['IDX_M_Valas'] = 0;
