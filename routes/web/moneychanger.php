@@ -88,6 +88,7 @@ Route::post('/mc-purchase-order/save-duplicate', 'MoneyChanger\PurchaseOrderCont
 
 Route::post('/mc-purchase-order-upload', 'MoneyChanger\PurchaseOrderController@upload');
 Route::get('/mc-purchase-order-download', 'MoneyChanger\PurchaseOrderController@download');
+Route::get('/mc-purchase-order-view-file', 'MoneyChanger\PurchaseOrderController@view_file');
 Route::get('/mc-purchase-order-delete-file', 'MoneyChanger\PurchaseOrderController@delete_file');
 
 // PURCHASE ORDER - DETAIL
@@ -123,6 +124,7 @@ Route::post('/mc-sales-order/save-duplicate', 'MoneyChanger\SalesOrderController
 
 Route::post('/mc-sales-order-upload', 'MoneyChanger\SalesOrderController@upload');
 Route::get('/mc-sales-order-download', 'MoneyChanger\SalesOrderController@download');
+Route::get('/mc-sales-order-view-file', 'MoneyChanger\SalesOrderController@view_file');
 Route::get('/mc-sales-order-delete-file', 'MoneyChanger\SalesOrderController@delete_file');
 
 // SALES QUICK (input cepat header + detail dalam 1 form)

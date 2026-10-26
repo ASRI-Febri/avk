@@ -775,6 +775,24 @@ class SalesOrderController extends MyController
         }
     }
 
+    public function view_file(Request $request)
+    {
+        $filepath = $request->query('filepath');
+
+        foreach (glob($filepath."*") as $filename) {
+
+            $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+            if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                abort(404);
+            }
+
+            return response()->file($filename, ['Content-Type' => $this->getMimeType($extension)]);
+        }
+
+        abort(404);
+    }
+
     public function delete_file(Request $request)
     {
         $filepath = $request->query('filepath');
