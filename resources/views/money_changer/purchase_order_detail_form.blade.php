@@ -8,7 +8,6 @@
 
     <input type="hidden" id="IDX_T_PurchaseOrderDetail" name="IDX_T_PurchaseOrderDetail" value="{{ $fields->IDX_T_PurchaseOrderDetail }}"/>
     <input type="hidden" id="IDX_T_PurchaseOrder" name="IDX_T_PurchaseOrder" value="{{ $fields->IDX_T_PurchaseOrder }}"/>
-    <input type="hidden" id="IDX_M_Valas" name="IDX_M_Valas" value="{{ $fields->IDX_M_Valas }}"/>
     <input type="hidden" id="ForeignAmount" name="ForeignAmount" value="{{ $fields->ForeignAmount }}"/>
 
     <div class="d-grid gap-3">

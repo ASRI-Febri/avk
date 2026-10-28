@@ -8,7 +8,6 @@
 
     <input type="hidden" id="IDX_T_SalesOrderDetail" name="IDX_T_SalesOrderDetail" value="{{ $fields->IDX_T_SalesOrderDetail }}"/>
     <input type="hidden" id="IDX_T_SalesOrder" name="IDX_T_SalesOrder" value="{{ $fields->IDX_T_SalesOrder }}"/>
-    <input type="hidden" id="IDX_M_Valas" name="IDX_M_Valas" value="{{ $fields->IDX_M_Valas }}"/>
     <input type="hidden" id="IDX_M_TransactionType" name="IDX_M_TransactionType" value="{{ $fields->IDX_M_TransactionType }}"/>
     <input type="hidden" id="ForeignAmount" name="ForeignAmount" value="{{ $fields->ForeignAmount }}"/>
 

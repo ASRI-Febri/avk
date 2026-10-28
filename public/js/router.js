@@ -29,7 +29,7 @@ function initUI()
 	$("input:text").focus(function() { $(this).select(); } );	
 
 	$('.modal').on('hidden.bs.modal', function(e){ 
-		$('.modal-content').html('');
+		$('#div-form-modal .modal-content').html('');
 		$(this).removeData('bs.modal');							
 	});
 
@@ -194,7 +194,7 @@ function callAjaxModalView(url,data)
 			//alert(scroll);			
 
 			// Add response in Modal body
-			$('.modal-content').html(response);
+			$('#div-form-modal .modal-content').html(response);
 
 			// Display Modal
 			$('#div-form-modal').modal('show'); 
