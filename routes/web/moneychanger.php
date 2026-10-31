@@ -87,9 +87,8 @@ Route::post('/mc-purchase-order/duplicate', 'MoneyChanger\PurchaseOrderControlle
 Route::post('/mc-purchase-order/save-duplicate', 'MoneyChanger\PurchaseOrderController@save_duplicate');
 
 Route::post('/mc-purchase-order-upload', 'MoneyChanger\PurchaseOrderController@upload');
-Route::get('/mc-purchase-order-download', 'MoneyChanger\PurchaseOrderController@download');
-Route::get('/mc-purchase-order-view-file', 'MoneyChanger\PurchaseOrderController@view_file');
-Route::get('/mc-purchase-order-delete-file', 'MoneyChanger\PurchaseOrderController@delete_file');
+Route::get('/mc-purchase-order-download/{id}', 'MoneyChanger\PurchaseOrderController@download');
+Route::get('/mc-purchase-order-view-file/{id}', 'MoneyChanger\PurchaseOrderController@view_file');
 
 // PURCHASE ORDER - DETAIL
 Route::get('/mc-purchase-order-detail', 'MoneyChanger\PurchaseOrderDetailController@inquiry');
@@ -123,9 +122,8 @@ Route::post('/mc-sales-order/duplicate', 'MoneyChanger\SalesOrderController@dupl
 Route::post('/mc-sales-order/save-duplicate', 'MoneyChanger\SalesOrderController@save_duplicate');
 
 Route::post('/mc-sales-order-upload', 'MoneyChanger\SalesOrderController@upload');
-Route::get('/mc-sales-order-download', 'MoneyChanger\SalesOrderController@download');
-Route::get('/mc-sales-order-view-file', 'MoneyChanger\SalesOrderController@view_file');
-Route::get('/mc-sales-order-delete-file', 'MoneyChanger\SalesOrderController@delete_file');
+Route::get('/mc-sales-order-download/{id}', 'MoneyChanger\SalesOrderController@download');
+Route::get('/mc-sales-order-view-file/{id}', 'MoneyChanger\SalesOrderController@view_file');
 
 // SALES QUICK (input cepat header + detail dalam 1 form)
 Route::get('/mc-sales-quick/create',     'MoneyChanger\SalesQuickController@create');

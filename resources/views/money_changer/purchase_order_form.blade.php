@@ -182,7 +182,8 @@
                                     <div class="col-sm-6">
                                         <div class="d-grid gap-3">
                                             
-                                            <input id="UploadFile" name="UploadFile" type="file" class="form-control">
+                                            <input id="UploadFile" name="UploadFile" type="file" class="form-control" accept=".jpg,.jpeg,.jfif,.png,.pdf">
+                                            <small class="text-muted">JPG, PNG atau PDF, maksimal 10 MB.</small>
                                         </div>
                                     </div>
                                 </div>
@@ -543,11 +544,17 @@
                     // }, 
                     success: function(data)
                     {
-                        //alert(data); // show response from the php script.
-
-                        //callAjaxView(data);
+                        if (data && data.flag == 'error') {
+                            Swal.fire({ title: "Error!", html: data.message, icon: "error" });
+                            return;
+                        }
 
                         $("#div-upload").html(data);
+                        $('#UploadFile').val('');
+                    },
+                    error: function(xhr)
+                    {
+                        Swal.fire({ title: "Error!", html: xhr.status == 413 ? 'Ukuran file terlalu besar.' : 'Upload gagal.', icon: "error" });
                     }
                 });
 

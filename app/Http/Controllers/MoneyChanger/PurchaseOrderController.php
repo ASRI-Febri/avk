@@ -17,7 +17,9 @@ use Image;
 use File;
 
 class PurchaseOrderController extends MyController
-{   
+{
+    use OrderUploadTrait;
+
     // =========================================================================================
     // CONSTRUCTOR
     // =========================================================================================
@@ -664,146 +666,22 @@ class PurchaseOrderController extends MyController
     }
 
     // =========================================================================================
-    // UPLOAD FILE
-    // =========================================================================================    
-    public function upload(Request $request)
+    // UPLOAD DOKUMEN (upload / download / view_file ada di OrderUploadTrait)
+    // =========================================================================================
+    protected function uploadConfig()
     {
-        // $this->validate($request, [
-        //     'UploadFile' => 'required',            	
-        // ]);
-
-        $validator = Validator::make($request->all(), [
-            'UploadFile' => 'required',
-        ],[
-            'IDX_T_PurchaseOrder.required' => 'Invalid index',
-        ]);
-        
-        if($validator->fails())
-        {
-            echo 'error';
-            return $this->validation_fails($validator->errors(),$request->input('UploadFile'));            	
-
-        } else {
-
-            $data = $request->all();
-
-            //$path = 'upload-doc/upload-agent';
-            $path = storage_path("app/public/upload-po" . "/" . $request->IDX_T_PurchaseOrder);
-
-            //echo $path;
-
-            if(!File::isDirectory($path)){
-                File::makeDirectory($path, 0777, true, true);
-            }
-
-            //echo $path;
-
-            if (!empty($_FILES['UploadFile']['name']))
-			{
-                $UploadFile = $request->file('UploadFile');
-
-                // Get filename with the extension
-                $filenameWithExt = $UploadFile->getClientOriginalName();
-
-                //Get just filename
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-
-                $extension = $UploadFile->getClientOriginalExtension();
-
-                // Filename to store
-                $fileNameToStore = $filename.'.'.$extension;
-
-                // UPLOAD TO PATH
-                $UploadFile->move($path, $fileNameToStore);
-
-                $param_upload['IDX_T_PurchaseOrder'] = $request->IDX_T_PurchaseOrder;
-                $param_upload['UploadCategory'] = $request->UploadCategory;
-                $param_upload['FilePath'] = $path;
-                $param_upload['FileName'] = $fileNameToStore;
-                $param_upload['FileDescription'] = 'Pembelian Valas - '.$request->PONumber;
-                $param_upload['UserID'] = 'XXX'.$this->data['user_id'];
-
-                $this->data['records_upload'] = $this->exec_sp('USP_MC_PurchaseOrderUpload_Save',$param_upload,'list','sqlsrv');
-            }           
-
-            $this->data['dir_network'] = $path;    
-            return view('money_changer.purchase_order_upload_list', $this->data);
-        }
-
-    }
-
-    public function download(Request $request)
-    {
-        $data = $request->all();
-
-        $filepath = $request->query('filepath');
-
-        //echo 'file path '.$filepath;
-
-        //$dir_network = storage_path('app/public/upload-pinjaman' . '/' . $request->cont_contract_no .'\'');
-
-        //echo '<br/>';
-        //echo 'dir network '.$dir_network;
-        
-        //foreach (glob($dir_network.$filepath."*") as $filename) {
-        foreach (glob($filepath."*") as $filename) {
-
-            //echo "foreach";
-            
-            $mimeType = $this->getMimeType($filename);            
-
-            $headers = array(
-                //'Content-Disposition' => 'attachment',
-                //'Content-Type' => File::mimeType($filename),
-                'Content-Type' => $mimeType,
-            );
-
-            return response()->download($filename, null, $headers); 
-        }
-    }
-
-    public function view_file(Request $request)
-    {
-        $filepath = $request->query('filepath');
-
-        foreach (glob($filepath."*") as $filename) {
-
-            $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-
-            if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                abort(404);
-            }
-
-            return response()->file($filename, ['Content-Type' => $this->getMimeType($extension)]);
-        }
-
-        abort(404);
-    }
-
-    public function delete_file(Request $request)
-    {
-        $filepath = $request->query('filepath');
-
-        if (Storage::exists($filePath)) {
-            Storage::delete($filePath);
-            echo "File deleted successfully.";
-        } else {
-            echo "File does not exist.";
-        }
-    }
-
-    protected function getMimeType($extension)
-    {
-        $mimeTypes = [
-            'jpg' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'png' => 'image/png',
-            'gif' => 'image/gif',
-            'pdf' => 'application/pdf',
-            'PDF' => 'application/pdf',
-            // Add other MIME types as needed
+        return [
+            'table'        => 'MC_T_PurchaseOrderUpload',
+            'key'          => 'IDX_T_PurchaseOrderUpload',
+            'parent'       => 'IDX_T_PurchaseOrder',
+            'order_table'  => 'MC_T_PurchaseOrder',
+            'folder'       => 'upload-po',
+            'form_id'      => 'FM-PI-U',
+            'save_sp'      => 'USP_MC_PurchaseOrderUpload_Save',
+            'list_sp'      => 'USP_MC_PurchaseOrderUpload_List',
+            'list_view'    => 'money_changer.purchase_order_upload_list',
+            'description'  => 'Pembelian Valas',
+            'number_field' => 'PONumber',
         ];
-
-        return $mimeTypes[$extension] ?? 'application/octet-stream'; // Default MIME type
     }
 }

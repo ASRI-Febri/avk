@@ -4,7 +4,6 @@
             <th scope="col">#</th>
             <th scope="col">Kategori</th>                     
             <th scope="col">Nama File</th>
-            <th scope="col">Lokasi File</th>
             <th scope="col">Keterangan</th>
 
             @if(!isset($show_action) || $show_action == TRUE)
@@ -28,20 +27,19 @@
             <tr>
                 <td>{{ $seq }}</td>
                 <td>{{ $row->UploadCategory }}</td>
-                <td>{{ $row->FileName }}</td>
-                <td>{{ $row->FilePath }}</td>
+                <td>{{ \App\Http\Controllers\MoneyChanger\SalesOrderController::uploadDisplayName($row->FileName) }}</td>
                 <td>{{ $row->FileDescription }}</td>
 
                 @if(!isset($show_action) || $show_action == TRUE)
                 <td class="text-center">      
-                    <a href="{{ url('/mc-sales-order-download?filepath='.$row->FilePath.'/'.$row->FileName) }}" target="_blank">																
-                        <span class="text-info"><strong>Download :</strong> @php echo basename($row->FileName); @endphp</span>	
+                    <a href="{{ url('/mc-sales-order-download/'.$row->IDX_T_SalesOrderUpload) }}" target="_blank">
+                        <span class="text-info"><strong>Download :</strong> {{ \App\Http\Controllers\MoneyChanger\SalesOrderController::uploadDisplayName($row->FileName) }}</span>
                     </a>
-                    @if(in_array(strtolower(pathinfo($row->FileName, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif']))
+                    @if(\App\Http\Controllers\MoneyChanger\SalesOrderController::isUploadImage($row->FileName))
                     <br>
                     <a href="#" onclick="viewUploadImage(this); return false;"
-                        data-src="{{ url('/mc-sales-order-view-file?filepath='.urlencode($row->FilePath.'/'.$row->FileName)) }}"
-                        data-title="{{ basename($row->FileName) }}">
+                        data-src="{{ url('/mc-sales-order-view-file/'.$row->IDX_T_SalesOrderUpload) }}"
+                        data-title="{{ \App\Http\Controllers\MoneyChanger\SalesOrderController::uploadDisplayName($row->FileName) }}">
                         <span class="text-success"><i class="fa fa-eye"></i> <strong>View Gambar</strong></span>
                     </a>
                     @endif
