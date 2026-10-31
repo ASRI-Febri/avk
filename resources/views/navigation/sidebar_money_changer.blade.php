@@ -273,6 +273,10 @@
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Kartu Stok Valas
                             </a>
                         </li>   
+                        <li id="nav-li-rpt-mutation-recap"><a href="{{ url('mc-rpt-mutation-recap') }}">
+                                <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Rekap Kartu Mutasi
+                            </a>
+                        </li>
                         {{-- <li id="nav-li-rpt-inventory-calculation">
                             <a href="{{ url('mc-rpt-inventory-calculation') }}">
                                 <i class="mdi mdi-checkbox-blank-circle align-middle"></i> Perhitungan Persediaan

@@ -251,4 +251,64 @@ class RptInventoryController extends MyController
             return view($this->data['view'], $this->data);
         }
     }
+
+    // =========================================================================================
+    // REKAP KARTU MUTASI (dari hasil Perhitungan HPP per periode)
+    // =========================================================================================
+    public function mutation_recap()
+    {
+        $this->data['title'] = 'AVK';
+        $this->data['form_title'] = 'Rekap Kartu Mutasi';
+        $this->data['form_sub_title'] = 'Rekap Kartu Mutasi';
+        $this->data['form_desc'] = 'Rekap Kartu Mutasi';
+        $this->data['form_remark'] = 'Rekap mutasi transaksi jual beli UKA per mata uang berdasarkan periode Perhitungan HPP';
+
+        array_push($this->data['breads'], 'Rekap Kartu Mutasi');
+
+        $this->data['state'] = 'update';
+        $this->data['fields'] = (object) [];
+
+        $periods = [];
+        foreach (DB::connection('sqlsrv')->select(
+            "SELECT DISTINCT COGSPeriod FROM MC_T_COGSValasCalculation WITH(NOLOCK) WHERE COGSPeriod IS NOT NULL ORDER BY COGSPeriod DESC"
+        ) as $row)
+        {
+            $periods[$row->COGSPeriod] = date('F Y', strtotime($row->COGSPeriod . '01')) . ' (' . $row->COGSPeriod . ')';
+        }
+        $this->data['dd_period'] = $periods;
+        $this->data['Period'] = $periods ? array_key_first($periods) : date('Ym');
+
+        $this->data['url_show_repoprt'] = url('mc-rpt-mutation-recap');
+
+        return view('money_changer/rpt_mutation_recap_form', $this->data);
+    }
+
+    public function mutation_recap_report(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'Period' => 'required|digits:6',
+        ]);
+
+        if ($validator->fails())
+        {
+            return $this->validation_fails($validator->errors(), $request->input('Period'));
+        }
+
+        $months = [1 => 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DESEMBER'];
+        $period = $request->input('Period');
+
+        $company = DB::connection('sqlsrv')->select(
+            "SELECT TOP 1 RTRIM(CompanyName) AS CompanyName FROM GN_M_Company WITH(NOLOCK) WHERE RecordStatus = 'A' ORDER BY IDX_M_Company"
+        );
+
+        $this->data['title'] = 'Rekap Kartu Mutasi';
+        $this->data['page_title'] = 'REKAP KARTU MUTASI';
+        $this->data['period_desc'] = $months[(int) substr($period, 4, 2)] . ' ' . substr($period, 0, 4);
+        $this->data['company_name'] = $company ? strtoupper($company[0]->CompanyName) : '';
+
+        $param['Period'] = $period;
+        $this->data['records'] = $this->exec_sp('USP_MC_R_StockMutationRecap', $param, 'list', 'sqlsrv');
+
+        return view('money_changer/rpt_mutation_recap_report', $this->data);
+    }
 }
