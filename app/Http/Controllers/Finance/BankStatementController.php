@@ -378,9 +378,15 @@ class BankStatementController extends MyController
             $adjustments[$link->IDX_T_JournalHeader][$link->SourceType == 'B' ? 'bank' : 'ledger'][] = $link->SourceID;
         }
 
+        $matches = [];
+        foreach ($this->exec_sp('USP_CM_BankStatement_MatchLinks', $param, 'list', 'sqlsrv') as $link)
+        {
+            $matches[$link->IDX_T_BankStatementMatch][$link->SourceType == 'B' ? 'bank' : 'ledger'][] = $link->SourceID;
+        }
+
         $this->data['fields'] = $fields[0];
         $this->data['balance'] = $balance[0];
-        $this->data['result'] = (new LedgerReconciler())->reconcile($bank, $ledger, $adjustments);
+        $this->data['result'] = (new LedgerReconciler())->reconcile($bank, $ledger, $adjustments, $matches);
         $this->data['can_journal'] = $this->check_permission($this->data['user_id'], 'FM-BS-J');
         $this->data['form_title'] = 'Rekonsiliasi ' . $fields[0]->StatementNo;
 
@@ -501,6 +507,53 @@ class BankStatementController extends MyController
         $param['UserID'] = 'XXX'.$this->data['user_id'];
 
         return $this->store('approve', $param);
+    }
+
+    // =========================================================================================
+    // TANDA COCOK MANUAL DARI REKONSILIASI
+    // =========================================================================================
+    public function match(Request $request)
+    {
+        if (!$this->check_permission($this->data['user_id'], 'FM-BS-J'))
+        {
+            return response()->json(['flag' => 'error', 'message' => 'Anda tidak memiliki akses.']);
+        }
+
+        $sources = '<rows>';
+        foreach ((array) $request->input('bank', []) as $id)
+        {
+            $sources .= sprintf('<r t="B" id="%d"/>', $id);
+        }
+        foreach ((array) $request->input('ledger', []) as $id)
+        {
+            $sources .= sprintf('<r t="L" id="%d"/>', $id);
+        }
+        $sources .= '</rows>';
+
+        $param['IDX_T_BankStatementHeader'] = (int) $request->input('IDX_T_BankStatementHeader');
+        $param['SourceXml'] = 'XXX'.$sources;
+        $param['UserID'] = 'XXX'.$this->data['user_id'];
+
+        $result = $this->exec_sp('USP_CM_BankStatement_Match_Save', $param, 'list', 'sqlsrv');
+        $result = end($result);
+
+        return response()->json(['flag' => $result->Result, 'message' => $result->LogDesc]);
+    }
+
+    public function unmatch(Request $request)
+    {
+        if (!$this->check_permission($this->data['user_id'], 'FM-BS-J'))
+        {
+            return response()->json(['flag' => 'error', 'message' => 'Anda tidak memiliki akses.']);
+        }
+
+        $param['IDX_T_BankStatementMatch'] = (int) $request->input('IDX_T_BankStatementMatch');
+        $param['UserID'] = 'XXX'.$this->data['user_id'];
+
+        $result = $this->exec_sp('USP_CM_BankStatement_Match_Delete', $param, 'list', 'sqlsrv');
+        $result = end($result);
+
+        return response()->json(['flag' => $result->Result, 'message' => $result->LogDesc]);
     }
 
     // =========================================================================================

@@ -82,4 +82,16 @@ class LedgerReconcilerTest extends TestCase
 
         $this->assertSame(['adjusted:1|1,2', 'exact:2|3'], $this->types($result));
     }
+
+    public function testGroupsManuallyMatchedTransactions()
+    {
+        $result = (new LedgerReconciler())->reconcile(
+            [$this->bank(1, '2026-09-15', 2622080, 0)],
+            [$this->ledger(1, '2026-09-16', 1138880, 0), $this->ledger(2, '2026-09-16', 1483200, 0)],
+            [],
+            [5 => ['bank' => [1], 'ledger' => [1, 2]]]
+        );
+
+        $this->assertSame(['manual:1|1,2'], $this->types($result));
+    }
 }

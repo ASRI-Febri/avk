@@ -18,6 +18,8 @@ GO
 --				@SourceXml : <rows><r t="B|L" id="..."/></rows>
 --				@LinesXml  : <lines><l coa="..." d="..." c="..." m="..."/></lines>
 --				Transaksi yang sudah punya jurnal penyesuaian aktif ditolak.
+-- Mod			:	Samuel Febrianto, 31 Oct 2026
+-- Mod Desc		:	Tolak transaksi yang sudah ditandai cocok manual.
 -- =============================================
 IF OBJECT_ID('dbo.USP_CM_BankStatement_CreateAdjustmentJournal') IS NOT NULL
 	DROP PROCEDURE [dbo].[USP_CM_BankStatement_CreateAdjustmentJournal]
@@ -89,6 +91,12 @@ BEGIN
 								INNER JOIN GL_T_JournalHeader J WITH(NOLOCK)
 									ON A.IDX_T_JournalHeader = J.IDX_T_JournalHeader AND J.RecordStatus = 'A')
 					THEN 'Ada transaksi yang sudah memiliki jurnal penyesuaian.'
+				 WHEN EXISTS (SELECT 1 FROM @Rows R
+								INNER JOIN CM_T_BankStatementMatchDetail MD WITH(NOLOCK)
+									ON R.SourceType = MD.SourceType AND R.SourceID = MD.SourceID
+								INNER JOIN CM_T_BankStatementMatch M WITH(NOLOCK)
+									ON MD.IDX_T_BankStatementMatch = M.IDX_T_BankStatementMatch AND M.RecordStatus = 'A')
+					THEN 'Ada transaksi yang sudah ditandai cocok.'
 				 WHEN NOT EXISTS (SELECT 1 FROM #BankStatementJournalLine) THEN 'Isi minimal satu baris jurnal.'
 				 WHEN EXISTS (SELECT 1 FROM #BankStatementJournalLine
 							  WHERE Debit < 0 OR Credit < 0 OR (Debit > 0 AND Credit > 0) OR (Debit = 0 AND Credit = 0))

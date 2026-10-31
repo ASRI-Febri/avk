@@ -22,6 +22,7 @@
         'date'        => ['Cocok, beda tanggal', 'bg-success'],
         'link'        => ['Dijurnal dari rekening koran', 'bg-info'],
         'adjusted'    => ['Disesuaikan', 'bg-success'],
+        'manual'      => ['Cocok manual', 'bg-success'],
         'combo'       => ['Cocok gabungan (periksa)', 'bg-warning text-dark'],
         'link_diff'   => ['Selisih nilai', 'bg-danger'],
         'bank_only'   => ['Hanya di bank', 'badge-bank-only'],
@@ -127,9 +128,17 @@
                 <button type="button" class="btn btn-outline-secondary btn-filter" data-filter="match">Cocok</button>
             </div>
             @if($can_journal)
-            <button type="button" id="btn-adjustment" class="btn btn-primary">
-                <i class="fas fa-coins me-1"></i> Jurnal Penyesuaian (<span id="selected-count">0</span> transaksi)
-            </button>
+            <div class="d-flex align-items-center">
+                <span class="me-3">
+                    <span id="selected-count">0</span> transaksi dipilih, selisih <b id="selected-difference">0.00</b>
+                </span>
+                <button type="button" id="btn-match" class="btn btn-success me-1">
+                    <i class="fas fa-link me-1"></i> Tandai Cocok
+                </button>
+                <button type="button" id="btn-adjustment" class="btn btn-primary">
+                    <i class="fas fa-coins me-1"></i> Jurnal Penyesuaian
+                </button>
+            </div>
             @endif
         </div>
         <div class="card-body p-0">
@@ -162,10 +171,16 @@
                         <tr class="row-{{ in_array($group['type'], $review) ? 'review' : 'match' }}">
                             @if($can_journal)
                             <td class="text-center d-print-none">
-                                @if(!$group['adjustment'])
+                                @if($group['manual'])
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-unmatch py-0 px-1"
+                                        data-match="{{ $group['manual'] }}" title="Batalkan tanda cocok">
+                                    <i class="fas fa-unlink"></i>
+                                </button>
+                                @elseif(!$group['adjustment'])
                                 <input type="checkbox" class="form-check-input chk-row"
                                        data-bank="{{ implode(',', array_column($group['bank'], 'id')) }}"
-                                       data-ledger="{{ implode(',', array_column($group['ledger'], 'id')) }}"/>
+                                       data-ledger="{{ implode(',', array_column($group['ledger'], 'id')) }}"
+                                       data-difference="{{ $group['difference'] }}"/>
                                 @endif
                             </td>
                             @endif
@@ -232,10 +247,67 @@
                 return ids;
             }
 
+            function selectedDifference()
+            {
+                var total = 0;
+                $('.chk-row:checked').each(function () {
+                    total += parseFloat($(this).data('difference')) || 0;
+                });
+                return Math.round(total * 100) / 100;
+            }
+
             function refreshSelected()
             {
+                var difference = selectedDifference();
                 $('#selected-count').text(selectedIds('bank').length + selectedIds('ledger').length);
+                $('#selected-difference').text(difference.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+                    .toggleClass('text-danger', difference != 0).toggleClass('text-success', difference == 0);
             }
+
+            function postAndReload(url, data)
+            {
+                $.post(url, $.extend({ _token: $('#_token').val() }, data), function (result) {
+                    if (result.flag == 'success') {
+                        sessionStorage.setItem('reconcile-scroll', window.scrollY);
+                        window.location.reload();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Gagal', html: result.message });
+                    }
+                }, 'json');
+            }
+
+            var scroll = sessionStorage.getItem('reconcile-scroll');
+            if (scroll !== null) {
+                sessionStorage.removeItem('reconcile-scroll');
+                setTimeout(function () { window.scrollTo(0, parseInt(scroll)); }, 0);
+            }
+
+            $('#btn-match').click(function () {
+                var bank = selectedIds('bank'), ledger = selectedIds('ledger');
+                if (bank.length == 0 || ledger.length == 0) {
+                    Swal.fire({ icon: 'warning', title: 'Pilih pasangan transaksi', text: 'Centang minimal satu transaksi bank dan satu transaksi ledger.' });
+                    return;
+                }
+                if (selectedDifference() != 0) {
+                    Swal.fire({ icon: 'warning', title: 'Nilai belum sama', text: 'Total bank dan ledger masih selisih. Gunakan Jurnal Penyesuaian untuk selisihnya.' });
+                    return;
+                }
+                postAndReload('{{ url('fm-bank-statement/match') }}', {
+                    IDX_T_BankStatementHeader: $('#IDX_T_BankStatementHeader').val(), bank: bank, ledger: ledger
+                });
+            });
+
+            $('.btn-unmatch').click(function () {
+                var match = $(this).data('match');
+                Swal.fire({
+                    icon: 'warning', title: 'Batalkan tanda cocok?', showCancelButton: true,
+                    confirmButtonText: 'Batalkan', cancelButtonText: 'Tidak'
+                }).then(function (result) {
+                    if (result.value) {
+                        postAndReload('{{ url('fm-bank-statement/unmatch') }}', { IDX_T_BankStatementMatch: match });
+                    }
+                });
+            });
 
             function applyFilter(filter)
             {

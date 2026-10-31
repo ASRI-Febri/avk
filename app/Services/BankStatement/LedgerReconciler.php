@@ -12,6 +12,8 @@ namespace App\Services\BankStatement;
  *   0. adjusted : transaksi yang diberi jurnal penyesuaian dari halaman
  *              rekonsiliasi, dikelompokkan bersama baris COA bank pada jurnal
  *              penyesuaian tersebut.
+ *   0. manual : transaksi yang ditandai cocok manual oleh user (tanpa jurnal),
+ *              mis. satu transfer bank yang dicatat dua penerimaan di hari lain.
  *   1. link  : baris rekening koran yang dijurnal lewat menu Rekening Koran,
  *              dicocokkan ke baris COA bank pada jurnal tersebut.
  *   2. exact / date : nominal dan arah sama, selisih tanggal maks. MAX_DAYS
@@ -31,15 +33,17 @@ class LedgerReconciler
      * @param array $bank   baris: id, date (Y-m-d), datetime, remark, in, out, journal_id
      * @param array $ledger baris: id, journal_id, voucher, date (Y-m-d), remark, in, out, posted, in_period
      * @param array $adjustments [journal_id jurnal penyesuaian => ['bank' => [id...], 'ledger' => [id...]]]
+     * @param array $matches     [id pasangan manual => ['bank' => [id...], 'ledger' => [id...]]]
      * @return array{groups: array, summary: array}
      */
-    public function reconcile(array $bank, array $ledger, array $adjustments = []): array
+    public function reconcile(array $bank, array $ledger, array $adjustments = [], array $matches = []): array
     {
         $bank = $this->keyed($bank);
         $ledger = $this->keyed($ledger);
         $groups = [];
 
         $this->matchAdjusted($bank, $ledger, $groups, $adjustments);
+        $this->matchManual($bank, $ledger, $groups, $matches);
         $this->matchLinked($bank, $ledger, $groups);
         $this->matchSingle($bank, $ledger, $groups);
         $this->matchCombos($bank, $ledger, $groups, 'bank');
@@ -77,6 +81,25 @@ class LedgerReconciler
                 $group['type'] = 'link_diff';
             }
             $group['adjustment'] = $journal;
+            $groups[] = $group;
+            $this->remove($bank, $rows);
+            $this->remove($ledger, $lines);
+        }
+    }
+
+    private function matchManual(array &$bank, array &$ledger, array &$groups, array $matches)
+    {
+        foreach ($matches as $match => $sources) {
+            $rows = array_values(array_intersect_key($bank, array_flip($sources['bank'] ?? [])));
+            $lines = array_values(array_intersect_key($ledger, array_flip($sources['ledger'] ?? [])));
+            if (!$rows && !$lines) {
+                continue;
+            }
+            $group = $this->group('manual', $rows, $lines);
+            if (abs($group['difference']) >= 0.005) {
+                $group['type'] = 'link_diff';
+            }
+            $group['manual'] = $match;
             $groups[] = $group;
             $this->remove($bank, $rows);
             $this->remove($ledger, $lines);
@@ -192,6 +215,7 @@ class LedgerReconciler
             'difference' => round($bankNet - $ledgerNet, 2),
             'sort'       => $bank ? min(array_column($bank, 'datetime')) : min($dates) . ' 99',
             'adjustment' => null,
+            'manual'     => null,
         ];
     }
 
