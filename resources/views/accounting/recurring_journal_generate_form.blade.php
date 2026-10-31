@@ -7,9 +7,11 @@
 @section('modal-content')
 
     <div class="alert alert-label-info">
-        Semua template recurring <b>aktif</b> yang masa berlakunya mencakup periode di bawah ini
-        akan digenerate jurnalnya (tanggal jurnal = akhir bulan, langsung posted).
-        Template yang sudah pernah digenerate untuk periode tersebut otomatis dilewati.
+        <div>
+            Semua template recurring <b>aktif</b> yang masa berlakunya mencakup periode di bawah ini
+            akan digenerate jurnalnya (tanggal jurnal = akhir bulan, langsung posted).
+            Template yang sudah pernah digenerate untuk periode tersebut otomatis dilewati.
+        </div>
     </div>
 
     <div class="d-grid gap-3">

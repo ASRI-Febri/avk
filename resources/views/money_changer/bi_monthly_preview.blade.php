@@ -62,20 +62,42 @@
                         }
                     @endphp
                     @if(count($no_bi_rate) > 0)
-                        <div class="alert alert-warning">
-                            <b>Kurs tengah BI belum tersedia</b> untuk valuta:
-                            <b>{{ implode(', ', $no_bi_rate) }}</b> pada tanggal akhir bulan periode ini —
-                            sementara memakai kurs master (rata-rata kurs jual/beli internal).
-                            Upload file Kurs Transaksi dari website BI di menu
-                            <a href="{{ url('mc-bi-middle-rate') }}" target="_blank">Kurs Tengah BI</a>,
-                            lalu preview ulang periode ini.
+                        <style>
+                            .bi-rate-notice { background: #fff8e1; border: 1px solid #f5d27a; border-left: 4px solid #e0a106; color: #5c4400; }
+                            .bi-rate-notice .notice-icon { color: #e0a106; font-size: 1.25rem; }
+                            .bi-rate-notice .badge-currency { background: #fdecc0; color: #5c4400; border: 1px solid #f0c75e; font-weight: 600; letter-spacing: .5px; }
+                            .bi-rate-notice .btn-notice { background: #8a5a00; border-color: #8a5a00; color: #fff; }
+                            .bi-rate-notice .btn-notice:hover { background: #6e4800; border-color: #6e4800; color: #fff; }
+                        </style>
+                        <div class="alert bi-rate-notice align-items-start mb-3">
+                            <i class="fas fa-exclamation-triangle notice-icon me-3 mt-1"></i>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold mb-1">Kurs tengah BI belum tersedia untuk {{ count($no_bi_rate) }} valuta</div>
+                                <div class="mb-2">
+                                    @foreach($no_bi_rate as $currency)
+                                        <span class="badge badge-currency me-1 mb-1">{{ $currency }}</span>
+                                    @endforeach
+                                </div>
+                                <div class="mb-2">
+                                    Kurs BI pada tanggal akhir bulan periode ini belum ada, sehingga sementara memakai
+                                    <b>kurs master</b> (rata-rata kurs jual/beli internal).
+                                </div>
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <span><b>Solusi:</b> upload file Kurs Transaksi dari website BI, lalu preview ulang periode ini.</span>
+                                    <a href="{{ url('mc-bi-middle-rate') }}" target="_blank" class="btn btn-sm btn-notice">
+                                        <i class="fas fa-upload me-1"></i> Buka menu Kurs Tengah BI
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     @endif
 
                     @if(!empty($result['saved']))
                         <div class="alert alert-success">
-                            <b>{{ $result['saved'] }}</b> baris valuta tersimpan untuk periode {{ $PeriodDesc }}.
-                            Silakan download file txt di tombol kanan bawah.
+                            <div>
+                                <b>{{ $result['saved'] }}</b> baris valuta tersimpan untuk periode {{ $PeriodDesc }}.
+                                Silakan download file txt di tombol kanan bawah.
+                            </div>
                         </div>
                     @endif
                     @if(!empty($result['error']))

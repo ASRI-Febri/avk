@@ -7,8 +7,10 @@
 @section('modal-content')
 
     <div class="alert alert-label-warning">
-        Perhitungan penyusutan periode di bawah ini akan <b>dibatalkan</b> dan dapat dihitung ulang.
-        Pembatalan hanya bisa dilakukan bila jurnal belum digenerate.
+        <div>
+            Perhitungan penyusutan periode di bawah ini akan <b>dibatalkan</b> dan dapat dihitung ulang.
+            Pembatalan hanya bisa dilakukan bila jurnal belum digenerate.
+        </div>
     </div>
 
     <input type="hidden" id="IDX_M_Company" name="IDX_M_Company" value="{{ $fields->IDX_M_Company }}"/>
