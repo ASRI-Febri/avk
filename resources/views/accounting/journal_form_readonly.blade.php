@@ -172,6 +172,13 @@
         @include('accounting.journal_detail_list')            
     </div> 
 
+    <div class="card border mt-3">
+        <div class="card-body">
+            <h6 class="text-secondary mb-3"><i class="fas fa-paperclip me-1"></i> Lampiran</h6>
+            @include('general.attachment_panel', ['attachment_type' => 'JE', 'attachment_id' => $fields->IDX_T_JournalHeader])
+        </div>
+    </div>
+
     <div class="row mt-2">
         <div class="col-12">
             <small class="text-muted d-block">Dibuat: {{ $user_date($fields->CreateByName, $fields->CreateByID, $fields->CreateByDate) }}</small>

@@ -129,6 +129,8 @@
                         @if($state <> 'create')
                         <a class="nav-item nav-link" id="card-detail-tab" data-bs-toggle="tab" href="#card-detail" aria-selected="false" role="tab" tabindex="-1">
                             <i class="fas fa-list"></i> Journal Detail</a>
+                        <a class="nav-item nav-link" id="card-attachment-tab" data-bs-toggle="tab" href="#card-attachment" aria-selected="false" role="tab" tabindex="-1">
+                            <i class="fas fa-paperclip"></i> Lampiran</a>
                         @endif
                     </div>
 
@@ -169,6 +171,9 @@
                             <div id="table-journal-detail" class="table-responsive">
                                 @include('accounting.journal_detail_list')            
                             </div>  
+                        </div>
+                        <div class="tab-pane fade" id="card-attachment" role="tabpanel" aria-labelledby="#card-attachment-tab">
+                            @include('general.attachment_panel', ['attachment_type' => 'JE', 'attachment_id' => $fields->IDX_T_JournalHeader])
                         </div>
                         @endif
                     </div>

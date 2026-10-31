@@ -105,6 +105,9 @@
                 <a class="nav-item nav-link" id="card-journal-allocation-tab" data-bs-toggle="tab" href="#card-journal-allocation" aria-selected="true" role="tab">
                     <i class="fas fa-file"></i> Journal Allocation
                 </a>
+                <a class="nav-item nav-link" id="card-attachment-tab" data-bs-toggle="tab" href="#card-attachment" aria-selected="true" role="tab">
+                    <i class="fas fa-paperclip"></i> Lampiran
+                </a>
                 <a class="nav-item nav-link" id="card-log-tab" data-bs-toggle="tab" href="#card-log" aria-selected="true" role="tab">
                     <i class="fas fa-list"></i> Log
                 </a>    
@@ -163,6 +166,9 @@
                     <div id="table-financialpayment-journal" class="table-responsive">
                         @include('finance.financial_payment_journal_list')            
                     </div>
+                </div>
+                <div class="tab-pane fade" id="card-attachment" role="tabpanel" aria-labelledby="#card-attachment-tab">
+                    @include('general.attachment_panel', ['attachment_type' => 'FP', 'attachment_id' => $fields->IDX_T_FinancialPaymentHeader])
                 </div>
                 <div class="tab-pane fade" id="card-log" role="tabpanel" aria-labelledby="#card-log-tab">
                     <div id="table-financialpayment-log" class="table-responsive">

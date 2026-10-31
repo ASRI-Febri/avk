@@ -82,3 +82,10 @@ Route::post('/gn-partner-bank/save', 'General\PartnerBankController@save');
 Route::post('/gn-partner-bank/delete', 'General\PartnerBankController@delete');
 Route::post('/gn-partner-bank/save-delete', 'General\PartnerBankController@save_delete');
 Route::get('/gn-partner-bank/reload/{id}', 'General\PartnerBankController@reload');
+
+// LAMPIRAN TRANSAKSI (financial payment, journal entry)
+Route::get('/gn-attachment/list', 'General\AttachmentController@list');
+Route::post('/gn-attachment/upload', 'General\AttachmentController@upload');
+Route::get('/gn-attachment/view/{id}', 'General\AttachmentController@view');
+Route::get('/gn-attachment/download/{id}', 'General\AttachmentController@download');
+Route::post('/gn-attachment/delete', 'General\AttachmentController@delete');
