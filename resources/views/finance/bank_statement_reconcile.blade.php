@@ -5,7 +5,14 @@
 @endsection
 
 @section('content')
+<div id="div-form-modal" class="modal fade" tabindex="-1" role="dialog" data-bs-backdrop="static" data-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content"></div>
+    </div>
+</div>
+<input type="hidden" id="IDX_T_BankStatementHeader" value="{{ $fields->IDX_T_BankStatementHeader }}"/>
 <style>
+    .datepicker2 { z-index: 10000 !important; }
     .badge-bank-only { background-color: #f1734f; color: #fff; }
     .badge-ledger-only { background-color: #6f42c1; color: #fff; }
 </style>
@@ -14,6 +21,7 @@
         'exact'       => ['Cocok', 'bg-success'],
         'date'        => ['Cocok, beda tanggal', 'bg-success'],
         'link'        => ['Dijurnal dari rekening koran', 'bg-info'],
+        'adjusted'    => ['Disesuaikan', 'bg-success'],
         'combo'       => ['Cocok gabungan (periksa)', 'bg-warning text-dark'],
         'link_diff'   => ['Selisih nilai', 'bg-danger'],
         'bank_only'   => ['Hanya di bank', 'badge-bank-only'],
@@ -110,7 +118,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header d-print-none">
+        <div class="card-header d-print-none d-flex justify-content-between align-items-center">
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-secondary btn-filter" data-filter="all">Semua ({{ count($result['groups']) }})</button>
                 <button type="button" class="btn btn-outline-secondary btn-filter active" data-filter="review">
@@ -118,12 +126,20 @@
                 </button>
                 <button type="button" class="btn btn-outline-secondary btn-filter" data-filter="match">Cocok</button>
             </div>
+            @if($can_journal)
+            <button type="button" id="btn-adjustment" class="btn btn-primary">
+                <i class="fas fa-coins me-1"></i> Jurnal Penyesuaian (<span id="selected-count">0</span> transaksi)
+            </button>
+            @endif
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-sm table-bordered mb-0" id="table-reconcile">
                     <thead class="table-light">
                         <tr>
+                            @if($can_journal)
+                            <th rowspan="2" class="text-center d-print-none"><input type="checkbox" class="form-check-input" id="chk-all"/></th>
+                            @endif
                             <th rowspan="2">Status</th>
                             <th colspan="4" class="text-center">Rekening Koran</th>
                             <th colspan="5" class="text-center">Ledger</th>
@@ -144,6 +160,15 @@
                     <tbody>
                     @foreach($result['groups'] as $group)
                         <tr class="row-{{ in_array($group['type'], $review) ? 'review' : 'match' }}">
+                            @if($can_journal)
+                            <td class="text-center d-print-none">
+                                @if(!$group['adjustment'])
+                                <input type="checkbox" class="form-check-input chk-row"
+                                       data-bank="{{ implode(',', array_column($group['bank'], 'id')) }}"
+                                       data-ledger="{{ implode(',', array_column($group['ledger'], 'id')) }}"/>
+                                @endif
+                            </td>
+                            @endif
                             <td><span class="badge {{ $labels[$group['type']][1] }}">{{ $labels[$group['type']][0] }}</span></td>
                             <td class="text-nowrap">
                                 @foreach($group['bank'] as $row)<div>{{ date('d/m H:i', strtotime($row['datetime'])) }}</div>@endforeach
@@ -164,6 +189,7 @@
                                 @foreach($group['ledger'] as $line)
                                     <div>
                                         <a href="{{ url('ac-journal/update/'.$line['journal_id']) }}" target="_blank">{{ $line['voucher'] }}</a>
+                                        @if($line['journal_id'] == $group['adjustment'])<span class="badge bg-success">Penyesuaian</span>@endif
                                         @if(!$line['posted'])<span class="badge bg-secondary">Unposted</span>@endif
                                         @if(!$line['in_period'])<span class="badge bg-secondary">Luar periode</span>@endif
                                     </div>
@@ -190,14 +216,60 @@
 @endsection
 
 @section('script')
+    <script src="{{ URL::asset('public/js/save.js') }}"></script>
+    <script src="{{ URL::asset('public/js/router.js') }}"></script>
     <script>
         $(document).ready(function () {
+            function selectedIds(side)
+            {
+                var ids = [];
+                $('.chk-row:checked').each(function () {
+                    var value = String($(this).data(side));
+                    if (value !== '') {
+                        ids = ids.concat(value.split(','));
+                    }
+                });
+                return ids;
+            }
+
+            function refreshSelected()
+            {
+                $('#selected-count').text(selectedIds('bank').length + selectedIds('ledger').length);
+            }
+
             function applyFilter(filter)
             {
                 $('#table-reconcile tbody tr').each(function () {
-                    $(this).toggle(filter == 'all' || $(this).hasClass('row-' + filter));
+                    var show = filter == 'all' || $(this).hasClass('row-' + filter);
+                    $(this).toggle(show);
+                    if (!show) {
+                        $(this).find('.chk-row').prop('checked', false);
+                    }
                 });
+                $('#chk-all').prop('checked', false);
+                refreshSelected();
             }
+
+            $('#chk-all').change(function () {
+                $('#table-reconcile tbody tr:visible .chk-row').prop('checked', this.checked);
+                refreshSelected();
+            });
+
+            $('.chk-row').change(refreshSelected);
+
+            $('#btn-adjustment').click(function () {
+                var bank = selectedIds('bank'), ledger = selectedIds('ledger');
+                if (bank.length + ledger.length == 0) {
+                    Swal.fire({ icon: 'warning', title: 'Belum ada transaksi dipilih', text: 'Centang transaksi yang akan dibuatkan jurnal penyesuaian.' });
+                    return;
+                }
+                callAjaxModalView('{{ url('fm-bank-statement/adjustment') }}', {
+                    _token: $('#_token').val(),
+                    IDX_T_BankStatementHeader: $('#IDX_T_BankStatementHeader').val(),
+                    bank: bank,
+                    ledger: ledger
+                });
+            });
 
             $('.btn-filter').click(function () {
                 $('.btn-filter').removeClass('active');

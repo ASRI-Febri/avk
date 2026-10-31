@@ -372,13 +372,135 @@ class BankStatementController extends MyController
 
         $balance = $this->exec_sp('USP_CM_BankStatement_LedgerBalance', $param, 'list', 'sqlsrv');
 
+        $adjustments = [];
+        foreach ($this->exec_sp('USP_CM_BankStatement_AdjustmentLinks', $param, 'list', 'sqlsrv') as $link)
+        {
+            $adjustments[$link->IDX_T_JournalHeader][$link->SourceType == 'B' ? 'bank' : 'ledger'][] = $link->SourceID;
+        }
+
         $this->data['fields'] = $fields[0];
         $this->data['balance'] = $balance[0];
-        $this->data['result'] = (new LedgerReconciler())->reconcile($bank, $ledger);
+        $this->data['result'] = (new LedgerReconciler())->reconcile($bank, $ledger, $adjustments);
+        $this->data['can_journal'] = $this->check_permission($this->data['user_id'], 'FM-BS-J');
         $this->data['form_title'] = 'Rekonsiliasi ' . $fields[0]->StatementNo;
 
         $this->data['view'] = 'finance/bank_statement_reconcile';
         return view($this->data['view'], $this->data);
+    }
+
+    // =========================================================================================
+    // JURNAL PENYESUAIAN DARI REKONSILIASI
+    // =========================================================================================
+    public function adjustment(Request $request)
+    {
+        $this->data['form_id'] = 'FM-BS-J';
+
+        if (!$this->check_permission($this->data['user_id'], $this->data['form_id']))
+        {
+            return $this->show_no_access_modal($this->data);
+        }
+
+        $this->data['form_desc'] = 'Jurnal Penyesuaian Rekonsiliasi';
+        $this->data['state'] = 'approve';
+
+        $this->sp_getdata = '[dbo].[USP_CM_BankStatement_Info]';
+        $fields = $this->get_detail_by_id($request->input('IDX_T_BankStatementHeader'))[0];
+
+        $param['IDX_T_BankStatementHeader'] = $fields->IDX_T_BankStatementHeader;
+        $bank_ids = array_flip((array) $request->input('bank', []));
+        $ledger_ids = array_flip((array) $request->input('ledger', []));
+
+        $this->data['records_bank'] = array_values(array_filter(
+            $this->exec_sp('USP_CM_BankStatementDetail_List', $param, 'list', 'sqlsrv'),
+            function ($row) use ($bank_ids) { return isset($bank_ids[$row->IDX_T_BankStatementDetail]); }
+        ));
+        $this->data['records_ledger'] = array_values(array_filter(
+            $this->exec_sp('USP_CM_BankStatement_LedgerLines', $param, 'list', 'sqlsrv'),
+            function ($row) use ($ledger_ids) { return isset($ledger_ids[$row->IDX_T_JournalDetail]); }
+        ));
+
+        // SELISIH = MUTASI BANK - MUTASI LEDGER; POSITIF BERARTI BANK PERLU DIDEBIT
+        $difference = 0;
+        $dates = [];
+        $remarks = [];
+        foreach ($this->data['records_bank'] as $row)
+        {
+            $difference += $row->CreditAmount - $row->DebitAmount;
+            $dates[] = substr($row->PostingDate, 0, 10);
+            $remarks[] = $row->Remark;
+        }
+        foreach ($this->data['records_ledger'] as $row)
+        {
+            $difference -= $row->BDebetAmount - $row->BCreditAmount;
+            $dates[] = $row->JournalDate;
+            $remarks[] = $row->VoucherNo;
+        }
+
+        $fields->Difference = round($difference, 2);
+        $fields->JournalDate = $dates ? max($dates) : $fields->PeriodEnd;
+        $fields->JournalRemark = 'Penyesuaian rekonsiliasi ' . implode(' / ', array_unique(array_filter($remarks)));
+
+        $this->data['fields'] = $fields;
+        $this->data['url_save_modal'] = url('fm-bank-statement/save-adjustment');
+        $this->data['show_save'] = count($this->data['records_bank']) + count($this->data['records_ledger']) > 0;
+
+        $this->data['view'] = 'finance/bank_statement_adjustment_form';
+        return view($this->data['view'], $this->data);
+    }
+
+    public function save_adjustment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'IDX_T_BankStatementHeader' => 'required',
+            'JournalDate' => 'required|date',
+            'JournalRemark' => 'required',
+            'lines' => 'required|array',
+            'lines.*.coa' => 'required',
+            'lines.*.amount' => 'required',
+            'lines.*.side' => 'required|in:D,C',
+        ], [
+            'lines.required' => 'Isi minimal satu baris jurnal.',
+            'lines.*.coa.required' => 'Chart of Account belum dipilih!',
+            'lines.*.amount.required' => 'Nilai baris jurnal belum diisi!',
+        ]);
+
+        if ($validator->fails())
+        {
+            return $this->validation_fails($validator->errors(), $request->input('IDX_T_BankStatementHeader'));
+        }
+
+        $sources = '<rows>';
+        foreach ((array) $request->input('bank', []) as $id)
+        {
+            $sources .= sprintf('<r t="B" id="%d"/>', $id);
+        }
+        foreach ((array) $request->input('ledger', []) as $id)
+        {
+            $sources .= sprintf('<r t="L" id="%d"/>', $id);
+        }
+        $sources .= '</rows>';
+
+        $lines = '<lines>';
+        foreach ($request->input('lines') as $line)
+        {
+            $amount = round((float) str_replace(',', '', $line['amount']), 2);
+            $lines .= sprintf('<l coa="%d" d="%.2f" c="%.2f" m="%s"/>', $line['coa'],
+                $line['side'] == 'D' ? $amount : 0, $line['side'] == 'C' ? $amount : 0, $this->xml_attr($line['remark'] ?? ''));
+        }
+        $lines .= '</lines>';
+
+        $this->sp_approval = '[dbo].[USP_CM_BankStatement_CreateAdjustmentJournal]';
+        $this->next_action = 'reload';
+        $this->next_url = url('fm-bank-statement/reconcile');
+
+        $param['IDX_T_BankStatementHeader'] = (int) $request->input('IDX_T_BankStatementHeader');
+        $param['SourceXml'] = 'XXX'.$sources;
+        $param['LinesXml'] = 'XXX'.$lines;
+        $param['JournalDate'] = date('Y-m-d', strtotime($request->input('JournalDate')));
+        $param['JournalRemark'] = 'XXX'.$this->esc($request->input('JournalRemark'));
+        $param['UserID'] = 'XXX'.$this->data['user_id'];
+
+        return $this->store('approve', $param);
     }
 
     // =========================================================================================
