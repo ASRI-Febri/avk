@@ -52,11 +52,11 @@ class RptInventoryController extends MyController
         $access = TRUE;
         
         $this->data['title'] = 'AVK';
-        $this->data['form_title'] = 'Laporan Inventory Valas';
-        $this->data['form_sub_title'] = 'Laporan Inventory Valas';
-        $this->data['form_desc'] = 'Laporan Inventory Valas';
+        $this->data['form_title'] = 'Kartu Stok Valas';
+        $this->data['form_sub_title'] = 'Kartu Stok Valas';
+        $this->data['form_desc'] = 'Kartu Stok Valas';
 
-        $this->data['form_remark'] = 'Laporan inventory valas berdasarkan cabang, periode tanggal awal dan tanggal akhir';
+        $this->data['form_remark'] = 'Kartu stok valas berdasarkan mata uang, kode valas, periode tanggal awal dan tanggal akhir';
 
         // BREADCRUMB
         array_push($this->data['breads'],'Inventory'); 
@@ -86,6 +86,8 @@ class RptInventoryController extends MyController
             $this->data['IDX_M_Currency'] = 0;
             $this->data['IDX_M_Valas'] = 0;
             $this->data['IDX_M_Branch'] = 1;
+            $this->data['GroupBy'] = 'valas';
+            $this->data['dd_group_by'] = ['valas' => 'Valas (per pecahan / SKU)', 'currency' => 'Currency (per mata uang)'];
             $this->data['start_date'] = date('Y-m-01');
             $this->data['end_date'] = date('Y-m-d');
 
@@ -105,7 +107,8 @@ class RptInventoryController extends MyController
         $validator = Validator::make($request->all(),[   
             'IDX_M_Branch' => 'required',
             'start_date' => 'required',
-            'end_date' => 'required'
+            'end_date' => 'required',
+            'GroupBy' => 'nullable|in:valas,currency',
         ]);
 
         if($validator->fails())
@@ -118,9 +121,9 @@ class RptInventoryController extends MyController
             $this->data['fields'] = $request->all();
 
             // REPORT INFORMATION
-            $this->data['page_title'] = 'Laporan Inventory Valas';   
-            $this->data['title'] = 'Laporan Inventory Valas';            
-            $this->data['form_title'] = 'Laporan Inventory Valas';    
+            $this->data['page_title'] = 'Kartu Stok Valas';   
+            $this->data['title'] = 'Kartu Stok Valas';            
+            $this->data['form_title'] = 'Kartu Stok Valas';    
             
             if($request->CurrencyName == ''){
                 $this->data['CurrencyName'] = 'Semua Mata Uang';
@@ -145,9 +148,67 @@ class RptInventoryController extends MyController
             $this->data['records'] = $this->exec_sp('USP_MC_R_StockCard',$param,'list','sqlsrv');
 
             // VIEW
+            if ($request->input('GroupBy') == 'currency')
+            {
+                $this->data['groups'] = $this->group_by_currency($this->data['records']);
+                return view('money_changer/rpt_inventory_period_report_currency', $this->data);
+            }
+
             $this->data['view'] = 'money_changer/rpt_inventory_period_report';                                 
             return view($this->data['view'], $this->data);
         }
+    }
+
+    // Kartu stok per mata uang: saldo awal semua pecahan digabung, mutasi diurutkan per tanggal,
+    // dan saldo berjalan dalam nilai valas (lembar x pecahan) karena lembar beda pecahan tidak bisa dijumlah.
+    // Kartu stok hanya menyimpan tanggal (tanpa jam), jadi dalam satu hari mutasi masuk didahulukan
+    // supaya saldo berjalan tidak tampak minus.
+    private function group_by_currency(array $records)
+    {
+        $groups = [];
+        foreach ($records as $row)
+        {
+            $key = $row->IDX_M_Currency;
+            if (!isset($groups[$key]))
+            {
+                $groups[$key] = ['currency_id' => trim($row->CurrencyID), 'currency_name' => trim($row->CurrencyName),
+                    'opening' => 0, 'rows' => []];
+            }
+
+            if ($row->IDX_T_StockCardValas == 0)
+            {
+                $groups[$key]['opening'] += $row->EB_ForeignAmount;
+                continue;
+            }
+
+            $row->IN_ForeignAmount = $row->IN_Quantity * $row->ValasChangeNumber;
+            $row->OUT_ForeignAmount = $row->OUT_Quantity * $row->ValasChangeNumber;
+            $groups[$key]['rows'][] = $row;
+        }
+
+        foreach ($groups as $key => &$group)
+        {
+            if (!$group['rows'] && round($group['opening'], 4) == 0)
+            {
+                unset($groups[$key]);
+                continue;
+            }
+
+            usort($group['rows'], function ($a, $b) {
+                return [$a->TransactionDate, $a->IN_Quantity > 0 ? 0 : 1, $a->IDX_T_StockCardValas]
+                    <=> [$b->TransactionDate, $b->IN_Quantity > 0 ? 0 : 1, $b->IDX_T_StockCardValas];
+            });
+
+            $balance = $group['opening'];
+            foreach ($group['rows'] as $row)
+            {
+                $balance += $row->IN_ForeignAmount - $row->OUT_ForeignAmount;
+                $row->Balance = $balance;
+            }
+            $group['closing'] = $balance;
+        }
+
+        return $groups;
     }
 
     public function inventory_calculation()

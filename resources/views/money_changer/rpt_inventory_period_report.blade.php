@@ -23,6 +23,10 @@
                     <td class="param-value">: {{ $ValasName }}</td>
                 </tr>           
                 <tr>
+                    <td class="param-key">GROUP DATA</td>
+                    <td class="param-value">: VALAS (PER PECAHAN / SKU)</td>
+                </tr>
+                <tr>
                     <td class="param-key">TANGGAL TRANSAKSI</td>
                     <td class="param-value">: {{ date('d M Y',strtotime($fields['start_date'])) . ' - ' .date('d M Y',strtotime($fields['end_date'])) }}</td>
                 </tr>  

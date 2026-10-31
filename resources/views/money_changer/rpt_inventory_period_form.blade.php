@@ -23,6 +23,8 @@
 
         <x-select-horizontal label="Kode Valas (Opsional)" id="IDX_M_Valas" :value="$IDX_M_Valas" class="required" :array="$dd_valas"/>
 
+        <x-select-horizontal label="Group Data" id="GroupBy" :value="$GroupBy" class="required" :array="$dd_group_by"/>
+
         <x-textbox-horizontal label="Tanggal Awal" id="start_date" :value="$start_date" placeholder="YYYY-MM-DD" class="readonly datepicker2 required" flag="required" />
 
         <x-textbox-horizontal label="Tanggal Akhir" id="end_date" :value="$end_date" placeholder="YYYY-MM-DD" class="readonly datepicker2 required" flag="required" />
