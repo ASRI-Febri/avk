@@ -93,10 +93,12 @@
                         .
                     </small>
                     @if($balance->UnpostedNet != 0)
-                        <div class="alert alert-danger mt-2 mb-0 py-2">
-                            <i class="fas fa-exclamation-triangle me-1"></i>
-                            Ada jurnal <b>Unposted</b> bernilai bersih {{ number_format($balance->UnpostedNet, 2) }} di periode ini.
-                            Saldo akhir ledger belum final: posting jurnal tersebut agar saldo awal periode berikutnya sama.
+                        <div class="alert alert-danger d-flex align-items-start gap-2 mt-2 mb-0 py-2">
+                            <i class="fas fa-exclamation-triangle mt-1"></i>
+                            <div>
+                                Ada jurnal <b>Unposted</b> bernilai bersih <b>{{ number_format($balance->UnpostedNet, 2) }}</b> di periode ini.
+                                Saldo akhir ledger belum final: posting jurnal tersebut agar saldo awal periode berikutnya sama.
+                            </div>
                         </div>
                     @endif
                 </div>
