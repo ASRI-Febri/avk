@@ -256,7 +256,7 @@ class BIMiddleRateController extends MyController
             $param['RateUnit'] = $item['RateUnit'];
             $param['SellRate'] = $item['SellRate'];
             $param['BuyRate'] = $item['BuyRate'];
-            $param['FileName'] = 'XXX' . str_replace("'", "''", $file_name);
+            $param['FileName'] = 'XXX' . $file_name;
             $param['UserID'] = 'XXX' . $this->data['user_id'];
 
             $result = $this->exec_sp('USP_MC_BIMiddleRate_Save', $param, 'list', 'sqlsrv');

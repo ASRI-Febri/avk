@@ -77,10 +77,10 @@ trait OrderUploadTrait
         $file->move($path, $stored);
 
         $param[$parent] = $id;
-        $param['UploadCategory'] = 'XXX'.str_replace("'", "''", $request->input('UploadCategory'));
+        $param['UploadCategory'] = 'XXX'.$request->input('UploadCategory');
         $param['FilePath'] = 'XXX'.$path;
-        $param['FileName'] = 'XXX'.str_replace("'", "''", $stored);
-        $param['FileDescription'] = 'XXX'.str_replace("'", "''", $config['description'] . ' - ' . $request->input($config['number_field']));
+        $param['FileName'] = 'XXX'.$stored;
+        $param['FileDescription'] = 'XXX'.$config['description'] . ' - ' . $request->input($config['number_field']);
         $param['UserID'] = 'XXX'.$this->data['user_id'];
         $this->exec_sp($config['save_sp'], $param, 'list', 'sqlsrv');
 

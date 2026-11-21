@@ -232,8 +232,8 @@ class RecurringJournalController extends MyController
             $param['IDX_M_Company'] = $data['IDX_M_Company'];
             $param['IDX_M_Branch'] = $data['IDX_M_Branch'];
             $param['RecurringCode'] = 'XXX'.$data['RecurringCode'];
-            $param['RecurringName'] = 'XXX'.str_replace("'", "''", $data['RecurringName']);
-            $param['RecurringDesc'] = 'XXX'.str_replace("'", "''", $data['RecurringDesc']);
+            $param['RecurringName'] = 'XXX'.$data['RecurringName'];
+            $param['RecurringDesc'] = 'XXX'.$data['RecurringDesc'];
             $param['IDX_M_COA_Debet'] = $data['IDX_M_COA_Debet'];
             $param['IDX_M_COA_Credit'] = $data['IDX_M_COA_Credit'];
             $param['RecurringAmount'] = str_replace(',', '', $data['RecurringAmount']);

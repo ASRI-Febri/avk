@@ -236,15 +236,15 @@ class DTTOTController extends MyController
         foreach ($rows as $item) {
             // ** Param sequence must refer to param sequence in USP_GN_DTTOT_Save **
             $param = [];
-            $param['FullName'] = 'XXX' . $this->esc($item['FullName']);
-            $param['Description'] = 'XXX' . $this->esc($item['Description']);
-            $param['SuspectType'] = 'XXX' . $this->esc($item['SuspectType']);
-            $param['DensusCode'] = 'XXX' . $this->esc($item['DensusCode']);
-            $param['PlaceOfBirth'] = 'XXX' . $this->esc($item['PlaceOfBirth']);
-            $param['DateOfBirth'] = 'XXX' . $this->esc($item['DateOfBirth']);
-            $param['Nationality'] = 'XXX' . $this->esc($item['Nationality']);
-            $param['Address'] = 'XXX' . $this->esc($item['Address']);
-            $param['FileName'] = 'XXX' . $this->esc($file_name);
+            $param['FullName'] = 'XXX' . $item['FullName'];
+            $param['Description'] = 'XXX' . $item['Description'];
+            $param['SuspectType'] = 'XXX' . $item['SuspectType'];
+            $param['DensusCode'] = 'XXX' . $item['DensusCode'];
+            $param['PlaceOfBirth'] = 'XXX' . $item['PlaceOfBirth'];
+            $param['DateOfBirth'] = 'XXX' . $item['DateOfBirth'];
+            $param['Nationality'] = 'XXX' . $item['Nationality'];
+            $param['Address'] = 'XXX' . $item['Address'];
+            $param['FileName'] = 'XXX' . $file_name;
             $param['UserID'] = 'XXX' . $this->data['user_id'];
 
             $result = $this->exec_sp('USP_GN_DTTOT_Save', $param, 'list', 'sqlsrv');
@@ -401,12 +401,5 @@ class DTTOTController extends MyController
         }
 
         return trim((string) $value);
-    }
-
-    private function esc($value)
-    {
-        // exec_sp merangkai parameter ke string EXEC; gandakan kutip tunggal
-        // agar teks seperti O'Brien tidak memutus statement SQL
-        return str_replace("'", "''", $value);
     }
 }

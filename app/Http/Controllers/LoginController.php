@@ -52,8 +52,10 @@ class LoginController extends MyController
 
             $user_password = trim($request->post('UserPassword'));           
             
-            $sql = "EXEC [USP_SM_CheckLoginValidation] '$user_id','$user_password'";
-            $query = DB::connection('sqlsrv')->select($sql);
+            $query = DB::connection('sqlsrv')->select(
+                'EXEC [USP_SM_CheckLoginValidation] ?, ?',
+                [$user_id, $user_password]
+            );
 
             $obj = array();        
 

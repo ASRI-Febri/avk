@@ -235,17 +235,17 @@ class BankStatementController extends MyController
 
         $param['IDX_M_FinancialAccount'] = $request->input('IDX_M_FinancialAccount');
         $param['BankName'] = 'XXXMandiri';
-        $param['AccountNo'] = 'XXX'.$this->esc($header['account_no']);
-        $param['AccountName'] = 'XXX'.$this->esc($header['account_name']);
-        $param['CurrencyID'] = 'XXX'.$this->esc($header['currency']);
+        $param['AccountNo'] = 'XXX'.$header['account_no'];
+        $param['AccountName'] = 'XXX'.$header['account_name'];
+        $param['CurrencyID'] = 'XXX'.$header['currency'];
         $param['PeriodStart'] = $header['period_start'];
         $param['PeriodEnd'] = $header['period_end'];
         $param['OpeningBalance'] = $header['opening_balance'];
         $param['ClosingBalance'] = $header['closing_balance'];
         $param['TotalDebit'] = $header['total_debit'];
         $param['TotalCredit'] = $header['total_credit'];
-        $param['FileName'] = 'XXX'.$this->esc($statement['file_name']);
-        $param['Notes'] = 'XXX'.$this->esc((string) $request->input('Notes'));
+        $param['FileName'] = 'XXX'.$statement['file_name'];
+        $param['Notes'] = 'XXX'.(string) $request->input('Notes');
         $param['DetailXml'] = 'XXX'.$xml;
         $param['UserID'] = 'XXX'.$this->data['user_id'];
 
@@ -503,7 +503,7 @@ class BankStatementController extends MyController
         $param['SourceXml'] = 'XXX'.$sources;
         $param['LinesXml'] = 'XXX'.$lines;
         $param['JournalDate'] = date('Y-m-d', strtotime($request->input('JournalDate')));
-        $param['JournalRemark'] = 'XXX'.$this->esc($request->input('JournalRemark'));
+        $param['JournalRemark'] = 'XXX'.$request->input('JournalRemark');
         $param['UserID'] = 'XXX'.$this->data['user_id'];
 
         return $this->store('approve', $param);
@@ -634,7 +634,7 @@ class BankStatementController extends MyController
             $this->sp_approval = '[dbo].[USP_CM_BankStatement_CreateMergedJournal]';
             $param['IDX_M_COA'] = (int) $request->input('MergeCOA');
             $param['JournalDate'] = date('Y-m-d', strtotime($request->input('MergeDate')));
-            $param['JournalRemark'] = 'XXX'.$this->esc($request->input('MergeRemark'));
+            $param['JournalRemark'] = 'XXX'.$request->input('MergeRemark');
         }
         else
         {
@@ -703,7 +703,7 @@ class BankStatementController extends MyController
         $param['IDX_T_BankStatementHeader'] = $request->input('IDX_T_BankStatementHeader');
         $param['IDX_M_COA'] = $request->input('IDX_M_COA');
         $param['JournalDate'] = date('Y-m-d', strtotime($request->input('JournalDate')));
-        $param['JournalRemark'] = 'XXX'.$this->esc($request->input('JournalRemark'));
+        $param['JournalRemark'] = 'XXX'.$request->input('JournalRemark');
         $param['UserID'] = 'XXX'.$this->data['user_id'];
 
         return $this->store('approve', $param);
@@ -785,8 +785,8 @@ class BankStatementController extends MyController
         $param['COAInterest'] = (int) $request->input('COAInterest');
         $param['COATax'] = (int) $request->input('COATax');
         $param['JournalDate'] = date('Y-m-d', strtotime($request->input('JournalDate')));
-        $param['ReferenceNo'] = 'XXX'.$this->esc($request->input('ReferenceNo'));
-        $param['JournalRemark'] = 'XXX'.$this->esc($request->input('JournalRemark'));
+        $param['ReferenceNo'] = 'XXX'.$request->input('ReferenceNo');
+        $param['JournalRemark'] = 'XXX'.$request->input('JournalRemark');
         $param['UserID'] = 'XXX'.$this->data['user_id'];
 
         return $this->store('approve', $param);
@@ -842,10 +842,6 @@ class BankStatementController extends MyController
     }
 
     // exec_sp menyusun EXEC dengan literal string tanpa escape.
-    private function esc($value)
-    {
-        return str_replace("'", "''", $value);
-    }
 
     // ENT_QUOTES mengubah ' menjadi &apos; sehingga hasilnya aman sebagai literal SQL.
     private function xml_attr($value)

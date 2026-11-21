@@ -134,8 +134,13 @@ class MyController extends Controller
         // Remark by febry, 6 Maret 2023
         //$data['sort_by'] = $request->input('columns')[$orderByColumnIndex]['name'];	
 
-        $data['sort_by'] = $request->input('columns')[$orderByColumnIndex]['data'];	
-        $data['sort_dir'] = $request->input('order.0.dir');
+        // SP *_List menyambung SortBy/SortDir ke dynamic SQL, jadi batasi ke kolom grid dan ASC/DESC
+        $sort_by = $request->input('columns.' . $orderByColumnIndex . '.data');
+        if (!in_array($sort_by, $this->array_column, true)) {
+            $sort_by = isset($this->array_column[0]) ? $this->array_column[0] : 'RowNumber';
+        }
+        $data['sort_by'] = $sort_by;
+        $data['sort_dir'] = strtoupper((string) $request->input('order.0.dir')) === 'DESC' ? 'DESC' : 'ASC';
         
         // R = Return Records, C = Return Count Records
         $data['return_type'] = 'R'; 			
@@ -338,29 +343,36 @@ class MyController extends Controller
     // =======================================================================================================
     // EXEC SQL SERVER STORED PROCEDURED AND PARAMETERS
     // =======================================================================================================
+    // Angka tetap ditulis langsung (regex hanya meloloskan digit, tanda, titik, eksponen) agar
+    // konversi tipe di SQL Server sama seperti sebelumnya; nilai lain selalu jadi parameter binding.
+    // Prefix 'XXX' tetap berarti "kirim sebagai teks" walaupun isinya angka.
+    private function build_sp_call($sp_name, $sp_param)
+    {
+        $placeholders = array();
+        $bindings = array();
+
+        foreach ($sp_param as $value)
+        {
+            if (is_numeric($value) && preg_match('/^\s*[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/', (string) $value)) {
+                $placeholders[] = trim((string) $value);
+            } else {
+                $value = (string) $value;
+                if (substr($value, 0, 3) == 'XXX') {
+                    $value = (string) substr($value, 3);
+                }
+                $placeholders[] = '?';
+                $bindings[] = $value;
+            }
+        }
+
+        return array("EXEC $sp_name " . implode(',', $placeholders), $bindings);
+    }
+
     public function exec_sp($sp_name,$sp_param,$return_type = 'list',$connection = 'sqlsrv')
 	{
-		$list_parameter = '';
-		foreach ($sp_param as $value)
-		{			
-			if (is_numeric($value)){
-				$list_parameter .= $value . ',';
-			} else {
-                if(substr($value,0,3) == 'XXX'){
-                    $list_parameter .= "'" . substr($value,3,strlen($value)-3) . "',";
-                } else {
-                    $list_parameter .= "'" . $value . "',";
-                }				
-			}			
-		}		
+        list($sql, $bindings) = $this->build_sp_call($sp_name, $sp_param);
 
-        //echo $list_parameter;
-
-		$sql = "EXEC $sp_name " . substr($list_parameter,0,-1); 
-
-        //echo $sql;
-                
-        $result =  DB::connection($connection)->select($sql);
+        $result =  DB::connection($connection)->select($sql, $bindings);
         
         if($return_type == 'list'){
             return $result;	
@@ -372,8 +384,9 @@ class MyController extends Controller
             } else {		
                 
                 $pdo = DB::connection($connection)->getPdo();
-                
-                $stmt = $pdo->query($sql);
+
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($bindings);
 
                 //print_r($stmt->getColumnMeta);
 
@@ -477,39 +490,11 @@ class MyController extends Controller
     {
         $pdo = DB::connection($connection)->getPdo();
 
-        $list_params = '';
-		foreach ($sp_param as $value)
-		{			
-			if (is_numeric($value)){
-				$list_params .= $value . ',';
-			} else {
-                if(substr($value,0,3) == 'XXX'){
-                    $list_params .= "'" . substr($value,3,strlen($value)-3) . "',";
-                } else {
-                    $list_params .= "'" . $value . "',";
-                }				
-			}			
-		}
-
-
-        // $list_params = '';
-        // foreach($sp_param as $key => $value) {
-        //     if(is_numeric($value)) {
-        //         $list_params .= $key . ' = ' . $value . ', ';
-        //     } else {
-        //         $list_params .= $key . " = '" . $value . "', ";
-        //     }
-        // }
-
-        // $query = "EXEC $sp_name " . substr($list_params, 0, -2);
-
-        $query = "EXEC $sp_name " . substr($list_params,0,-1); 
-
-        //echo $query;
+        list($query, $bindings) = $this->build_sp_call($sp_name, $sp_param);
 
         $stmt = $pdo->prepare($query);
 
-        $exec = $stmt->execute();
+        $exec = $stmt->execute($bindings);
 
         if (!$exec) return $pdo->errorInfo();
 

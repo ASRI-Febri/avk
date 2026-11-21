@@ -87,11 +87,11 @@ class AttachmentController extends MyController
 
             $param['SourceType'] = 'XXX'.$type;
             $param['SourceID'] = $id;
-            $param['Category'] = 'XXX'.$this->esc($request->input('Category'));
-            $param['FileName'] = 'XXX'.$this->esc(mb_substr($file->getClientOriginalName(), 0, 255));
+            $param['Category'] = 'XXX'.$request->input('Category');
+            $param['FileName'] = 'XXX'.mb_substr($file->getClientOriginalName(), 0, 255);
             $param['StoredName'] = 'XXX'.$stored;
             $param['FileSize'] = $size;
-            $param['Description'] = 'XXX'.$this->esc((string) $request->input('Description'));
+            $param['Description'] = 'XXX'.(string) $request->input('Description');
             $param['UserID'] = 'XXX'.$this->data['user_id'];
 
             $result = $this->exec_sp('USP_GN_Attachment_Save', $param, 'list', 'sqlsrv');
@@ -176,11 +176,5 @@ class AttachmentController extends MyController
     private function directory($type, $id)
     {
         return storage_path('app/attachment/' . $type . '/' . (int) $id);
-    }
-
-    // exec_sp menyusun EXEC dengan literal string tanpa escape.
-    private function esc($value)
-    {
-        return str_replace("'", "''", $value);
     }
 }

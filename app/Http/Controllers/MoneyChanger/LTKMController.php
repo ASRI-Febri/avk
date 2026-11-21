@@ -169,7 +169,7 @@ class LTKMController extends MyController
             }
 
             $indicator = isset($indicators[$idx_sales_order]) ? $indicators[$idx_sales_order] : '';
-            $indicator = str_replace("'", "''", trim($indicator));
+            $indicator = trim($indicator);
 
             $param = [];
             $param['LTKMPeriod'] = 'XXX' . $period;

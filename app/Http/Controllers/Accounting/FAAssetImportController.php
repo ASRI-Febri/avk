@@ -261,9 +261,9 @@ class FAAssetImportController extends MyController
             $param['IDX_M_Branch'] = $item['cabang_idx'];
             $param['IDX_M_Department'] = $item['dept_idx'];
             $param['IDX_M_AssetCategory'] = $item['kategori_idx'];
-            $param['AssetCode'] = 'XXX' . $this->esc($item['kode_aset']);
-            $param['AssetName'] = 'XXX' . $this->esc($item['nama_aset']);
-            $param['AssetDesc'] = 'XXX' . $this->esc($item['keterangan']);
+            $param['AssetCode'] = 'XXX' . $item['kode_aset'];
+            $param['AssetName'] = 'XXX' . $item['nama_aset'];
+            $param['AssetDesc'] = 'XXX' . $item['keterangan'];
             $param['AcquisitionDate'] = 'XXX' . $item['tgl_perolehan'];
             $param['UsageStartDate'] = 'XXX' . $item['tgl_mulai_pakai'];
             $param['AcquisitionCost'] = $item['harga_perolehan'];
@@ -273,7 +273,7 @@ class FAAssetImportController extends MyController
             $param['FiscalGroup'] = 'XXX' . $item['kelompok_fiskal'];
             $param['FiscalDeprMethod'] = 'XXX' . $item['metode_fiskal'];
             $param['IDX_T_PurchaseInvoice'] = 0;
-            $param['ReferenceNo'] = 'XXX' . $this->esc($item['no_referensi']);
+            $param['ReferenceNo'] = 'XXX' . $item['no_referensi'];
             $param['AssetStatus'] = 'XXX' . 'A'; // langsung Aktif agar ikut disusutkan
             $param['OpeningAccumDepr'] = $item['akum_awal'];
             $param['UserID'] = 'XXX' . $this->data['user_id'];
@@ -336,12 +336,5 @@ class FAAssetImportController extends MyController
     {
         $value = str_replace(',', '', trim((string) $value));
         return is_numeric($value) ? (float) $value : -1;
-    }
-
-    private function esc($value)
-    {
-        // exec_sp merangkai parameter ke string EXEC; gandakan kutip tunggal
-        // agar teks seperti O'Brien tidak memutus statement SQL
-        return str_replace("'", "''", $value);
     }
 }
