@@ -40,13 +40,17 @@ This app calls SQL Server stored procedures directly — **not** Eloquent ORM. V
 
 ```php
 // Typical controller data fetch
-$result = DB::connection('sqlsrv')->select("EXEC [dbo].[USP_FM_SalesInvoice_List] ...");
+$result = $this->exec_sp('[dbo].[USP_CM_FinancialPayment_List]', $param); // MyController, positional params
 ```
 
 **Procedure naming convention:** `USP_[Module]_[Entity]_[Action]`
 - `USP_GN_Company_List` — General, Company, list
-- `USP_FM_SalesInvoice_Save` — Finance, SalesInvoice, save
-- `USP_AC_Journal_Delete` — Accounting, Journal, delete
+- `USP_CM_SalesInvoice_Approve` — Cash Management (Finance), SalesInvoice, approve
+- `USP_GL_JournalDetail_Delete` — General Ledger (Accounting), JournalDetail, delete
+
+SP prefixes in the DB: `GN` General, `SM` Security, `GL` General Ledger, `FA` Fixed Asset, `CM` Finance/Cash Management, `MC` Money Changer. Route prefixes `fm-`/`ac-` map to SP prefixes `CM`/`GL`+`FA`.
+
+**Detailed business-logic docs for recoding the SPs:** `docs/recode/README.md` (per-module logic, journals, risks, SP catalog, table dictionary). Snapshot of all SP sources: `database/sqlserver/procedures/`.
 
 ### Controller Base Class
 
@@ -191,6 +195,7 @@ List views use server-side DataTables. The `inquiry_data()` method returns a JSO
 
 - **Driver:** `sqlsrv` (SQL Server)
 - **Database:** `AVKDB`
+- Local `.env` currently points at a local copy (`@@SERVERNAME` = `BERNARDINUS4256\SQLEXPRESS`); production is `WIN-U77CDEKVAKS`. Run `SELECT @@SERVERNAME` before any DDL or data change.
 - All schema and business logic live in SQL Server stored procedures
 - Only 3 Laravel migrations exist (users, password_resets, failed_jobs) — do not rely on `php artisan migrate` for business tables
 - When debugging data issues, check the stored procedure first

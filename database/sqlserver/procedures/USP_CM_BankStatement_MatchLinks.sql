@@ -1,0 +1,13 @@
+
+CREATE PROCEDURE [dbo].[USP_CM_BankStatement_MatchLinks]
+	@IDX_T_BankStatementHeader	BIGINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT M.IDX_T_BankStatementMatch, D.SourceType, D.SourceID, RTRIM(M.UCreate) AS UCreate, M.DCreate
+	FROM CM_T_BankStatementMatch M WITH(NOLOCK)
+		INNER JOIN CM_T_BankStatementMatchDetail D WITH(NOLOCK) ON M.IDX_T_BankStatementMatch = D.IDX_T_BankStatementMatch
+	WHERE M.IDX_T_BankStatementHeader = @IDX_T_BankStatementHeader AND M.RecordStatus = 'A'
+	ORDER BY M.IDX_T_BankStatementMatch, D.SourceType, D.SourceID
+END
